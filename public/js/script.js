@@ -20,13 +20,11 @@ function search() {
         if (data.length === 0) {
             resultadosDiv.innerHTML = 'No se encontraron resultados.';
         } else {
-            resultadosDiv.innerHTML=`Resultados del torneo ${data[0].Torneo_id}`;
+            resultadosDiv.innerHTML=`Resultados del torneo ${data[0].Nombre_torneo}`;
             const tabla = document.createElement('table');
-            tabla.setAttribute('border','1');
             const thead = document.createElement('thead');
             thead.innerHTML = `
                 <tr>
-                    <th>ID Torneo</th>
                     <th>Usuario</th>
                     <th>Posicion</th>
                     <th>Puntaje</th>
@@ -36,8 +34,7 @@ function search() {
             const tbody = document.createElement('tbody');
             data.forEach(torneo => {
                 const fila = document.createElement('tr');
-                fila.innerHTML += `<td>${torneo.Torneo_id}</td>
-                                   <td>${torneo.usuario_id}</td>
+                fila.innerHTML += `<td>${torneo.usuario}</td>
                                    <td>${torneo.posicion}</td>
                                    <td>${torneo.puntaje}</td>`;
                 tbody.appendChild(fila);
@@ -45,7 +42,8 @@ function search() {
             tabla.appendChild(tbody);
             resultadosDiv.appendChild(tabla);
         }
-    });
+    })
+    .then(document.getElementById('search-container').style.display = 'none');
 }
 function insert() {
     const url = document.getElementById('insert-input').value;

@@ -20,7 +20,7 @@ class Torneo extends Conectar{
         try{
             //15193348
             $conexion=parent::conexion();
-            $sql = "SELECT * FROM Torneo_posiciones WHERE Torneo_id=? ORDER BY posicion ASC";
+            $sql = "SELECT T.Nombre_torneo,U.usuario,tp.posicion,tp.puntaje FROM Torneo_posiciones tp JOIN Torneo T ON tp.juego_id =T.id_juego AND tp.Torneo_id=T.id_torneo JOIN                          usuarios U ON U.id_usuario=tp.usuario_id WHERE tp.Torneo_id=? ORDER BY tp.posicion ASC";
             $sql = $conexion->prepare($sql);
             $sql->execute([$torneo]);
 

@@ -56,6 +56,36 @@
     flex-direction: column;
 }
 
+table {
+
+	border-collapse: separate;
+	border-spacing: 0 5px;
+	color: black;
+	display: block ruby;
+	max-height: 50vh;
+	font-size: medium;
+	line-height: normal;
+}
+
+th{
+	padding:15px;
+	color:white;
+}
+
+td{
+	background-color: white;
+}
+
+td:first-of-type{
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+
+}
+td:last-of-type{
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
 /* aca vemos que pedo */
 
 html {
