@@ -26,12 +26,14 @@ Para calcular las posiciones del ranking, el sistema debe realizar la sumatoria 
 
 Los usuarios serán registrados automáticamente con el usuario y el id de challonge, exceptuando a aquellos participantes que no se hayan registrado con su usuario a traves de la web, para los cuales se deberá crear un id temporal y un nombre temporal, el cual se actualizará cuando se conozca el id de su usuario de challonge. Este nombre temporal se deberá respetar para todos los torneos venideros hasta que el usuario cuente con un id de challonge, ahi se reemplazará la información de sus resultados en torneos y nombres. 
 
-El proyecto se decidió construir en Next.js con hosting Vercel utilizando Neon para guardar PostgreSQL
+El proyecto se decidió construir en Next.js con hosting Vercel utilizando Neon para guardar PostgreSQL (Probar Supabase con postgres primero)
 Estudiar la posibilidad de comprar dominios usando cnc.py (o hostinger si no se puede) costeando con torneo
 
 ### DER disponible aqui: https://miro.com/app/board/uXjVLtzFaL8=/
 
-### API de Challonge https://api.challonge.com/v1
+### API de Challonge: https://api.challonge.com/v1
+
+### Trello del proyecto: https://trello.com/b/LT8wZFFH/mokete-gaming
 
 #### Version 1.1
 Añadir cache para seguridad respecto a DDOS a las consultas SQL (Redis???)
