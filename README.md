@@ -29,6 +29,13 @@ Los usuarios serán registrados automáticamente con el usuario y el id de chall
 El proyecto se decidió construir en Next.js con hosting Vercel utilizando Neon para guardar PostgreSQL (Probar Supabase con postgres primero)
 Estudiar la posibilidad de comprar dominios usando cnc.py (o hostinger si no se puede) costeando con torneo
 
+## Como ejecutar este código en su máquina local
+
+- Descargar este repositorio
+- Ejecutar `npm install` en linea de comando dentro de la carpeta descargada
+- Ejecutar `npm run dev`
+- Abrir en el navegador http://localhost:3000/
+
 ### DER disponible aqui: https://miro.com/app/board/uXjVLtzFaL8=/
 
 ### API de Challonge: https://api.challonge.com/v1
