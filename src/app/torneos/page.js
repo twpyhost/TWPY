@@ -1,10 +1,13 @@
 import Navbar from "@/components/navbar";
 import Table from "@/components/table";
 
-import torneos from "../../torneos.json";
+// import torneos from "../../torneos.json";
+import { getTorneos } from "../api/db";
 import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+  const torneos = await getTorneos();
+
   return (
     <>
       <Navbar />
@@ -20,12 +23,12 @@ export default function Home() {
           </thead>
 
           <tbody className="">
-            {torneos.map((torneo) => (
-              <tr className="text-center">
+            {torneos.map((torneo, index) => (
+              <tr key={index} className="text-center">
                 <Link href={"/"}>
-                  <td className="">{torneo.nombre}</td>
+                  <td className="">{torneo.nombre_torneo}</td>
                 </Link>
-                <td className="">{torneo.fecha}</td>
+                <td className="">{torneo.fecha_torneo}</td>
               </tr>
             ))}
           </tbody>

@@ -1,0 +1,46 @@
+import { createClient } from "@supabase/supabase-js";
+// Create a single supabase client for interacting with your database
+const supabase = createClient("", process.env.NEXT_PUBLIC_ANON_KEY || "");
+
+const getTorneos = async () => {
+  const { data, error } = await supabase
+    .from("torneo")
+    .select("nombre_torneo, fecha_torneo"); // Fix syntax here
+
+  if (error) {
+    console.error("Error fetching torneos: ", error);
+    return null;
+  }
+
+  return data;
+};
+
+const getRankings = async () => {
+  const { data, error } = await supabase
+    .from("ranking")
+    .select("usuario (challonge_username), puntaje, posicion")
+    .order("posicion");
+
+  if (error) {
+    console.error("Error fetching torneos: ", error);
+    return null;
+  }
+
+  return data;
+};
+
+const getCompetidores = async () => {
+  const { data, error } = await supabase
+    .from("usuario")
+    .select("challonge_username")
+    .order("challonge_username");
+
+  if (error) {
+    console.error("Error fetching torneos: ", error);
+    return null;
+  }
+
+  return data;
+};
+
+export { getTorneos, getRankings, getCompetidores };
