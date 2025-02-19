@@ -16,10 +16,7 @@ const getTorneos = async () => {
 };
 
 const getRankings = async () => {
-  const { data, error } = await supabase
-    .from("ranking")
-    .select("usuario (challonge_username), puntaje, posicion")
-    .order("posicion");
+  const { data, error } = await supabase.rpc("player_ranking");
 
   if (error) {
     console.error("Error fetching torneos: ", error);
