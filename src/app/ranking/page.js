@@ -25,7 +25,7 @@ export default async function Home() {
           <tbody className="">
             {rankings.map((ranking, index) => (
               <tr key={index} className="text-center">
-                <td className="">{ranking.usuario.challonge_username}</td>
+                <td className="">{ranking.challonge_username}</td>
                 <td className="">{ranking.puntaje}</td>
                 <td className="">{ranking.posicion}</td>
               </tr>
