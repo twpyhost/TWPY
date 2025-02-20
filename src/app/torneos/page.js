@@ -14,8 +14,6 @@ export default async function Home() {
 
   return (
     <>
-      <Navbar />
-
       <div>
         <h1>Torneos</h1>
         <YearFilter />

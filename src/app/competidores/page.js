@@ -9,8 +9,6 @@ export default async function Home() {
 
   return (
     <>
-      <Navbar />
-
       <div>
         <h1>Competidores</h1>
         <Table>

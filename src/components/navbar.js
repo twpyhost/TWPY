@@ -2,6 +2,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import logo from "../../public/images/misc/tekken8-logo-sm.png";
+import Image from "next/image";
+
 export default function Navbar() {
   const pathname = usePathname();
 
@@ -14,7 +17,9 @@ export default function Navbar() {
   return (
     <nav className="bg-black text-white flex justify-between items-center p-4">
       <h1 className="">
-        <Link href="/">Tekken Warriors PY</Link>
+        <Link href="/">
+          <Image src={logo} width={200} height={51} alt="tekken" />
+        </Link>
       </h1>
       <ul className="flex gap-x-8">
         {navItems.map((item, index) => (
