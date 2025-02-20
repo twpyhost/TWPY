@@ -13,7 +13,7 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        'tekken-pink': '#f50a64',
+        "tekken-pink": "#F50A64",
       },
     },
   },
