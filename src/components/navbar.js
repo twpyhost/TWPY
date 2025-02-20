@@ -6,7 +6,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="main_navbar flex justify-between items-center p-4">
+    <nav className="bg-black text-white flex justify-between items-center p-4">
       <h1 className="">
         <Link href="/">Tekken Warriors PY</Link>
       </h1>
