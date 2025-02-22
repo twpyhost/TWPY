@@ -9,7 +9,7 @@ export default function YearFilter({}) {
 
   return (
     <div>
-      <label htmlFor="year-select">Filter by Year: </label>
+      <label htmlFor="year-select">Filtro por año </label>
       <select id="year-select" value={selectedYear} onChange={handleChange}>
         <option value="all">Todos</option>
         <option value="2024">2024</option>
