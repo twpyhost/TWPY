@@ -1,0 +1,9 @@
+[
+  { "nombre": "Torneo 1", "fecha": "2023-01-01" },
+  { "nombre": "Torneo 2", "fecha": "2023-02-02" },
+  { "nombre": "Torneo 3", "fecha": "2023-03-03" },
+  { "nombre": "Torneo 4", "fecha": "2023-04-04" },
+  { "nombre": "Torneo 5", "fecha": "2023-05-05" },
+  { "nombre": "Torneo 6", "fecha": "2023-06-06" },
+  { "nombre": "Torneo 7", "fecha": "2023-07-07" }
+]
