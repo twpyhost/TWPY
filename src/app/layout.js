@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} antialiased font-warsaw text-5xl italic bg-gradient-to-br from-[#630D33] to-[#277687] h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} antialiased font-warsaw text-5xl italic bg-gradient-to-br from-[#630D33] to-[#277687] min-h-screen`}
       >
         <Navbar />
 

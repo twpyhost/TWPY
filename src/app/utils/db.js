@@ -8,18 +8,7 @@ const supabase = createClient(
 const getTorneos = async () => {
   const { data, error } = await supabase
     .from("torneo")
-    .select("nombre_torneo, fecha_torneo"); // Fix syntax here
-
-  if (error) {
-    console.error("Error fetching torneos: ", error);
-    return null;
-  }
-
-  return data;
-};
-
-const getRankings = async () => {
-  const { data, error } = await supabase.rpc("player_ranking");
+    .select("torneo_id, nombre_torneo, fecha_torneo"); // Fix syntax here
 
   if (error) {
     console.error("Error fetching torneos: ", error);
@@ -42,5 +31,27 @@ const getCompetidores = async () => {
 
   return data;
 };
+const getRankings = async () => {
+  const { data, error } = await supabase.rpc("player_ranking");
 
-export { getTorneos, getRankings, getCompetidores };
+  if (error) {
+    console.error("Error fetching torneos: ", error);
+    return null;
+  }
+
+  console.log(data);
+
+  return data;
+};
+
+const getFiltroAno = async () => {
+  const { data, error } = await supabase.rpc("get_filtro_ano");
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  return data;
+};
+
+export { getTorneos, getRankings, getCompetidores, getFiltroAno };

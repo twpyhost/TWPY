@@ -1,30 +1,23 @@
-import Navbar from "@/components/navbar";
 import Table from "@/components/table";
 
 // import torneos from "../../torneos.json";
-import { getCompetidores } from "../api/db";
+import { getCompetidores } from "../utils/db";
 
-export default async function Home() {
+export default async function Competidores() {
   const competidores = await getCompetidores();
 
   return (
     <>
       <div>
         <h1>Competidores</h1>
-        <Table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-            </tr>
-          </thead>
+        <Table columns={1}>
+          <div className="text-center p-2">Nombre</div>
 
-          <tbody className="">
-            {competidores.map((competidor, index) => (
-              <tr key={index} className="text-center">
-                <td className="">{competidor.challonge_username}</td>
-              </tr>
-            ))}
-          </tbody>
+          {competidores.map((competidor, index) => (
+            <div key={index + "competidor"} className="text-center p-2">
+              {competidor.challonge_username}
+            </div>
+          ))}
         </Table>
       </div>
     </>
