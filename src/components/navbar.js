@@ -1,3 +1,4 @@
+<<<<<<< prueba-para-despues-mergear
 "use client"; // 👈 Esto indica que es un componente del cliente
 import Link from "next/link";
 import { usePathname } from "next/navigation";

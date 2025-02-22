@@ -1,7 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+
 import Navbar from "@/components/navbar";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,9 +34,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
+
         className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} antialiased font-warsaw text-5xl italic bg-gradient-to-br from-[#630D33] to-[#277687] h-screen`}
       >
         <Navbar />
+
 
         {children}
       </body>

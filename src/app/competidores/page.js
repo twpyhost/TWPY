@@ -26,6 +26,7 @@ export default async function Home() {
             ))}
           </tbody>
         </Table>
+
       </div>
     </>
   );
