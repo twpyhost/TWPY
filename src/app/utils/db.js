@@ -39,8 +39,6 @@ const getRankings = async () => {
     return null;
   }
 
-  console.log(data);
-
   return data;
 };
 

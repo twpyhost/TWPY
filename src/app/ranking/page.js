@@ -10,17 +10,17 @@ export default async function Ranking() {
     <>
       <div>
         <h1>Ranking</h1>
-        <Table columns={6}>
+        <Table columns={"grid-cols-4"}>
           {/* Headers */}
           {[
             "Posición",
             "Nombre",
             "Puntaje",
-            "Posición Anterior",
-            "Puntaje Anterior",
+            // "Posición Anterior",
+            // "Puntaje Anterior",
             "Movimiento",
           ].map((header, index) => (
-            <div key={index} className="text-center p-2">
+            <div key={index} className="p-2 text-center">
               {header}
             </div>
           ))}
@@ -28,22 +28,22 @@ export default async function Ranking() {
           {/* Body */}
           {rankings.map((ranking, index) => (
             <>
-              <div key={index + "pos"} className="text-center p-2">
+              <div key={index + "pos"} className="px-6 py-2">
                 {ranking.posicion}
               </div>
-              <div key={index + "nombre"} className="text-center p-2">
-                {ranking.challonge_username} Steve
+              <div key={index + "nombre"} className="py-2 text-center">
+                {ranking.challonge_username}
               </div>
-              <div key={index + "puntaje"} className="text-center p-2">
-                {ranking.puntaje}
+              <div key={index + "puntaje"} className="py-2 text-center">
+                {ranking.puntaje}00
               </div>
-              <div key={index + "posAnt"} className="text-center p-2">
+              {/* <div key={index + "posAnt"} className="p-2 text-center">
                 {ranking.pos_anterior}
               </div>
-              <div key={index + "puntAnt"} className="text-center p-2">
+              <div key={index + "puntAnt"} className="p-2 text-center">
                 {ranking.puntaje_anterior}
-              </div>
-              <div key={index + "mov"} className="text-center p-2 text-xl">
+              </div> */}
+              <div key={index + "mov"} className="p-2 text-center text-xl">
                 {ranking.movimiento === "SUBE" && "⬆"}
                 {ranking.movimiento === "BAJA" && "⬇"}
                 {ranking.movimiento === "IGUAL" && "🟰"}

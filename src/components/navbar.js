@@ -1,4 +1,5 @@
 "use client"; // 👈 Esto indica que es un componente del cliente
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -7,6 +8,7 @@ import Image from "next/image";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
     { name: "RANKING", href: "/ranking" },
@@ -15,21 +17,69 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-black text-white flex justify-between items-center p-4">
-      <h1 className="">
-        <Link href="/">
-          <Image src={logo} width={200} height={51} alt="tekken" />
-        </Link>
-      </h1>
-      <ul className="flex gap-x-8">
+    <nav className="flex items-center justify-between bg-black p-4 text-5xl italic text-white">
+      <Link href="/">
+        <Image src={logo} width={200} height={51} alt="tekken" />
+      </Link>
+
+      <div className="relative">
+        {/* Menu Icon */}
+        <div
+          className={`cursor-pointer rounded-lg p-2 transition-colors md:hidden ${
+            isOpen ? "bg-gray-300" : "bg-transparent"
+          }`}
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
+          </svg>
+        </div>
+
+        {/* Dropdown Menu */}
+
+        <div
+          className={`absolute right-0 top-16 flex flex-1 transform flex-col space-y-2 bg-black p-4 text-white shadow-lg transition-transform md:hidden ${
+            isOpen
+              ? "translate-y-0 opacity-100"
+              : "pointer-events-none -translate-y-5 opacity-0"
+          } duration-300 ease-in-out`}
+        >
+          <ul className="gap-x-8">
+            {navItems.map((item, index) => (
+              <li
+                className={`${
+                  pathname === item.href
+                    ? "text-tekken-pink"
+                    : "hover:text-tekken-pink"
+                } transition-colors duration-300`}
+                key={index}
+              >
+                <Link href={item.href}>{item.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <ul className="hidden gap-x-8 md:flex">
         {navItems.map((item, index) => (
           <li
             className={`${
               pathname === item.href
                 ? "text-tekken-pink"
                 : "hover:text-tekken-pink"
-            }
-      transition-colors duration-300`}
+            } transition-colors duration-300`}
             key={index}
           >
             <Link href={item.href}>{item.name}</Link>

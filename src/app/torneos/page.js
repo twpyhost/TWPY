@@ -13,7 +13,7 @@ export default async function Torneos() {
         <h1>Torneos</h1>
         <YearFilter />
 
-        <Table columns={2}>
+        <Table columns={"grid-cols-2"}>
           {/* Headers */}
           {["Nombre", "Fecha"].map((header, index) => (
             <div key={index} className="text-center p-2">

@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,13 +31,16 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} antialiased font-warsaw text-5xl italic bg-gradient-to-br from-[#630D33] to-[#277687] min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} font-warsaw antialiased`}
       >
         <Navbar />
+        <div className="bg-gradient-to-br from-[#630D33] to-[#277687]">
+          {children}
+        </div>
 
-        {children}
+        <Footer />
       </body>
     </html>
   );

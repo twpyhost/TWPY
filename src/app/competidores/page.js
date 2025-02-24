@@ -10,7 +10,7 @@ export default async function Competidores() {
     <>
       <div>
         <h1>Competidores</h1>
-        <Table columns={1}>
+        <Table columns={"grid-cols-1"}>
           <div className="text-center p-2">Nombre</div>
 
           {competidores.map((competidor, index) => (
