@@ -33,10 +33,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} font-warsaw antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} flex min-h-screen flex-col font-warsaw antialiased`}
       >
         <Navbar />
-        <div className="bg-gradient-to-br from-[#630D33] to-[#277687]">
+        <div className="flex-1 bg-gradient-to-br from-[#630D33] to-[#277687]">
           {children}
         </div>
 

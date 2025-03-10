@@ -2,20 +2,46 @@ import { createClient } from "@supabase/supabase-js";
 // Create a single supabase client for interacting with your database
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_ANON_KEY || ""
+  process.env.NEXT_PUBLIC_ANON_KEY || "",
 );
 
 const getTorneos = async () => {
   const { data, error } = await supabase
     .from("torneo")
-    .select("torneo_id, nombre_torneo, fecha_torneo"); // Fix syntax here
+    .select("torneo_id, nombre_torneo, fecha_torneo");
 
   if (error) {
     console.error("Error fetching torneos: ", error);
     return null;
   }
 
-  return data;
+  const torneosWithTemporada = data.map((torneo) => {
+    const temporada = torneo.fecha_torneo.split("-")[0];
+    return { ...torneo, temporada }; // Create a new object with the additional property
+  });
+
+  return torneosWithTemporada;
+};
+
+const getTorneoResultados = async (torneo_id) => {
+  const { data, error } = await supabase
+    .from("torneo_resultado")
+    .select(
+      "torneo_id, torneo (nombre_torneo), usuario (challonge_id) posicion, puntaje,",
+    )
+    .eq("torneo_id", torneo_id);
+
+  if (error) {
+    console.error("Error fetching torneos: ", error);
+    return null;
+  }
+
+  const torneosWithTemporada = data.map((torneo) => {
+    const temporada = torneo.fecha_torneo.split("-")[0];
+    return { ...torneo, temporada }; // Create a new object with the additional property
+  });
+
+  return torneosWithTemporada;
 };
 
 const getCompetidores = async () => {

@@ -17,16 +17,18 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="flex items-center justify-between bg-black p-4 text-5xl italic text-white">
+    // <div className="flex justify-center">
+    <nav className="z-50 mx-auto flex w-full max-w-screen-2xl select-none items-center justify-between bg-black p-4 text-5xl italic text-white">
       <Link href="/">
         <Image src={logo} width={200} height={51} alt="tekken" />
       </Link>
 
+      {/* Mobile */}
       <div className="relative">
         {/* Menu Icon */}
         <div
-          className={`cursor-pointer rounded-lg p-2 transition-colors md:hidden ${
-            isOpen ? "bg-gray-300" : "bg-transparent"
+          className={`cursor-pointer p-2 transition-colors md:hidden ${
+            isOpen ? "bg-tekken-pink" : "bg-transparent"
           }`}
           onClick={() => setIsOpen(!isOpen)}
         >
@@ -64,6 +66,7 @@ export default function Navbar() {
                     : "hover:text-tekken-pink"
                 } transition-colors duration-300`}
                 key={index}
+                onClick={() => setIsOpen(false)}
               >
                 <Link href={item.href}>{item.name}</Link>
               </li>
@@ -72,7 +75,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      <ul className="hidden gap-x-8 md:flex">
+      {/* Desktop */}
+      <ul className="hidden gap-x-8 px-4 md:flex">
         {navItems.map((item, index) => (
           <li
             className={`${
@@ -87,5 +91,6 @@ export default function Navbar() {
         ))}
       </ul>
     </nav>
+    // </div>
   );
 }
