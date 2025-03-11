@@ -45,7 +45,7 @@ export default function Footer() {
       <div className="py-4 text-center">
         Creado con ❤️ por:
         <div className="flex w-full justify-center gap-4">
-          <span>Rushador Cuidadoso</span>
+          <span>Denis "Rushador Cuidadoso"</span>
           <span>Roxana</span>
           <span>Rodrigo</span>
         </div>

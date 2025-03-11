@@ -37,13 +37,13 @@ export default function Resultados() {
           {/* Body */}
           {resultados.map((resultado, index) => (
             <>
-              <div key={index + "pos"} className="text-center">
+              <div key={index + "pos" + resultado} className="text-center">
                 {resultado.posicion}
               </div>
-              <div key={index + "nombre"} className="text-center">
+              <div key={index + "nombre" + resultado} className="text-center">
                 {resultado.usuario.challonge_username}
               </div>
-              <div key={index + "puntaje"} className="text-center">
+              <div key={index + "puntaje" + resultado} className="text-center">
                 {resultado.puntaje}
               </div>
             </>
