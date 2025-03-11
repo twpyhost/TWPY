@@ -27,21 +27,19 @@ const getTorneoResultados = async (torneo_id) => {
   const { data, error } = await supabase
     .from("torneo_resultado")
     .select(
-      "torneo_id, torneo (nombre_torneo), usuario (challonge_id) posicion, puntaje,",
+      "torneo (nombre_torneo), usuario (challonge_username), posicion, puntaje",
     )
-    .eq("torneo_id", torneo_id);
+    .eq("torneo_id", torneo_id)
+    .order("posicion");
 
   if (error) {
     console.error("Error fetching torneos: ", error);
     return null;
   }
 
-  const torneosWithTemporada = data.map((torneo) => {
-    const temporada = torneo.fecha_torneo.split("-")[0];
-    return { ...torneo, temporada }; // Create a new object with the additional property
-  });
+  console.log(data);
 
-  return torneosWithTemporada;
+  return data;
 };
 
 const getCompetidores = async () => {
@@ -78,4 +76,10 @@ const getFiltroAno = async () => {
   return data;
 };
 
-export { getTorneos, getRankings, getCompetidores, getFiltroAno };
+export {
+  getTorneos,
+  getRankings,
+  getCompetidores,
+  getFiltroAno,
+  getTorneoResultados,
+};

@@ -1,18 +1,51 @@
-import { headers } from "next/headers";
+"use client";
 
+import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { getTorneoResultados } from "@/app/utils/db";
 import Table from "@/components/table";
 
-export default async function Resultados() {
-  const headersList = await headers();
-  const currentPath = headersList.get("x-current-path") || "Unknown";
+export default function Resultados() {
+  const [resultados, setResultados] = useState([]);
+  const currentPath = usePathname();
 
-  console.log(currentPath);
+  const torneoId = currentPath.split("/").pop();
+
+  async function getResultados() {
+    setResultados(await getTorneoResultados(torneoId));
+  }
+
+  useEffect(() => {
+    getResultados();
+  }, []);
 
   return (
     <>
       <div className="my-4 flex flex-col items-center">
         <div className="my-4 text-center text-6xl">Resultado del Torneo</div>
-        <h1>{currentPath}</h1>
+        <Table columns={"grid-cols-3"}>
+          {/* Headers */}
+          {["Posición", "Nombre", "Puntaje"].map((header, index) => (
+            <div key={index} className="text-center">
+              {header}
+            </div>
+          ))}
+
+          {/* Body */}
+          {resultados.map((resultado, index) => (
+            <>
+              <div key={index + "pos"} className="text-center">
+                {resultado.posicion}
+              </div>
+              <div key={index + "nombre"} className="text-center">
+                {resultado.usuario.challonge_username}
+              </div>
+              <div key={index + "puntaje"} className="text-center">
+                {resultado.puntaje}
+              </div>
+            </>
+          ))}
+        </Table>
       </div>
     </>
   );
