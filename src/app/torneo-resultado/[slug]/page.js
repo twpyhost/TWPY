@@ -6,27 +6,30 @@ import { getTorneoResultados } from "@/app/utils/db";
 import Table from "@/components/table";
 
 export default function Resultados() {
-  const [resultados, setResultados] = useState([]);
+  const [resultados, setResultados] = useState();
   const currentPath = usePathname();
 
   const torneoId = currentPath.split("/").pop();
 
-  async function getResultados() {
-    setResultados(await getTorneoResultados(torneoId));
-  }
-
   useEffect(() => {
+    async function getResultados() {
+      setResultados(await getTorneoResultados(torneoId));
+    }
     getResultados();
   }, []);
 
-  return (
+  return resultados ? (
     <>
       <div className="my-4 flex flex-col items-center">
         <div className="my-4 text-center text-6xl">Resultado del Torneo</div>
+        <div className="my-4 text-center text-6xl">
+          {resultados[0].torneo.nombre_torneo}
+        </div>
+
         <Table columns={"grid-cols-3"}>
           {/* Headers */}
           {["Posición", "Nombre", "Puntaje"].map((header, index) => (
-            <div key={index} className="text-center">
+            <div key={index + header + "columna"} className="text-center">
               {header}
             </div>
           ))}
@@ -46,6 +49,12 @@ export default function Resultados() {
             </>
           ))}
         </Table>
+      </div>
+    </>
+  ) : (
+    <>
+      <div className="my-4 flex flex-col items-center">
+        <div className="my-4 text-center text-6xl">Loading...</div>
       </div>
     </>
   );

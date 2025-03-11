@@ -28,14 +28,13 @@ export default async function Torneos({ searchParams }) {
             {header}
           </div>
         ))}
-
         {/* Body */}
         {filteredTorneos.map((torneo, index) => (
           <>
             <Link href={`/torneo-resultado/${torneo.torneo_id}`}>
               <div
                 key={index + "torneo" + torneo.torneo_id}
-                className="p-2 text-center"
+                className="p-2 text-center transition-colors duration-300 hover:text-tekken-pink"
               >
                 {torneo.nombre_torneo}
               </div>
@@ -43,7 +42,7 @@ export default async function Torneos({ searchParams }) {
             <Link href={`/torneo-resultado/${torneo.torneo_id}`}>
               <div
                 key={index + "torneo_fecha" + torneo.torneo_id}
-                className="flex h-full items-center justify-center p-2 text-center"
+                className="flex h-full items-center justify-center p-2 text-center transition-colors duration-300 hover:text-tekken-pink"
               >
                 {torneo.fecha_torneo}
               </div>
