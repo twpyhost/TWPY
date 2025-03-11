@@ -27,7 +27,7 @@ export default function Footer() {
               <Link
                 key={index}
                 href={"#"}
-                className="w-12 fill-tekken-pink transition-all duration-1000 ease-out first:w-16 hover:brightness-75"
+                className="w-12 fill-white transition-all duration-300 ease-out first:w-16 hover:fill-tekken-pink"
               >
                 {svg}
               </Link>
@@ -35,19 +35,21 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="">
-        Sobre nosotros:
-        <div>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras et massa
-          id mi malesuada vestibulum.
+      <div>
+        <span>Sobre nosotros:</span>
+        <div className="text-xl sm:text-2xl lg:text-3xl">
+          Tekken Warriors Paraguay es una comunidad con más de 15 años de
+          trayectoria a nivel nacional e internacional. Su objetivo es promover
+          la competencia y el compañerismo entre players mediante
+          torneos y encuentros.
         </div>
       </div>
       <div className="py-4 text-center">
         Creado con ❤️ por:
-        <div className="flex w-full justify-center gap-4">
+        <div className="flex w-full justify-center gap-4 text-xl">
           <span>Denis "Rushador Cuidadoso"</span>
-          <span>Roxana</span>
-          <span>Rodrigo</span>
+          <span>Roxana "Rox"</span>
+          <span>Rodrigo "Fate"</span>
         </div>
       </div>
     </div>

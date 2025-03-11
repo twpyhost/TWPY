@@ -29,13 +29,13 @@ export default function Home() {
             <Image
               src={jin}
               height={1000}
-              className="absolute -left-36 -top-20 z-0"
+              className="absolute -left-36 -top-20 z-0 brightness-75"
               alt="Jin"
             />
             <Image
               src={kazuya}
               height={1500}
-              className="absolute -right-40 -top-20 z-0 sm:-right-56 md:-right-64"
+              className="absolute -right-40 -top-20 z-0 brightness-75 sm:-right-56 md:-right-64"
               alt="Kazuya"
             />
           </div>
