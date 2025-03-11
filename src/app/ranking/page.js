@@ -30,7 +30,7 @@ export default async function Ranking() {
             <div key={index + "pos"} className="text-center">
               {ranking.posicion}
             </div>
-            <div key={index + "nombre"} className="text-center">
+            <div key={index + "nombre"} className="">
               {ranking.challonge_username}
             </div>
             <div key={index + "puntaje"} className="text-center">

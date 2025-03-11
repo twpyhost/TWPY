@@ -1,7 +1,7 @@
 export default function Table({ children, columns }) {
   return (
     <div
-      className={`grid ${columns} w-full justify-center sm:w-3/4 sm:text-3xl`}
+      className={`grid ${columns} w-full justify-center text-xl sm:w-3/4 sm:text-3xl md:max-w-screen-sm lg:max-w-screen-lg`}
     >
       {children}
     </div>
