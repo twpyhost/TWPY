@@ -1,12 +1,22 @@
 'use client';
-
+import toast, { Toaster } from "react-hot-toast"; // Import toast library
 import { useState } from "react";
+
+// Reusable loading button component
+const LoadingButton = ({ loading, text, loadingText }) => (
+  <button
+    type="submit"
+    className="w-full py-2 bg-blue-600 text-white rounded-md"
+    disabled={loading}
+  >
+    {loading ? loadingText : text}
+  </button>
+);
 
 export default function CargarTorneo() {
   const [url, setUrl] = useState(""); // State to hold the URL
   const [loading, setLoading] = useState(false); // To show loading state
-  const [error, setError] = useState(null); // To handle errors
-  const [success, setSuccess] = useState(null); // To show success message
+  const [loadingInsert, setLoadingInsert] = useState(false); // To show loading state
   const [tournament, setTournament] = useState(null); // State to store tournament details
 
   // Handle form submission
@@ -14,12 +24,10 @@ export default function CargarTorneo() {
     e.preventDefault(); // Prevent the default form submission
 
     setLoading(true); // Set loading to true when the request starts
-    setError(null); // Reset any previous errors
-    setSuccess(null); // Reset success message
     setTournament(null); // Reset previous tournament data
 
     try {
-      const response = await fetch("/api/cargar_torneo", {
+      const response = await fetch("/api/previsualizar_torneo", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,8 +40,8 @@ export default function CargarTorneo() {
       if (!response.ok) {
         throw new Error(responseData.error || "Error desconocido al cargar el torneo");
       }
-      setSuccess(responseData.message || "Solicitud exitosa");
-      setUrl(""); // Clear input field
+      toast.success(responseData.message || "Solicitud exitosa"); // Show success toast
+      //setUrl(""); // Clear input field
 
       const torneo = responseData.data.tournament;
       setTournament({
@@ -45,14 +53,31 @@ export default function CargarTorneo() {
       });
 
     } catch (error) {
-      setError(error.message); // Display error if the request fails
+      toast.error(error.message); // Display error if the request fails
     } finally {
       setLoading(false); // Set loading to false when the request is done
     }
   };
 
+  // Handle form submission
+  const handleSubmitTorneo = async (e) => {
+    try {
+      e.preventDefault(); // Prevent the default form submission
+      setLoadingInsert(true); // Set loading to true when the request starts
+      toast.success("No se hizo nada");
+      setTournament(null);
+    }
+    catch (error) {
+      toast.error(error.message); // Display error if the request fails
+    }
+    finally {
+      setLoadingInsert(false); // Set loading to false when the request is done
+    }
+  }
+
   return (
     <div className="max-w-md mx-auto p-4">
+      <Toaster/>
       <h1 className="text-xl font-semibold">Cargar Torneo</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -66,28 +91,32 @@ export default function CargarTorneo() {
             onChange={(e) => setUrl(e.target.value)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md text-black"
             required
-            placeholder="https://challonge.com/es/abcdefgh"
+            placeholder="https://challonge.com/abcdefgh"
           />
         </div>
         
-        <button
-          type="submit"
-          className="w-full py-2 bg-blue-600 text-white rounded-md"
-          disabled={loading}
-        >
-          {loading ? "Obteniendo datos..." : "Previsualizar"}
-        </button>
+        <LoadingButton loading={loading} text="Previsualizar" loadingText="Obteniendo datos..." />
       </form>
-      {error && <div className="mt-4 text-red-500">{error}</div>}
-      {success && <div className="mt-4 text-green-500">{success}</div>}
+
       {tournament && (
-        <div className="p-4 border border-gray-300 rounded-md">
-          <h2 className="text-center text-lg font-semibold">Detalles del Torneo</h2>
-          {Object.entries(tournament).map(([key, value]) => (
-            <p key={key}>
-              <strong>{key.replace(/_/g, " ")}:</strong> {value}
-            </p>
-          ))}
+        <div className="mt-4 p-4 border border-gray-300 rounded-md">
+          <form onSubmit={handleSubmitTorneo}>
+            <div className="mb-4">
+              <h2 className="text-center text-lg font-semibold">Detalles del Torneo</h2>
+              {Object.entries(tournament).map(([key, value]) => (
+                <p key={key}>
+                  <strong>{key.replace(/_/g, " ")}:</strong> {value}
+                </p>
+              ))}
+              <input
+                type="text"
+                id="url_challonge"
+                value={tournament.url_challonge}
+                readOnly
+              />
+            </div>
+            <LoadingButton loading={loadingInsert} text="Insertar Torneo" loadingText="Insertando..." />
+          </form>
         </div>
       )}
     </div>
