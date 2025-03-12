@@ -14,6 +14,7 @@ export default function Navbar() {
     { name: "RANKING", href: "/ranking" },
     { name: "TORNEOS", href: "/torneos" },
     { name: "COMPETIDORES", href: "/competidores" },
+    { name: "ADMIN", href: "/admin/cargar_torneo" },
   ];
 
   return (
