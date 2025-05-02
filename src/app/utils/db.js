@@ -35,8 +35,8 @@ const getRankings = async () => {
   const { data, error } = await supabase.rpc("player_ranking");
 
   if (error) {
-    console.error("Error fetching torneos: ", error);
-    return null;
+    console.log("Error fetching rankings: ", error);
+    return [];
   }
 
   return data;
