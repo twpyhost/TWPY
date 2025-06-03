@@ -46,7 +46,7 @@ export default function Home() {
           </div>
 
           {/* Right */}
-          <div className="z-50 flex flex-col py-40">
+          <div className="z-40 flex flex-col py-40">
             <h1 className="text-center text-8xl italic">
               Bienvenido al Ranking de Tekken Warriors Paraguay
             </h1>

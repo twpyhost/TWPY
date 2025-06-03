@@ -11,8 +11,8 @@ const getTorneos = async () => {
     .select("torneo_id, nombre_torneo, fecha_torneo"); // Fix syntax here
 
   if (error) {
-    console.error("Error fetching torneos: ", error);
-    return null;
+    console.log("Error fetching torneos: ", error);
+    return [];
   }
 
   return data;

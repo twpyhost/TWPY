@@ -23,10 +23,8 @@ export default function LoginPage() {
     if (error) {
        toast.error(error.message)
     } else {
-      toast.success('Inicio de sesión exitoso. Redirigiendo...')
-        setTimeout(() => {
-          router.push('/') // o donde quieras
-        }, 3000)
+      // toast.success('Inicio de sesión exitoso. Redirigiendo...')
+      router.push('/')
     }
 
     setLoading(false)
