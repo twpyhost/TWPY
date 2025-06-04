@@ -8,8 +8,9 @@ import logo from "../../public/images/misc/tekken8-logo-sm.png";
 import Image from "next/image";
 
 import { useUserSession } from "@/components/userSession";
-import { handleLogout } from "@/lib/authUtils";
 import toast, { Toaster } from "react-hot-toast";
+
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -32,11 +33,11 @@ export default function Navbar() {
   const router = useRouter();
 
   const logout = async () => {
-    const result = await handleLogout();
-    if (!result.success) {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
       toast.error(`Error al cerrar sesión: ${result.message}`);
     } else {
-      router.push("/"); // mejor que window.location.href
+      router.push("/");
     }
   };
 
@@ -90,7 +91,7 @@ export default function Navbar() {
                   <Link href={item.href}>{item.name}</Link>
                 </li>
               ))}
-              {!loadingUser && !user && (
+              {!user && (
                 sessionItems.map((item, index) => (
                   <li
                     className={`${
@@ -128,7 +129,7 @@ export default function Navbar() {
               <Link href={item.href}>{item.name}</Link>
             </li>
           ))}
-          {!loadingUser && !user && (
+          {!user && (
             sessionItems.map((item, index) => (
               <li
                 className={`${
@@ -142,22 +143,24 @@ export default function Navbar() {
               </li>
             ))
           )}
-        </ul>
-        {user && (
-          <div className="relative ml-8">
-            <button onClick={() => setMenuAdminOpen(!menuAdminOpen)} className="rounded-full w-8 h-8 bg-blue-500 flex items-center justify-center">
-              {user.email[0].toUpperCase()}
-            </button>
-
-            {menuAdminOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow-lg z-50 text-sm text-right">
-                <a href="/competidores" className="block px-4 py-2 hover:bg-gray-200 rounded">Mi Perfil</a>
-                <a href="/" className="block px-4 py-2 hover:bg-gray-200 rounded">Configuración</a>
-                <button onClick={() => logout()} className="w-full text-right px-4 py-2 hover:bg-gray-200 rounded">Cerrar sesión</button>
+          <li>
+            {user && (
+              <div className="relative ml-8">
+                <button onClick={() => setMenuAdminOpen(!menuAdminOpen)} className="rounded-full w-8 h-8 bg-blue-500 flex items-center justify-center">
+                  {user.email[0].toUpperCase()}
+                </button>
+                {menuAdminOpen && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow-lg z-50 text-sm text-right">
+                    <a href="/competidores" className="block px-4 py-2 hover:bg-gray-200 rounded">Mi Perfil</a>
+                    <a href="/" className="block px-4 py-2 hover:bg-gray-200 rounded">Configuración</a>
+                    <button onClick={() => logout()} className="w-full text-right px-4 py-2 hover:bg-gray-200 rounded">Cerrar sesión</button>
+                  </div>
+                )}
               </div>
             )}
-          </div>
-        )}
+          </li>
+        </ul>
+        
       </nav>
     </div>
   );

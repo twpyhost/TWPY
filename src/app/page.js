@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col flex-grow">
       {/* Mobile */}
       <div className="my-12 flex flex-col px-4 lg:hidden">
         <h1 className="text-center text-6xl italic md:text-7xl">
@@ -25,7 +25,7 @@ export default function Home() {
 
       {/* Desktop */}
       {/* Black Bar */}
-      <div className="h-full overflow-hidden">
+      <div className="h-full overflow-hidden flex-grow">
         <div className="hidden h-16 w-full bg-black lg:block" />
 
         <div className="relative -mt-20 hidden grid-cols-2 lg:grid">
@@ -46,16 +46,17 @@ export default function Home() {
           </div>
 
           {/* Right */}
-          <div className="z-40 flex flex-col py-40">
+          <div className="z-40 flex flex-col py-40 px-20">
             <h1 className="text-center text-8xl italic">
               Bienvenido al Ranking de Tekken Warriors Paraguay
             </h1>
-            <p className="mt-12 text-6xl">
+            <p className="mt-12 text-6xl text-center">
               Este espacio está diseñado para registrar y mostrar los resultados
               de torneos de Tekken Warriors Paraguay
             </p>
-
-            <SeeRankingButton />
+            <div className="flex justify-center">
+              <SeeRankingButton />
+            </div>
           </div>
         </div>
       </div>

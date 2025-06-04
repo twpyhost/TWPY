@@ -31,7 +31,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-4">
+    <div className="w-full max-w-md p-4 mx-auto my-10">
       <Toaster/>
       <h2 className="text-xl font-semibold">Iniciar sesión</h2>
       <form onSubmit={handleLogin}>
