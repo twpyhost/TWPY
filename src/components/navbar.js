@@ -22,7 +22,6 @@ export default function Navbar() {
     { name: "RANKING", href: "/ranking" },
     { name: "TORNEOS", href: "/torneos" },
     { name: "COMPETIDORES", href: "/competidores" },
-    { name: "ADMIN", href: "/admin/cargar_torneo" },
   ];
 
   const sessionItems = [
@@ -151,8 +150,7 @@ export default function Navbar() {
                 </button>
                 {menuAdminOpen && (
                   <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow-lg z-50 text-sm text-right">
-                    <a href="/competidores" className="block px-4 py-2 hover:bg-gray-200 rounded">Mi Perfil</a>
-                    <a href="/" className="block px-4 py-2 hover:bg-gray-200 rounded">Configuración</a>
+                    <Link href="/admin/cargar_torneo" className="block px-4 py-2 hover:bg-gray-200 rounded">Cargar torneo</Link>
                     <button onClick={() => logout()} className="w-full text-right px-4 py-2 hover:bg-gray-200 rounded">Cerrar sesión</button>
                   </div>
                 )}

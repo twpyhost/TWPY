@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
-
 import { createClient } from '@/lib/supabaseServer'
+import CargarTorneo from './cargarTorneo'
 
 export default async function PrivatePage() {
   const supabase = await createClient()
@@ -12,5 +12,5 @@ export default async function PrivatePage() {
     redirect('/login')
   }
 
-  return <p>Hello {data.user.email}</p>
+  return <CargarTorneo></CargarTorneo>
 }
