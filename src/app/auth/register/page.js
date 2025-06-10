@@ -1,7 +1,7 @@
 'use client'
 import toast, { Toaster } from "react-hot-toast"; // Import toast library
 import { useState } from 'react'
-import { supabase } from '../../lib/supabaseClient'
+import { supabase } from '../../../lib/supabaseClient'
 import LoadingButton from "@/components/loadingButton";
 
 export default function Register() {
@@ -28,7 +28,7 @@ export default function Register() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-4">
+    <div className="w-full max-w-md mx-auto p-4 my-10">
       <Toaster/>
       <h1 className="text-xl font-semibold">Registro</h1>
       <form onSubmit={handleRegister}>

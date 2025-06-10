@@ -25,8 +25,8 @@ export default function Navbar() {
   ];
 
   const sessionItems = [
-    { name: "REGISTRARSE", href: "/register" },
-    { name: "LOGIN", href: "/login" }
+    { name: "REGISTRARSE", href: "/auth/register" },
+    { name: "LOGIN", href: "/auth/login" }
   ];
 
   const router = useRouter();
