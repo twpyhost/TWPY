@@ -32,7 +32,7 @@ export default function ConfirmEmailPage() {
       } else {
         toast.success('¡Correo confirmado! Redirigiendo...', { id: toastId })
         setTimeout(() => {
-          router.push('/login') // o donde quieras
+          router.push('/auth/login') // o donde quieras
         }, 3000)
       }
     }

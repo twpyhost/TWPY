@@ -7,11 +7,19 @@ import LoadingButton from "@/components/loadingButton";
 export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [passwordConfirm, setPasswordConfirm] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleRegister = async (e) => {
     e.preventDefault()
     setLoading(true)
+
+    console.log("pass1 y pass2", password, passwordConfirm)
+    if (password !== passwordConfirm) {
+      toast.error("Las contraseñas no son idénticas, verifique.")
+      setLoading(false)
+      return;
+    }
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -21,6 +29,9 @@ export default function Register() {
     if (error) {
       toast.error(error.message)
     } else {
+      setEmail('')
+      setPassword('')
+      setPasswordConfirm('')
       toast.success('Usuario registrado. Revisa tu correo para confirmar el registro.')
     }
 
@@ -42,9 +53,17 @@ export default function Register() {
         />
         <input
           type="password"
-          placeholder="Contraseña"
+          placeholder="Ingrese una contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
+          className="mt-1 mb-2 block w-full px-3 py-2 border border-gray-300 rounded-md text-black"
+        />
+        <input
+          type="password"
+          placeholder="Vuelva a ingresar la contraseña"
+          value={passwordConfirm}
+          onChange={(e) => setPasswordConfirm(e.target.value)}
           required
           className="mt-1 mb-2 block w-full px-3 py-2 border border-gray-300 rounded-md text-black"
         />

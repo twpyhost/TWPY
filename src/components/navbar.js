@@ -34,8 +34,9 @@ export default function Navbar() {
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      toast.error(`Error al cerrar sesión: ${result.message}`);
+      toast.error(`Ha ocurrido un error al cerrar sesión: ${result.message}`);
     } else {
+      toast.success('Has cerrado sesión correctamente.')
       router.push("/");
     }
   };

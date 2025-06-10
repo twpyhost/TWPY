@@ -24,7 +24,7 @@ export default function LoginPage() {
     if (error) {
        toast.error(error.message)
     } else {
-      // toast.success('Inicio de sesión exitoso. Redirigiendo...')
+      toast.success('Has iniciado sesión correctamente.')
       router.push('/')
     }
 
