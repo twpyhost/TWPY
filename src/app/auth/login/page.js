@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { supabase } from '../../../lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 import LoadingButton from "@/components/loadingButton"
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -57,6 +58,11 @@ export default function LoginPage() {
           loadingText="Ingresando..."
         />
       </form>
+      <p className="p-4 text-center">¿No estás registrado?
+        <Link href="/auth/register" className="text-blue-600 hover:text-blue-300 m-2">
+        Registrarse
+      </Link>
+      </p>
     </div>
   )
 }

@@ -25,7 +25,6 @@ export default function Navbar() {
   ];
 
   const sessionItems = [
-    { name: "REGISTRARSE", href: "/auth/register" },
     { name: "LOGIN", href: "/auth/login" }
   ];
 
