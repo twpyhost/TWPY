@@ -42,7 +42,6 @@ export default function Navbar() {
 
   return (
     <div>
-      <Toaster/>
       <nav className="flex items-center justify-between bg-black p-4 text-5xl italic text-white">
         <div className="relative">
           {/* Menu Icon */}

@@ -29,7 +29,6 @@ export default function Register() {
 
   return (
     <div className="w-full max-w-md mx-auto p-4 my-10">
-      <Toaster/>
       <h1 className="text-xl font-semibold">Registro</h1>
       <form onSubmit={handleRegister}>
         <input

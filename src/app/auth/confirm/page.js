@@ -42,7 +42,6 @@ export default function ConfirmEmailPage() {
 
   return (
     <div className="p-4">
-      <Toaster/>
     </div>
   )
 }

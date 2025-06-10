@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import toast, { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} font-warsaw antialiased`}
       >
+        <Toaster/>
         <div className="flex min-h-screen flex-col bg-gradient-to-br from-[#630D33] to-[#277687]">
           <Navbar />
           <main className="flex-grow flex flex-col">{children}</main>

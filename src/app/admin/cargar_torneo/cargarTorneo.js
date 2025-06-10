@@ -68,7 +68,6 @@ export default function CargarTorneo() {
 
   return (
     <div className="w-full max-w-md mx-auto p-4">
-      <Toaster/>
       <h1 className="text-xl font-semibold">Cargar Torneo</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
