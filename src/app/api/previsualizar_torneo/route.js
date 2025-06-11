@@ -5,28 +5,39 @@ export async function POST(req) {
     const { url } = await req.json(); // Extract the URL from the request body
 
     if (!url) {
-      return new Response(JSON.stringify({ error: "Se requiere la URL" }), { status: 400 });
+      return new Response(JSON.stringify({ error: "Se requiere la URL" }), {
+        status: 400,
+      });
     }
 
     // Extract the tournament ID from the URL
     const tournamentId = extractTournamentId(url);
     if (!tournamentId) {
-      return new Response(JSON.stringify({ error: "URL no válida" }), { status: 400 });
+      return new Response(JSON.stringify({ error: "URL no válida" }), {
+        status: 400,
+      });
     }
 
     // Call the Challonge API with the tournament ID
     const apiResponse = await fetchChallongeApi(tournamentId);
     if (!apiResponse.ok) {
       const errorMessage = await apiResponse.text(); // Get error details from response body
-      return new Response(JSON.stringify({ error: errorMessage }), { status: apiResponse.status });
+      return new Response(JSON.stringify({ error: errorMessage }), {
+        status: apiResponse.status,
+      });
     }
 
     const data = await apiResponse.json();
-    return new Response(JSON.stringify({ message: "Torneo encontrado exitosamente", data: data }), { status: 200 });
-
+    return new Response(
+      JSON.stringify({ message: "Torneo encontrado exitosamente", data: data }),
+      { status: 200 },
+    );
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: "Ocurrió un error al procesar la URL" }), { status: 500 });
+    return new Response(
+      JSON.stringify({ error: "Ocurrió un error al procesar la URL" }),
+      { status: 500 },
+    );
   }
 }
 
@@ -39,7 +50,7 @@ function extractTournamentId(url) {
 
 // Function to call the Challonge API with the tournament ID
 async function fetchChallongeApi(tournamentId) {
-  const apiKey = process.env.CHALLONGE_API_KEY; // Replace with your API key
+  const apiKey = process.env.NEXT_PUBLIC_CHALLONGE_API_KEY; // Replace with your API key
   const apiUrl = `https://api.challonge.com/v1/tournaments/${tournamentId}.json?api_key=${apiKey}&include_participants=1`;
 
   try {
