@@ -3,7 +3,7 @@ import supabase from "../db";
 const GetAllResultados = async () => {
   const { data, error } = await supabase
     .from("torneo_resultado")
-    .select("nombre_torneo, fecha_torneo");
+    .select("*");
 
   if (error) {
     console.error("Error al retornar resultados: ", error);
@@ -25,7 +25,7 @@ const GetResultadosTorneo = async (juego_id,torneo_id) => {
     return null;
   }
 
-  return data[0];
+  return data;
 }
 
 const PostResultado = async (torneo) => {
