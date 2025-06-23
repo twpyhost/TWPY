@@ -41,6 +41,7 @@ export default function Navbar() {
   };
 
   return (
+
     <div>
       <nav className="flex items-center justify-between bg-black p-4 text-5xl italic text-white">
         <div className="relative">
@@ -75,6 +76,7 @@ export default function Navbar() {
                 ? "translate-y-0 opacity-100"
                 : "pointer-events-none -translate-y-5 opacity-0"
             } duration-300 ease-in-out`}
+
           >
             <ul className="gap-x-8">
               {navItems.map((item, index) => (
@@ -136,9 +138,11 @@ export default function Navbar() {
                     : "hover:text-tekken-pink"
                 } transition-colors duration-300`}
                 key={index}
+                onClick={() => setIsOpen(false)}
               >
                 <Link href={item.href}>{item.name}</Link>
               </li>
+
             ))
           )}
           <li>
@@ -160,5 +164,6 @@ export default function Navbar() {
         
       </nav>
     </div>
+
   );
 }

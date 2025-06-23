@@ -34,13 +34,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} font-warsaw antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} flex min-h-screen flex-col bg-black font-warsaw antialiased`}
       >
-        <Toaster/>
-        <div className="flex min-h-screen flex-col bg-gradient-to-br from-[#630D33] to-[#277687]">
-          <Navbar />
-          <main className="flex-grow flex flex-col">{children}</main>
-          <Footer />
+
+        <Navbar />
+        <div className="flex-1 bg-gradient-to-br from-[#630D33] to-[#277687]">
+          {children}
+
         </div>
       </body>
     </html>

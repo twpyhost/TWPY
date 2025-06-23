@@ -1,35 +1,27 @@
 "use client";
-import { useState, useEffect } from "react";
-import { getFiltroAno } from "@/app/utils/db";
 
-export default function YearFilter({}) {
-  const [anos, setAnos] = useState([]);
-  const [selectedYear, setSelectedYear] = useState("all");
-
-  useEffect(() => {
-    const fetchAnos = async () => {
-      const anos = await getFiltroAno();
-      setAnos(anos);
-    };
-    fetchAnos();
-  }, []);
-
-  const handleChange = (event) => {
-    setSelectedYear(event.target.value);
-  };
+const YearFilterDropdown = ({ selectedYear, anos }) => {
+  const years = anos;
 
   return (
-    <div>
-      <label htmlFor="year-select">Filtro por año </label>
-      <select id="year-select" value={selectedYear} onChange={handleChange}>
-        <option value="all">Todos</option>
-        {anos.map((ano, index) => (
-          <option key={index} value={ano.year}>
-            {ano.year}
-          </option>
-        ))}
-      </select>
-      <p>Selected Year: {selectedYear}</p>
-    </div>
+    <select
+      name="year"
+      defaultValue={selectedYear}
+      onChange={(e) => {
+        window.location.search = `?year=${e.target.value}`;
+      }}
+      className="mb-4 flex w-3/4 max-w-xs bg-black text-center text-2xl"
+    >
+      <option value="all">Todos</option>
+      {years.map((year) => (
+        <option key={year} value={year}>
+          {year}
+        </option>
+      ))}
+    </select>
   );
-}
+};
+
+export default YearFilterDropdown;
+
+// maybe wrap it all in <form>
