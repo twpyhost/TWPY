@@ -6,9 +6,7 @@ import kazuya from "@/assets/images/kazuya-home.webp";
 
 export default function Home() {
   return (
-
     <>
-
       {/* Mobile */}
       <div className="overflow-hidden lg:hidden">
         {/* Black Bar */}
@@ -23,7 +21,7 @@ export default function Home() {
             de torneos de Tekken Warriors Paraguay
           </p>
 
-          <div className="z-50 mx-auto mt-8 py-4">
+          <div className="z-40 mx-auto mt-8 py-4">
             <SeeRankingButton />
           </div>
 
@@ -45,10 +43,8 @@ export default function Home() {
       </div>
 
       {/* Desktop */}
-
       <div className="hidden overflow-hidden lg:block">
         {/* Black Bar */}
-
 
         <div className="h-16 w-full bg-black" />
         {/* Grid */}
@@ -70,14 +66,12 @@ export default function Home() {
           </div>
 
           {/* Right */}
-
           <div className="z-50 flex flex-col px-6 py-40">
-
             <h1 className="text-center text-8xl italic">
               {/* <br /> */}
               Bienvenido al Ranking de Tekken Warriors Paraguay
             </h1>
-            <p className="mt-12 text-6xl text-center">
+            <p className="mt-12 text-center text-6xl">
               Este espacio está diseñado para registrar y mostrar los resultados
               de torneos de Tekken Warriors Paraguay
             </p>
