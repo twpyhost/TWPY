@@ -42,7 +42,7 @@ export default function Navbar() {
     // <div className="flex justify-center">
     <nav className="z-50 mx-auto flex w-full max-w-screen-2xl select-none items-center justify-between bg-black p-4 text-5xl italic text-white">
       <Link href="/">
-        <Image src={logo} width={200} height={51} alt="tekken" />
+        <Image src={logo} width={300} alt="tekken" />
       </Link>
 
       {/* Mobile */}
@@ -111,7 +111,7 @@ export default function Navbar() {
       </div>
 
       {/* Desktop */}
-      <ul className="hidden gap-x-8 md:flex">
+      <ul className="hidden gap-x-5 md:flex">
         {navItems.map((item, index) => (
           <li
             className={`${
