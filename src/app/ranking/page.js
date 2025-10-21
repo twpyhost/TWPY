@@ -1,36 +1,56 @@
-import Navbar from "@/components/navbar";
 import Table from "@/components/table";
 
 // import torneos from "../../torneos.json";
-import { getRankings } from "../api/db";
+import { getRankings } from "../utils/db";
 
-export default async function Home() {
+export default async function Ranking() {
   const rankings = await getRankings();
 
   return (
-    <>
-      <div>
-        <h1>Ranking</h1>
-        <Table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Puntaje</th>
-              <th>Posición</th>
-            </tr>
-          </thead>
+    <div className="my-4 flex flex-col items-center">
+      <div className="my-4 text-center text-6xl">Ranking</div>
+      <Table columns={"grid-cols-4"}>
+        {/* Headers */}
+        {[
+          "Posición",
+          "Nombre",
+          "Puntaje",
+          // "Posición Anterior",
+          // "Puntaje Anterior",
+          "Movimiento",
+        ].map((header, index) => (
+          <div key={index} className="text-center">
+            {header}
+          </div>
+        ))}
 
-          <tbody className="">
-            {rankings.map((ranking, index) => (
-              <tr key={index} className="text-center">
-                <td className="">{ranking.challonge_username}</td>
-                <td className="">{ranking.puntaje}</td>
-                <td className="">{ranking.posicion}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
-    </>
+        {/* Body */}
+        {rankings.map((ranking, index) => (
+          <>
+            <div key={index + "pos"} className="text-center">
+              {ranking.posicion}
+            </div>
+            <div key={index + "nombre"} className="">
+              {ranking.challonge_username}
+            </div>
+            <div key={index + "puntaje"} className="text-center">
+              {ranking.puntaje}
+            </div>
+            {/* <div key={index + "posAnt"} className="p-2 text-center">
+                {ranking.pos_anterior}
+              </div>
+              <div key={index + "puntAnt"} className="p-2 text-center">
+                {ranking.puntaje_anterior}
+              </div> */}
+            <div key={index + "mov"} className="text-center text-xl">
+              {ranking.movimiento === "SUBE" && "⬆"}
+              {ranking.movimiento === "BAJA" && "⬇"}
+              {ranking.movimiento === "IGUAL" && "🟰"}
+              {ranking.movimiento === "NUEVO" && "🌟"}
+            </div>
+          </>
+        ))}
+      </Table>
+    </div>
   );
 }

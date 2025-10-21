@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 
 import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
+import toast, { Toaster } from "react-hot-toast";
 
 
 const geistSans = Geist({
@@ -32,15 +34,16 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body
-
-        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} antialiased font-warsaw text-5xl italic bg-gradient-to-br from-[#630D33] to-[#277687] h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} flex min-h-screen flex-col bg-black font-warsaw antialiased`}
       >
         <Navbar />
+        <div className="bg-gradient-to-br from-[#630D33] to-[#277687]">
+          {children}
+        </div>
 
-
-        {children}
+        <Footer />
       </body>
     </html>
   );

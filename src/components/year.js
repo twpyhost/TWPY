@@ -1,21 +1,27 @@
 "use client";
-import { useState } from "react";
 
-export default function YearFilter({}) {
-  const [selectedYear, setSelectedYear] = useState("all");
-  const handleChange = (event) => {
-    setSelectedYear(event.target.value);
-  };
+const YearFilterDropdown = ({ selectedYear, anos }) => {
+  const years = anos;
 
   return (
-    <div>
-      <label htmlFor="year-select">Filter by Year: </label>
-      <select id="year-select" value={selectedYear} onChange={handleChange}>
-        <option value="all">Todos</option>
-        <option value="2024">2024</option>
-        <option value="2025">2025</option>
-      </select>
-      <p>Selected Year: {selectedYear}</p>
-    </div>
+    <select
+      name="year"
+      defaultValue={selectedYear}
+      onChange={(e) => {
+        window.location.search = `?year=${e.target.value}`;
+      }}
+      className="mb-4 flex w-3/4 max-w-xs bg-black text-center text-2xl"
+    >
+      <option value="all">Todos</option>
+      {years.map((year) => (
+        <option key={year} value={year}>
+          {year}
+        </option>
+      ))}
+    </select>
   );
-}
+};
+
+export default YearFilterDropdown;
+
+// maybe wrap it all in <form>
