@@ -50,7 +50,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="flex w-full flex-col items-center py-4 text-center sm:flex-row">
-        <div className="flex w-1/2 flex-col justify-center">
+        <div className="flex flex-col justify-center md:w-1/2">
           Síguenos:
           <div className="mt-2 flex grid-cols-2 items-center justify-center gap-x-4">
             {svgs.map((svg, index) => (

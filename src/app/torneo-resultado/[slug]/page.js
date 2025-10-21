@@ -26,7 +26,7 @@ export default function Resultados() {
           {resultados[0].torneo.nombre_torneo}
         </div>
 
-        <Table columns={"grid-cols-3"}>
+        <Table columns={"grid-cols-3"} key={"#"}>
           {/* Headers */}
           {["Posición", "Nombre", "Puntaje"].map((header, index) => (
             <div key={index + header + "columna"} className="text-center">
