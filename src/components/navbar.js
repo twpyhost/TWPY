@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-"use client"; // 👈 Esto indica que es un componente del cliente
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
