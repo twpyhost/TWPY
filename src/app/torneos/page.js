@@ -1,3 +1,7 @@
+
+// import { useState } from "react";
+
+import Navbar from "@/components/navbar";
 import Table from "@/components/table";
 import { getTorneos, getFiltroAno } from "../utils/db";
 import { getFormattedTorneos } from "../utils/dateformat";
