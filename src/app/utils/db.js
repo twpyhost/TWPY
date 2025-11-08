@@ -49,7 +49,7 @@ const getCompetidores = async () => {
     .order("challonge_username");
 
   if (error) {
-    console.error("Error fetching torneos: ", error);
+    console.error("Error fetching Competidores: ", error);
     return null;
   }
 
@@ -83,3 +83,4 @@ export {
   getFiltroAno,
   getTorneoResultados,
 };
+export default supabase;

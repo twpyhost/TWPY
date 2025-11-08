@@ -1,16 +1,21 @@
-import supabase from "../db";
+import supabase from "@/app/utils/db";
 
 const GetTorneos = async () => {
   const { data, error } = await supabase
     .from("torneo")
-    .select("nombre_torneo, fecha_torneo");
+    .select("torneo_id, nombre_torneo, fecha_torneo");
 
   if (error) {
-    console.error("Error al retornar torneos: ", error);
+    console.error("Error fetching torneos: ", error);
     return null;
   }
 
-  return data;
+  const torneosWithTemporada = data.map((torneo) => {
+    const temporada = torneo.fecha_torneo.split("-")[0];
+    return { ...torneo, temporada }; // Create a new object with the additional property
+  });
+
+  return torneosWithTemporada;
 }
 
 const GetTorneo = async (juego_id,torneo_id) => {

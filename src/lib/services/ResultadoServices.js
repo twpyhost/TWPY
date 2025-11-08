@@ -1,4 +1,4 @@
-import supabase from "../db";
+import supabase from "@/app/utils/db";
 
 const GetAllResultados = async () => {
   const { data, error } = await supabase
@@ -16,9 +16,10 @@ const GetAllResultados = async () => {
 const GetResultadosTorneo = async (juego_id,torneo_id) => {
   const { data, error } = await supabase
     .from("torneo_resultado")
-    .select("*")
+    .select("torneo (nombre_torneo), usuario (challonge_username), posicion, puntaje")
     .eq("juego_id",juego_id)
-    .eq("torneo_id",torneo_id);
+    .eq("torneo_id",torneo_id)
+    .order("posicion");
 
   if (error) {
     console.error("Error al retornar resultados: ", error);

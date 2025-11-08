@@ -1,9 +1,10 @@
-import supabase from "../db";
+import supabase from "@/app/utils/db";
 
 const GetUsuarios = async () => {
   const { data, error } = await supabase
     .from("usuario")
-    .select("challonge_username");
+    .select("challonge_username")
+    .order("challonge_username");
 
   if (error) {
     console.error("Error al retornar usuarios: ", error);
