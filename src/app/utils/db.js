@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 // Create a single supabase client for interacting with your database
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_ANON_KEY || "",
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
 );
 
 const getTorneos = async () => {
@@ -11,8 +11,8 @@ const getTorneos = async () => {
     .select("torneo_id, nombre_torneo, fecha_torneo");
 
   if (error) {
-    console.error("Error fetching torneos: ", error);
-    return null;
+    console.log("Error fetching torneos: ", error);
+    return [];
   }
 
   const torneosWithTemporada = data.map((torneo) => {
@@ -59,8 +59,8 @@ const getRankings = async () => {
   const { data, error } = await supabase.rpc("player_ranking");
 
   if (error) {
-    console.error("Error fetching torneos: ", error);
-    return null;
+    console.log("Error fetching rankings: ", error);
+    return [];
   }
 
   return data;

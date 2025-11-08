@@ -21,7 +21,7 @@ export default function Home() {
             de torneos de Tekken Warriors Paraguay
           </p>
 
-          <div className="z-50 mx-auto mt-8 py-4">
+          <div className="z-40 mx-auto mt-8 py-4">
             <SeeRankingButton />
           </div>
 
@@ -71,12 +71,13 @@ export default function Home() {
               {/* <br /> */}
               Bienvenido al Ranking de Tekken Warriors Paraguay
             </h1>
-            <p className="mt-12 text-6xl">
+            <p className="mt-12 text-center text-6xl">
               Este espacio está diseñado para registrar y mostrar los resultados
               de torneos de Tekken Warriors Paraguay
             </p>
-
-            <SeeRankingButton />
+            <div className="flex justify-center">
+              <SeeRankingButton />
+            </div>
           </div>
         </div>
       </div>
