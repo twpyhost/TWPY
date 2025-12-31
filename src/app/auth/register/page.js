@@ -14,7 +14,6 @@ export default function Register() {
     e.preventDefault()
     setLoading(true)
 
-    console.log("pass1 y pass2", password, passwordConfirm)
     if (password !== passwordConfirm) {
       toast.error("Las contraseñas no son idénticas, verifique.")
       setLoading(false)

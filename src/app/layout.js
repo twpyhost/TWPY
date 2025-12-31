@@ -39,6 +39,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} flex min-h-screen flex-col bg-black font-warsaw antialiased`}
       >
+        <Toaster/>
         <Navbar />
         <div className="bg-gradient-to-br from-[#630D33] to-[#277687]">
           {children}
