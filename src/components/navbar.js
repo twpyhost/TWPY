@@ -22,6 +22,7 @@ export default function Navbar() {
     { name: "RANKING", href: "/ranking" },
     { name: "TORNEOS", href: "/torneos" },
     { name: "COMPETIDORES", href: "/competidores" },
+    { name: "REGLAMENTO", href: "/reglamento" },
   ];
 
   const sessionItems = [{ name: "LOGIN", href: "/auth/login" }];
