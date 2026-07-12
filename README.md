@@ -33,6 +33,15 @@ Estudiar la posibilidad de comprar dominios usando cnc.py (o hostinger si no se 
 
 - Descargar este repositorio
 - Ejecutar `npm install` en linea de comando dentro de la carpeta descargada
+- Crear `.env.local` con credenciales locales para el admin:
+
+```env
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=change-this-password
+ADMIN_SESSION_SECRET=change-this-long-random-secret
+NEXT_PUBLIC_CHALLONGE_API_KEY=your-challonge-api-key
+```
+
 - Ejecutar `npm run dev`
 - Abrir en el navegador http://localhost:3000/
 

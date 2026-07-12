@@ -1,24 +1,22 @@
-
-// import { useState } from "react";
-
-import Navbar from "@/components/navbar";
 import Table from "@/components/table";
 import { getTorneos, getFiltroAno } from "../utils/db";
 import { getFormattedTorneos } from "../utils/dateformat";
 import YearFilterDropdown from "@/components/year";
 import Link from "next/link";
+import { Fragment } from "react";
 
 export default async function Torneos({ searchParams }) {
   let torneos = await getTorneos();
   torneos = await getFormattedTorneos(torneos);
 
   const anos = await getFiltroAno();
-  const selectedYear = searchParams.year || "all";
+  const params = await searchParams;
+  const selectedYear = params?.year || "all";
 
   const filteredTorneos =
     selectedYear === "all"
       ? torneos
-      : torneos.filter((torneo) => torneo.temporada === selectedYear || "");
+      : torneos.filter((torneo) => torneo.temporada === selectedYear);
 
   return (
     <div className="mx-auto my-4 flex flex-col items-center lg:w-3/4">
@@ -34,7 +32,7 @@ export default async function Torneos({ searchParams }) {
         ))}
         {/* Body */}
         {filteredTorneos.map((torneo, index) => (
-          <>
+          <Fragment key={torneo.torneo_id}>
             <Link href={`/torneo-resultado/${torneo.torneo_id}`}>
               <div
                 key={index + "torneo" + torneo.torneo_id}
@@ -51,7 +49,7 @@ export default async function Torneos({ searchParams }) {
                 {torneo.fecha_torneo}
               </div>
             </Link>
-          </>
+          </Fragment>
         ))}
       </Table>
     </div>

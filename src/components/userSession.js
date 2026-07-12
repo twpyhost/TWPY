@@ -1,28 +1,39 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { useEffect, useState } from "react";
 
 export function useUserSession() {
-  const [user, setUser] = useState(null)
-  const [loadingUser, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [loadingUser, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user || null)
-      setLoading(false)
+    let mounted = true;
+
+    async function fetchUser() {
+      try {
+        const response = await fetch("/api/admin/session");
+        const data = await response.json();
+
+        if (mounted) {
+          setUser(data.user || null);
+        }
+      } catch {
+        if (mounted) {
+          setUser(null);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
     }
 
-    fetchUser()
+    fetchUser();
 
-    // Escuchar cambios de sesión
-    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user || null)
-    })
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
-    return () => listener.subscription.unsubscribe()
-  }, [])
-
-  return {user, loadingUser}
+  return { user, loadingUser };
 }

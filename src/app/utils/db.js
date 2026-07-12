@@ -1,79 +1,99 @@
-import { createClient } from "@supabase/supabase-js";
-// Create a single supabase client for interacting with your database
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
-);
+import torneos from "@/torneos.json";
+import resultado from "@/resultado.json";
 
 const getTorneos = async () => {
-  const { data, error } = await supabase
-    .from("torneo")
-    .select("torneo_id, nombre_torneo, fecha_torneo");
+  return torneos.map((torneo) => {
+    const fecha_torneo = torneo.fecha;
 
-  if (error) {
-    console.log("Error fetching torneos: ", error);
-    return [];
-  }
-
-  const torneosWithTemporada = data.map((torneo) => {
-    const temporada = torneo.fecha_torneo.split("-")[0];
-    return { ...torneo, temporada }; // Create a new object with the additional property
+    return {
+      torneo_id: torneo.id,
+      nombre_torneo: torneo.nombre,
+      fecha_torneo,
+      temporada: fecha_torneo.split("-")[0],
+    };
   });
-
-  return torneosWithTemporada;
 };
 
-const getTorneoResultados = async (torneo_id) => {
-  const { data, error } = await supabase
-    .from("torneo_resultado")
-    .select(
-      "torneo (nombre_torneo), usuario (challonge_username), posicion, puntaje",
-    )
-    .eq("torneo_id", torneo_id)
-    .order("posicion");
+const getTorneoResultados = async (torneoId) => {
+  const torneo =
+    resultado.torneos.find((item) => item.id === String(torneoId)) ||
+    resultado.torneos[0];
 
-  if (error) {
-    console.error("Error fetching torneos: ", error);
-    return null;
-  }
-
-  console.log(data);
-
-  return data;
+  return torneo.competidores.map((competidor) => ({
+    torneo: {
+      nombre_torneo: torneo.nombre,
+    },
+    usuario: {
+      challonge_username: competidor.name,
+    },
+    posicion: competidor.position,
+    puntaje: competidor.score,
+  }));
 };
 
 const getCompetidores = async () => {
-  const { data, error } = await supabase
-    .from("usuario")
-    .select("challonge_username")
-    .order("challonge_username");
+  const competidores = new Map();
 
-  if (error) {
-    console.error("Error fetching torneos: ", error);
-    return null;
-  }
+  resultado.torneos.forEach((torneo) => {
+    torneo.competidores.forEach((competidor) => {
+      competidores.set(competidor.id, {
+        challonge_username: competidor.name,
+      });
+    });
+  });
 
-  return data;
+  return [...competidores.values()].sort((a, b) =>
+    a.challonge_username.localeCompare(b.challonge_username),
+  );
 };
+
 const getRankings = async () => {
-  const { data, error } = await supabase.rpc("player_ranking");
+  const totals = new Map();
+  const previousTotals = new Map();
+  const latestTournamentId = [...torneos].sort((a, b) =>
+    b.fecha.localeCompare(a.fecha),
+  )[0]?.id;
 
-  if (error) {
-    console.log("Error fetching rankings: ", error);
-    return [];
-  }
+  resultado.torneos.forEach((torneo) => {
+    torneo.competidores.forEach((competidor) => {
+      const current = totals.get(competidor.id) || {
+        challonge_username: competidor.name,
+        puntaje: 0,
+      };
 
-  return data;
+      current.puntaje += competidor.score;
+      totals.set(competidor.id, current);
+
+      if (torneo.id !== latestTournamentId) {
+        const previous = previousTotals.get(competidor.id) || {
+          challonge_username: competidor.name,
+          puntaje: 0,
+        };
+
+        previous.puntaje += competidor.score;
+        previousTotals.set(competidor.id, previous);
+      }
+    });
+  });
+
+  const rankings = buildRanking(totals);
+  const previousRankings = buildRanking(previousTotals);
+
+  return rankings.map((ranking) => {
+    const previous = previousRankings.find(
+      (item) => item.challonge_username === ranking.challonge_username,
+    );
+
+    return {
+      ...ranking,
+      movimiento: getMovimiento(ranking.posicion, previous?.posicion),
+    };
+  });
 };
 
 const getFiltroAno = async () => {
-  const { data, error } = await supabase.rpc("get_filtro_ano");
-  if (error) {
-    console.error(error);
-    return null;
-  }
-
-  return data;
+  const years = torneos.map((torneo) => torneo.fecha.split("-")[0]);
+  return [...new Set(years)].sort((a, b) => b.localeCompare(a));
 };
 
 export {
@@ -83,3 +103,29 @@ export {
   getFiltroAno,
   getTorneoResultados,
 };
+
+function buildRanking(totals) {
+  return [...totals.values()]
+    .sort((a, b) => b.puntaje - a.puntaje)
+    .map((competidor, index) => ({
+      posicion: index + 1,
+      challonge_username: competidor.challonge_username,
+      puntaje: competidor.puntaje,
+    }));
+}
+
+function getMovimiento(currentPosition, previousPosition) {
+  if (!previousPosition) {
+    return "NUEVO";
+  }
+
+  if (currentPosition < previousPosition) {
+    return "SUBE";
+  }
+
+  if (currentPosition > previousPosition) {
+    return "BAJA";
+  }
+
+  return "IGUAL";
+}

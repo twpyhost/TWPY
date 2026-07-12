@@ -1,24 +1,153 @@
 {
-  "torneo": "ronin",
-  "id": 1,
-  "competidores": [
+  "torneos": [
     {
-      "id": 1,
-      "name": "Ryu",
-      "position": 1,
-      "score": 100
+      "id": "1",
+      "nombre": "TWPY Opening Clash",
+      "competidores": [
+        { "id": "jin_py", "name": "JinPy", "position": 1, "score": 100 },
+        {
+          "id": "electric_deni",
+          "name": "ElectricDeni",
+          "position": 2,
+          "score": 80
+        },
+        { "id": "asuka_main", "name": "AsukaMain", "position": 3, "score": 65 },
+        { "id": "kuma_fan", "name": "KumaFan", "position": 4, "score": 55 },
+        { "id": "lili_flow", "name": "LiliFlow", "position": 5, "score": 45 },
+        {
+          "id": "paul_fenix",
+          "name": "PaulFenixPY",
+          "position": 7,
+          "score": 30
+        }
+      ]
     },
     {
-      "id": 2,
-      "name": "Chun Li",
-      "position": 2,
-      "score": 90
+      "id": "2",
+      "nombre": "Asuncion Dojo Series #1",
+      "competidores": [
+        {
+          "id": "electric_deni",
+          "name": "ElectricDeni",
+          "position": 1,
+          "score": 100
+        },
+        { "id": "jin_py", "name": "JinPy", "position": 2, "score": 80 },
+        { "id": "king_grab", "name": "KingGrab", "position": 3, "score": 65 },
+        { "id": "asuka_main", "name": "AsukaMain", "position": 4, "score": 55 },
+        {
+          "id": "dragunov_595",
+          "name": "Dragunov595",
+          "position": 5,
+          "score": 45
+        },
+        { "id": "kuma_fan", "name": "KumaFan", "position": 7, "score": 30 }
+      ]
     },
     {
-      "id": 3,
-      "name": "Ken",
-      "position": 3,
-      "score": 80
+      "id": "3",
+      "nombre": "Iron Fist Friday",
+      "competidores": [
+        { "id": "king_grab", "name": "KingGrab", "position": 1, "score": 100 },
+        {
+          "id": "electric_deni",
+          "name": "ElectricDeni",
+          "position": 2,
+          "score": 80
+        },
+        { "id": "jin_py", "name": "JinPy", "position": 3, "score": 65 },
+        { "id": "nina_step", "name": "NinaStep", "position": 4, "score": 55 },
+        { "id": "lili_flow", "name": "LiliFlow", "position": 5, "score": 45 },
+        { "id": "asuka_main", "name": "AsukaMain", "position": 7, "score": 30 }
+      ]
+    },
+    {
+      "id": "4",
+      "nombre": "Mokete Gaming Cup",
+      "competidores": [
+        { "id": "jin_py", "name": "JinPy", "position": 1, "score": 100 },
+        {
+          "id": "dragunov_595",
+          "name": "Dragunov595",
+          "position": 2,
+          "score": 80
+        },
+        {
+          "id": "electric_deni",
+          "name": "ElectricDeni",
+          "position": 3,
+          "score": 65
+        },
+        { "id": "king_grab", "name": "KingGrab", "position": 4, "score": 55 },
+        { "id": "nina_step", "name": "NinaStep", "position": 5, "score": 45 },
+        {
+          "id": "paul_fenix",
+          "name": "PaulFenixPY",
+          "position": 7,
+          "score": 30
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "nombre": "TWPY Winter Knockout",
+      "competidores": [
+        {
+          "id": "electric_deni",
+          "name": "ElectricDeni",
+          "position": 1,
+          "score": 100
+        },
+        { "id": "jin_py", "name": "JinPy", "position": 2, "score": 80 },
+        {
+          "id": "dragunov_595",
+          "name": "Dragunov595",
+          "position": 3,
+          "score": 65
+        },
+        { "id": "lili_flow", "name": "LiliFlow", "position": 4, "score": 55 },
+        { "id": "king_grab", "name": "KingGrab", "position": 5, "score": 45 },
+        { "id": "kuma_fan", "name": "KumaFan", "position": 7, "score": 30 },
+        { "id": "reina_wave", "name": "ReinaWave", "position": 9, "score": 20 },
+        { "id": "law_stance", "name": "LawStance", "position": 13, "score": 10 }
+      ]
+    },
+    {
+      "id": "6",
+      "nombre": "Legacy Battle Night",
+      "competidores": [
+        {
+          "id": "paul_fenix",
+          "name": "PaulFenixPY",
+          "position": 1,
+          "score": 100
+        },
+        { "id": "asuka_main", "name": "AsukaMain", "position": 2, "score": 80 },
+        { "id": "kuma_fan", "name": "KumaFan", "position": 3, "score": 65 },
+        { "id": "jin_py", "name": "JinPy", "position": 4, "score": 55 },
+        { "id": "king_grab", "name": "KingGrab", "position": 5, "score": 45 }
+      ]
+    },
+    {
+      "id": "7",
+      "nombre": "South Side Throwdown",
+      "competidores": [
+        { "id": "jin_py", "name": "JinPy", "position": 1, "score": 100 },
+        {
+          "id": "electric_deni",
+          "name": "ElectricDeni",
+          "position": 2,
+          "score": 80
+        },
+        {
+          "id": "paul_fenix",
+          "name": "PaulFenixPY",
+          "position": 3,
+          "score": 65
+        },
+        { "id": "asuka_main", "name": "AsukaMain", "position": 4, "score": 55 },
+        { "id": "lili_flow", "name": "LiliFlow", "position": 5, "score": 45 }
+      ]
     }
   ]
 }
