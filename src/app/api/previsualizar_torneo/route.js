@@ -1,4 +1,5 @@
 import { getAdminUser } from "@/lib/adminAuth";
+import { extractTournamentId, fetchChallongeApi } from "@/lib/challonge";
 
 export async function POST(req) {
   try {
@@ -61,23 +62,5 @@ export async function POST(req) {
       { error: "Ocurrio un error al procesar la URL" },
       { status: 500 },
     );
-  }
-}
-
-function extractTournamentId(url) {
-  const regex = /challonge\.com\/(?:es\/)?([a-z0-9]+)/;
-  const match = url.match(regex);
-  return match ? match[1] : null;
-}
-
-async function fetchChallongeApi(tournamentId) {
-  const apiKey = process.env.NEXT_PUBLIC_CHALLONGE_API_KEY;
-  const apiUrl = `https://api.challonge.com/v1/tournaments/${tournamentId}.json?api_key=${apiKey}&include_participants=1`;
-
-  try {
-    return await fetch(apiUrl);
-  } catch (error) {
-    console.error("Error fetching Challonge API:", error);
-    return null;
   }
 }

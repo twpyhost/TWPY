@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 export function useUserSession() {
   const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loadingUser, setLoading] = useState(true);
 
   useEffect(() => {
@@ -11,15 +12,17 @@ export function useUserSession() {
 
     async function fetchUser() {
       try {
-        const response = await fetch("/api/admin/session");
+        const response = await fetch("/api/auth/session");
         const data = await response.json();
 
         if (mounted) {
           setUser(data.user || null);
+          setIsAdmin(Boolean(data.isAdmin));
         }
       } catch {
         if (mounted) {
           setUser(null);
+          setIsAdmin(false);
         }
       } finally {
         if (mounted) {
@@ -35,5 +38,5 @@ export function useUserSession() {
     };
   }, []);
 
-  return { user, loadingUser };
+  return { user, isAdmin, loadingUser };
 }

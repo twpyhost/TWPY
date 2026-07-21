@@ -14,7 +14,7 @@ export default function Navbar() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [menuAdminOpen, setMenuAdminOpen] = useState(false);
-  const { user } = useUserSession();
+  const { user, isAdmin } = useUserSession();
 
   const navItems = [
     { name: "RANKING", href: "/ranking" },
@@ -27,7 +27,7 @@ export default function Navbar() {
 
   const logout = async () => {
     try {
-      const response = await fetch("/api/admin/logout", { method: "POST" });
+      const response = await fetch("/api/auth/logout", { method: "POST" });
       if (!response.ok) {
         throw new Error("No se pudo cerrar sesion");
       }
@@ -147,12 +147,14 @@ export default function Navbar() {
               </button>
               {menuAdminOpen && (
                 <div className="absolute right-0 z-50 mt-2 w-40 rounded bg-white text-right text-sm text-black shadow-lg">
-                  <Link
-                    href="/admin/cargar_torneo"
-                    className="block rounded px-4 py-2 hover:bg-gray-200"
-                  >
-                    Cargar torneo
-                  </Link>
+                  {isAdmin && (
+                    <Link
+                      href="/admin/cargar_torneo"
+                      className="block rounded px-4 py-2 hover:bg-gray-200"
+                    >
+                      Cargar torneo
+                    </Link>
+                  )}
                   <button
                     onClick={logout}
                     className="w-full rounded px-4 py-2 text-right hover:bg-gray-200"

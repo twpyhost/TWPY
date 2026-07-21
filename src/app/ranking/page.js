@@ -1,7 +1,10 @@
 import Table from "@/components/table";
 
-// import torneos from "../../torneos.json";
 import { getRankings } from "../utils/db";
+
+// Revalida cada 60s para reflejar torneos nuevos sin redeploy
+// (y cachea las consultas a la BD).
+export const revalidate = 60;
 
 export default async function Ranking() {
   const rankings = await getRankings();

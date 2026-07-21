@@ -33,17 +33,33 @@ Estudiar la posibilidad de comprar dominios usando cnc.py (o hostinger si no se 
 
 - Descargar este repositorio
 - Ejecutar `npm install` en linea de comando dentro de la carpeta descargada
-- Crear `.env.local` con credenciales locales para el admin:
-
-```env
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=change-this-password
-ADMIN_SESSION_SECRET=change-this-long-random-secret
-NEXT_PUBLIC_CHALLONGE_API_KEY=your-challonge-api-key
-```
-
+- Copiar `.env.example` a `.env.local` y completar las credenciales (ver comentarios en el archivo)
 - Ejecutar `npm run dev`
 - Abrir en el navegador http://localhost:3000/
+
+## Fuente de datos (mock vs Supabase)
+
+La variable `DATA_SOURCE` controla de donde salen los datos (solo servidor):
+
+- `DATA_SOURCE=mock` (default): usa los JSON locales `src/torneos.json` y `src/resultado.json`. No requiere Supabase.
+- `DATA_SOURCE=supabase`: lee de Supabase. Requiere `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` y, para insertar torneos desde el admin, `SUPABASE_SERVICE_ROLE_KEY`.
+
+La capa de datos vive en `src/lib/data/` (`mockDb.js`, `supabaseDb.js` y el facade `index.js`).
+
+## Base de datos
+
+El esquema completo (tablas, RLS y seed de puntajes) esta en
+`supabase/migrations/0001_init.sql`. Para crearlo: abrir el SQL Editor del
+proyecto de Supabase, pegar el contenido del archivo y ejecutarlo.
+
+## Deploy (Vercel)
+
+1. Importar el repo en Vercel.
+2. Configurar las variables de entorno de `.env.example` en el proyecto
+   (empezar con `DATA_SOURCE=mock` para salir online; cambiar a `supabase`
+   cuando la BD tenga datos reales cargados y verificados).
+3. `CHALLONGE_API_KEY` y `SUPABASE_SERVICE_ROLE_KEY` son secretos de servidor:
+   nunca usar el prefijo `NEXT_PUBLIC_` con ellos.
 
 ### DER disponible aqui: https://miro.com/app/board/uXjVLtzFaL8=/
 

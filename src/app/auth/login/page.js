@@ -1,6 +1,7 @@
 "use client";
 
 import toast from "react-hot-toast";
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LoadingButton from "@/components/loadingButton";
@@ -22,7 +23,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/admin/login", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,9 +54,7 @@ export default function LoginPage() {
 
         <div className="mb-8 text-center italic">
           <p className="text-3xl text-tekken-pink sm:text-4xl">TWPY</p>
-          <h2 className="mt-2 text-6xl leading-none sm:text-7xl">
-            Admin Login
-          </h2>
+          <h2 className="mt-2 text-6xl leading-none sm:text-7xl">Login</h2>
         </div>
 
         <form
@@ -64,13 +63,13 @@ export default function LoginPage() {
         >
           <div>
             <label htmlFor="email" className="mb-2 block text-3xl italic">
-              Correo Admin
+              Correo
             </label>
             <input
               id="email"
               className="block w-full border border-white/20 bg-white/95 px-4 py-3 text-lg text-black outline-none transition-colors placeholder:text-gray-500 focus:border-tekken-pink focus:ring-2 focus:ring-tekken-pink/60"
               type="email"
-              placeholder="admin@example.com"
+              placeholder="correo@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -79,7 +78,7 @@ export default function LoginPage() {
 
           <div>
             <label htmlFor="password" className="mb-2 block text-3xl italic">
-              Password Admin
+              Password
             </label>
             <input
               id="password"
@@ -98,6 +97,16 @@ export default function LoginPage() {
             loadingText="Ingresando..."
           />
         </form>
+
+        <p className="mt-6 text-center text-xl italic text-white/70">
+          ¿No tenes cuenta?{" "}
+          <Link
+            href="/auth/register"
+            className="text-tekken-pink hover:brightness-125"
+          >
+            Registrate
+          </Link>
+        </p>
       </section>
     </div>
   );
