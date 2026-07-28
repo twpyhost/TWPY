@@ -68,29 +68,28 @@ plus a `.ribbon` utility class implementing the common eyebrow/badge clip-path +
 ## Shared primitives (`src/components/`)
 
 - **`Navbar`** (rebuild in place): sticky 76px black bar, TEKKEN 8 logo left (links to `/`), 5 italic Bebas Neue links (Ranking/Torneos/Competidores/Reglamento/Login) with active-route underline+glow (magenta, cyan for Login), hamburger + slide-down panel under 880px. Keep existing session-aware admin dropdown, restyle to match.
-- **`Footer`** (lean variant, per the design's per-page footer — used on Ranking/Competidores/Reglamento): dark bar, `TEKKEN WARRIORS PARAGUAY` wordmark left, page-appropriate prompt copy right.
-- **`HomeFooter`** (new, Home-only): the design's Home "Sobre nosotros" content — TWPY logo, heading, body paragraph, social icon row, credits row — restyled with new tokens but keeping the copy already present in the current global `Footer.js`.
+- **`Footer`** (single shared component, used on every page except Login): the design's Home "Sobre nosotros" content — TWPY logo, heading, body paragraph, social icon row, credits row — restyled with new tokens, keeping the copy already present in the current global `Footer.js`. **Decision (overrides the design handoff's per-page lean-footer variant)**: one `Navbar` + one `Footer`, identical on every page — Home, Ranking, Competidores, Reglamento, Admin's public-facing bits. No separate lean wordmark-bar footer.
 - **`RibbonTag`**: small reusable component for the clip-path eyebrow/badge pattern (props: text, color variant).
 - **`Button`**: primary (magenta, glow shadow, brightness-dim hover + black border-on-hover) and secondary/outline variants.
 - **`HeroSection`**: radial-gradient dark background + two blurred glow blobs (magenta/cyan), used by Ranking/Competidores/Reglamento hero blocks.
 
-`layout.js` stops rendering a single global `<Footer />`; each page renders its own footer (`HomeFooter` on `/`, `Footer` elsewhere) so the two treatments specified by the design can coexist.
+**Login is the one exception**: it keeps the distinct top bar + "← VOLVER AL INICIO" back link already designed into `design/Login Liga Tekken Paraguay.dc.html` — no shared `Navbar`, no shared `Footer`. `layout.js` renders `Navbar`/`Footer` for every route; a small pathname check (same `usePathname()` pattern already used inside `Navbar`) skips rendering both on `/auth/login`.
 
 `Table.js` is retired — Ranking and Competidores get bespoke card/row markup per the design (no generic grid component fits both).
 
 ## Per-page plan
 
 ### Home (`src/app/page.js`)
-Navbar (new) → **existing hero kept as-is** (Jin/Kazuya images, "Bienvenido al Ranking..." heading, `SeeRankingButton`, mobile/desktop split) — no visual changes to this section per explicit user decision — → `HomeFooter` (new design's "Sobre nosotros" block: logo, heading, paragraph, socials, credits). Source reference: `design/Home Liga Tekken Paraguay.dc.html` for the footer block only.
+Navbar (shared) → **existing hero kept as-is** (Jin/Kazuya images, "Bienvenido al Ranking..." heading, `SeeRankingButton`, mobile/desktop split) — no visual changes to this section per explicit user decision — → Footer (shared). Source reference: `design/Home Liga Tekken Paraguay.dc.html` for the footer block only.
 
 ### Ranking (`src/app/ranking/page.js`)
-No dedicated "Ranking" web screen exists in the design bundle (only the fixed-size social-graphic Landscape/Portada exports, out of scope). Build hero (`HeroSection`, eyebrow "RANKING", stat callout) + list using the **same card/row visual language as Competidores** (numbered rows, magenta/cyan tier accents, Bebas Neue point figures) — this is explicit in `design/README.md`'s Ranking section. Keep existing `getRankings()` data (posicion/challonge_username/puntaje/movimiento) and the ▲/▼/=/★ trend indicator, restyled to match the design's trend-coloring convention. `Footer` (lean).
+No dedicated "Ranking" web screen exists in the design bundle (only the fixed-size social-graphic Landscape/Portada exports, out of scope). Build hero (`HeroSection`, eyebrow "RANKING", stat callout) + list using the **same card/row visual language as Competidores** (numbered rows, magenta/cyan tier accents, Bebas Neue point figures) — this is explicit in `design/README.md`'s Ranking section. Keep existing `getRankings()` data (posicion/challonge_username/puntaje/movimiento) and the ▲/▼/=/★ trend indicator, restyled to match the design's trend-coloring convention. `Footer` (shared).
 
 ### Competidores (`src/app/competidores/page.js`)
-Hero with two stat counters (total / ranked) → optional top-3 podium (`showPodium`, default true) → filter pills (Todos/Rankeados/Sin puntos) + search + sort (points/A-Z) → responsive card grid (`auto-fill minmax(232px,1fr)`), top-3 cyan accent, ranked magenta, unranked dim. Wired to existing `getCompetidores()`. Source: `design/Competidores Liga Tekken Paraguay.dc.html`. `Footer` (lean).
+Hero with two stat counters (total / ranked) → optional top-3 podium (`showPodium`, default true) → filter pills (Todos/Rankeados/Sin puntos) + search + sort (points/A-Z) → responsive card grid (`auto-fill minmax(232px,1fr)`), top-3 cyan accent, ranked magenta, unranked dim. Wired to existing `getCompetidores()`. Source: `design/Competidores Liga Tekken Paraguay.dc.html`. `Footer` (shared).
 
 ### Reglamento (`src/app/reglamento/page.js`)
-Hero (eyebrow "NORMATIVA OFICIAL · TEKKEN 8", H1, rule-count stat) → 4 quick-fact cards → sticky left index (6 anchored sections) + numbered rule list (11 rules, ported from `design/Reglamento Liga Tekken Paraguay.dc.html`, content matches current hardcoded rules almost verbatim) → cyan accent for section 4 ("En la partida") → rule 05 gets the white "DESCALIFICACIÓN" ribbon. `Footer` (lean, rules-specific prompt copy).
+Hero (eyebrow "NORMATIVA OFICIAL · TEKKEN 8", H1, rule-count stat) → 4 quick-fact cards → sticky left index (6 anchored sections) + numbered rule list (11 rules, ported from `design/Reglamento Liga Tekken Paraguay.dc.html`, content matches current hardcoded rules almost verbatim) → cyan accent for section 4 ("En la partida") → rule 05 gets the white "DESCALIFICACIÓN" ribbon. `Footer` (shared).
 
 ### Login (`src/app/auth/login/page.js`)
 Distinct layout, no shared Navbar — simple top bar (logo + "← VOLVER AL INICIO" link back to `/`) over full-page radial gradient with pulse animation. Two-column (form-first stacked <780px): left eyebrow+H1("ENTRÁ A LA ARENA")+stat callouts, right bordered form card (email/password, "Recordarme" + forgot-password row, magenta submit "INGRESAR", divider, Discord OAuth button, register link). Keep existing `/api/auth/login` POST flow for the email/password path. **New**: wire the Discord button to a real Supabase OAuth (`signInWithOAuth({ provider: 'discord' })`) call instead of leaving it as a no-op — the design's copy implies it should work. Source: `design/Login Liga Tekken Paraguay.dc.html`.
