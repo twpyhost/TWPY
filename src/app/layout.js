@@ -1,22 +1,27 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bebas_Neue, Source_Sans_3 } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const bebasNeue = Bebas_Neue({
+  weight: "400",
   subsets: ["latin"],
+  variable: "--font-display",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const sourceSans3 = Source_Sans_3({
+  weight: ["400", "600", "700"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
+  variable: "--font-body",
 });
 
+// Kept for src/app/torneos and src/app/auth/register, which still use
+// font-warsaw explicitly via inherited body styling in a few spots — see
+// Global Constraints in the implementation plan.
 const warsaw = localFont({
   src: [
     {
@@ -37,14 +42,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} flex min-h-screen flex-col bg-black font-warsaw antialiased`}
+        className={`${bebasNeue.variable} ${sourceSans3.variable} ${warsaw.variable} flex min-h-screen flex-col bg-black font-body antialiased`}
       >
-        <Toaster/>
+        <Toaster />
         <Navbar />
-        <div className="bg-gradient-to-br from-[#630D33] to-[#277687]">
-          {children}
-        </div>
-
+        {children}
         <Footer />
       </body>
     </html>
