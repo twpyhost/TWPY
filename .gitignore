@@ -1,6 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 **/LOGO TWPY/
+**/LOGO TWPY.zip
 
 # dependencies
 /node_modules
@@ -43,3 +44,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .qodo
+
+# claude code / agent skills (installed packages, reproducible from skills-lock.json)
+.claude/settings.local.json
+.claude/skills/
+.agents/skills/

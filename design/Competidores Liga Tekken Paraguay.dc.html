@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/colors.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/typography.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/effects.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/styles.css">
+<style>
+body{margin:0;background:#000}
+a{color:rgb(var(--color-primary-500));text-decoration:none}
+a:hover{color:rgb(var(--color-tekken-blue-400))}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glowPulse{0%,100%{opacity:.5}50%{opacity:.9}}
+input::placeholder{color:rgba(255,255,255,.35)}
+input:focus{outline:none}
+</style>
+<script src="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js"></script>
+</helmet>
+
+<div style="background:#000;min-height:100vh;font-family:var(--font-body,'Source Sans 3',sans-serif);color:#fff;overflow-x:clip" data-screen-label="Competidores">
+
+  <nav style="position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;height:76px;padding:0 clamp(20px,4vw,56px);background:rgb(var(--color-black-500));border-bottom:1px solid rgba(255,255,255,.06)">
+    <a href="./Home Liga Tekken Paraguay.dc.html" style="display:flex;align-items:center"><img src="uploads/tekken8-logo-sm.png" alt="TEKKEN 8" style="height:32px;width:auto;display:block"></a>
+    <div style="{{ navRowStyle }}">
+      <a href="./Ranking Liga Tekken Paraguay - Landscape.dc.html" onClick="{{ closeNav }}" style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;font-style:italic;color:#fff;border-bottom:2px solid transparent;padding-bottom:8px;transition:color .25s var(--ease-standard),border-color .25s var(--ease-standard),text-shadow .25s var(--ease-standard)" style-hover="color:rgb(var(--color-primary-500));border-bottom-color:rgb(var(--color-primary-500));text-shadow:0 0 14px rgba(245,10,100,.65)">RANKING</a>
+      <a href="./Torneos Liga Tekken Paraguay.dc.html" onClick="{{ closeNav }}" style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;font-style:italic;color:#fff;border-bottom:2px solid transparent;padding-bottom:8px;transition:color .25s var(--ease-standard),border-color .25s var(--ease-standard),text-shadow .25s var(--ease-standard)" style-hover="color:rgb(var(--color-primary-500));border-bottom-color:rgb(var(--color-primary-500));text-shadow:0 0 14px rgba(245,10,100,.65)">TORNEOS</a>
+      <a href="#competidores" onClick="{{ closeNav }}" style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;font-style:italic;color:rgb(var(--color-primary-500));border-bottom:2px solid rgb(var(--color-primary-500));padding-bottom:8px;text-shadow:0 0 14px rgba(245,10,100,.65)">COMPETIDORES</a>
+      <a href="./Reglamento Liga Tekken Paraguay.dc.html" onClick="{{ closeNav }}" style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;font-style:italic;color:#fff;border-bottom:2px solid transparent;padding-bottom:8px;transition:color .25s var(--ease-standard),border-color .25s var(--ease-standard),text-shadow .25s var(--ease-standard)" style-hover="color:rgb(var(--color-primary-500));border-bottom-color:rgb(var(--color-primary-500));text-shadow:0 0 14px rgba(245,10,100,.65)">REGLAMENTO</a>
+      <a href="#login" onClick="{{ closeNav }}" style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;font-style:italic;color:rgba(255,255,255,.75);border-bottom:2px solid transparent;padding-bottom:8px;transition:color .25s var(--ease-standard),border-color .25s var(--ease-standard),text-shadow .25s var(--ease-standard)" style-hover="color:rgb(var(--color-tekken-blue-400));border-bottom-color:rgb(var(--color-tekken-blue-400));text-shadow:0 0 14px rgba(63,209,231,.65)">LOGIN</a>
+    </div>
+    <button type="button" onClick="{{ toggleNav }}" aria-label="Menú" style="{{ hamburgerStyle }}">
+      <span style="{{ line1Style }}"></span>
+      <span style="{{ line2Style }}"></span>
+      <span style="{{ line3Style }}"></span>
+    </button>
+  </nav>
+
+  <section id="competidores" style="position:relative;overflow:hidden;padding:clamp(44px,6vw,84px) clamp(24px,5vw,72px) clamp(30px,4vw,48px)">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 0%, rgb(20,44,56) 0%, rgb(6,16,22) 52%, #000 100%)"></div>
+    <div style="position:absolute;left:-14%;top:-32%;width:58%;height:110%;background:radial-gradient(circle at 50% 45%, rgba(245,10,100,.34) 0%, rgba(230,0,0,.1) 46%, transparent 72%);filter:blur(10px);animation:glowPulse 7s ease-in-out infinite"></div>
+    <div style="position:absolute;right:-16%;top:-36%;width:58%;height:110%;background:radial-gradient(circle at 50% 45%, rgba(63,209,231,.3) 0%, rgba(30,120,220,.1) 46%, transparent 72%);filter:blur(10px)"></div>
+
+    <div style="position:relative;z-index:2;max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:6px;animation:fadeUp .6s var(--ease-standard) both">
+        <div style="display:inline-flex;align-self:flex-start;background:rgb(var(--color-primary-500));clip-path:polygon(6% 0,100% 0,94% 100%,0 100%);padding:4px 22px;box-shadow:0 2px 20px rgba(245,10,100,.5)">
+          <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.28em;line-height:1.35;color:#fff">ROSTER OFICIAL &middot; TEMPORADA 2025</span>
+        </div>
+        <h1 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-style:italic;font-size:clamp(56px,8.4vw,116px);line-height:.88;letter-spacing:.01em;margin-left:-6px;text-shadow:0 0 34px rgba(230,0,0,.65),0 0 90px rgba(245,10,100,.38)">COMPETIDORES</h1>
+        <p style="margin:8px 0 0;max-width:580px;font-size:16px;line-height:1.6;color:rgba(255,255,255,.72)">Todos los players que pisaron el bracket en la Liga Tekken Paraguay. Buscá tu nick, mirá tus puntos y tu posición en el ranking nacional.</p>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:28px">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding-left:16px;border-left:3px solid rgb(var(--color-primary-500))">
+            <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:52px;line-height:.9">{{ totalCount }}</span>
+            <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.22em;color:rgba(255,255,255,.6)">COMPETIDORES</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding-left:16px;border-left:3px solid rgb(63,209,231)">
+            <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:52px;line-height:.9">{{ rankedCount }}</span>
+            <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.22em;color:rgba(255,255,255,.6)">RANKEADOS</span>
+          </div>
+        </div>
+        <img src="uploads/TWPY%20LOGO%20VARIANTES-04.png" alt="Tekken Warriors Paraguay" style="height:118px;width:auto;display:block;filter:drop-shadow(0 0 22px rgba(255,255,255,.25))">
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#000;padding:0 clamp(24px,5vw,72px) clamp(60px,7vw,100px)">
+    <div style="max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:26px">
+
+      <sc-if value="{{ showPodium }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:-40px">
+          <sc-for list="{{ podium }}" as="p" hint-placeholder-count="3">
+            <div style="position:relative;overflow:hidden;background:linear-gradient(150deg, rgba(245,10,100,.26) 0%, rgba(8,20,28,.97) 55%);border:1px solid rgba(255,255,255,.12);padding:22px 24px 20px;display:flex;flex-direction:column;gap:14px">
+              <div style="position:absolute;right:-6px;bottom:-30px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-style:italic;font-size:150px;line-height:.8;color:rgba(255,255,255,.06);pointer-events:none">{{ p.pos }}</div>
+              <div style="position:relative;display:inline-flex;align-self:flex-start;background:{{ p.tagBg }};clip-path:polygon(7% 0,100% 0,93% 100%,0 100%);padding:3px 18px">
+                <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:14px;letter-spacing:.24em;line-height:1.35;color:{{ p.tagFg }}">{{ p.tag }}</span>
+              </div>
+              <div style="position:relative;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:clamp(30px,2.6vw,40px);line-height:1;letter-spacing:.02em">{{ p.name }}</div>
+              <div style="position:relative;display:flex;align-items:baseline;gap:8px">
+                <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:34px;line-height:1;color:rgb(var(--color-primary-500))">{{ p.pts }}</span>
+                <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:16px;letter-spacing:.2em;color:rgba(255,255,255,.55)">PUNTOS</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1);padding:14px 0">
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <sc-for list="{{ filters }}" as="f" hint-placeholder-count="3">
+            <button type="button" onClick="{{ f.onClick }}" style="cursor:pointer;background:{{ f.bg }};color:{{ f.fg }};border:1px solid {{ f.border }};clip-path:polygon(7px 0,100% 0,calc(100% - 7px) 100%,0 100%);padding:8px 24px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:17px;letter-spacing:.16em;transition:background .25s var(--ease-standard),color .25s var(--ease-standard)">{{ f.label }} <span style="opacity:.6">{{ f.count }}</span></button>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;gap:18px">
+          <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);padding:8px 16px;min-width:220px">
+            <span style="font-size:15px;color:rgba(255,255,255,.4)">&#9906;</span>
+            <input type="text" value="{{ query }}" onInput="{{ onQuery }}" placeholder="Buscar nick..." style="flex:1;background:transparent;border:none;color:#fff;font-family:var(--font-body,'Source Sans 3',sans-serif);font-size:15px;letter-spacing:.02em;width:100%">
+          </div>
+          <button type="button" onClick="{{ toggleSort }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;background:transparent;border:none;color:rgba(255,255,255,.7);font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:17px;letter-spacing:.16em;transition:color .25s var(--ease-standard)" style-hover="color:rgb(var(--color-primary-500))">{{ sortLabel }} <span style="color:rgb(var(--color-primary-500))">&#8645;</span></button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:12px">
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="12">
+          <a href="#" style="position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-height:132px;background:{{ c.bg }};border:1px solid rgba(255,255,255,.09);border-left:3px solid {{ c.accent }};padding:16px 18px;color:#fff;transition:background .25s var(--ease-standard),transform .25s var(--ease-standard),box-shadow .25s var(--ease-standard),border-color .25s var(--ease-standard)" style-hover="background:rgba(245,10,100,.16);transform:translateY(-4px);box-shadow:0 10px 30px rgba(245,10,100,.26);border-color:rgba(245,10,100,.55);color:#fff">
+            <span style="position:absolute;right:-4px;bottom:-34px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-style:italic;font-size:104px;line-height:.8;letter-spacing:-.02em;color:rgba(255,255,255,.055);pointer-events:none">{{ c.mono }}</span>
+            <span style="position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.2em;color:{{ c.posColor }}">{{ c.posLabel }}</span>
+              <span style="width:8px;height:8px;background:{{ c.dot }};clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></span>
+            </span>
+            <span style="position:relative;display:flex;flex-direction:column;gap:6px;min-width:0">
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:26px;line-height:1.05;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span>
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:16px;letter-spacing:.16em;color:{{ c.ptsColor }}">{{ c.ptsLabel }}</span>
+            </span>
+          </a>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:44px 0;text-align:center;display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:30px;letter-spacing:.08em;color:rgba(255,255,255,.8)">SIN RESULTADOS</span>
+          <span style="font-size:15px;color:rgba(255,255,255,.5)">Ningún competidor coincide con &ldquo;{{ query }}&rdquo;.</span>
+        </div>
+      </sc-if>
+
+    </div>
+  </section>
+
+  <section style="background:rgb(var(--color-black-500));border-top:1px solid rgba(255,255,255,.08);padding:clamp(28px,4vw,44px) clamp(24px,5vw,72px);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
+    <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.24em;color:rgb(var(--color-primary-500))">TEKKEN WARRIORS PARAGUAY</span>
+    <span style="font-size:14px;color:rgba(255,255,255,.5)">¿Falta tu nick? Jugá un torneo ranked y entrás automáticamente al roster.</span>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showPodium&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Comportamiento&quot;}}">
+const RANK = [
+  [1,'RushadorCuidadoso',1350],[2,'DEER_Hosco',1110],[3,'Danns_',1090],[4,'WARIOTWPY',1000],
+  [5,'gonzykkes',830],[6,"Mandi'o Colo",820],[7,'SaikeN',660],[8,'TrunksEsp',420],[9,'DamianCp',400],
+  [10,'Yuyincarlos',370],[11,'LMDTLightGear',360],[12,'TWPY | tsukigazin',330],[13,'TWPY_ROX',300],
+  [14,'Peepo_Rolon93',250],[15,'RVNT I DSS',220],[16,'Jarrinqui',190],[17,'SsnakePy86',180],
+  [18,'Gsus1801',140],[19,'Lagann18',130],[20,'TWPYShaka',120],[21,'TWPYpalolo',120],[22,'Serafin',110],
+  [23,'Focus_Pocus_',100],[24,'TWPYNucita',100],[25,'Salwafle',90],[26,'ssnakepy',90],
+  [27,'TWPYpollito',80],[28,'Myers',70],[29,'JJ',70],[30,'KikeCarlsen',70],[31,'Dragon_sex',70]
+];
+
+const NAMES = [
+  'BG_okocom170','BLK_Slammers019','DamianCp','Danns_','DEER_Hosco','Dragon_sex','Fat32','Focus_Pocus_',
+  'gonzykkes','Gsus1801','Jarrinqui','JJ','JK_Ayrlex','JORDI_SEX','KikeCarlsen','Lagann18','LMDTLightGear',
+  "Mandi'o Colo",'Mr.Asado','mtroche','Myers','Peepo_Rolon93','Rise','RushadorCuidadoso','RVNT I DSS',
+  'SaikeN','Salwafle','Serafin','ssnakepy','SsnakePy86','STT_Gero','TrunksEsp','TWPY | tsukigazin',
+  'TWPY_ROX','TWPYNucita','TWPYpalolo','TWPYpollito','TWPYShaka','WARIOTWPY','Yuyincarlos'
+];
+
+class Component extends DCLogic {
+  state = { filter: 'todos', query: '', byPoints: true, mobile: false, navOpen: false };
+
+  componentDidMount() {
+    this._rz = () => this.setState(s => ({ mobile: window.innerWidth < 880, navOpen: window.innerWidth < 880 ? s.navOpen : false }));
+    this._rz();
+    window.addEventListener('resize', this._rz);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._rz);
+  }
+
+  build() {
+    const map = {};
+    RANK.forEach(([pos, name, pts]) => { map[name] = { pos, pts }; });
+    return NAMES.map(name => {
+      const r = map[name];
+      const mono = name.replace(/[^A-Za-z0-9]/g, '').charAt(0).toUpperCase() || '?';
+      const top = r && r.pos <= 3;
+      return {
+        name, mono,
+        pos: r ? r.pos : 999,
+        pts: r ? r.pts : 0,
+        ranked: !!r,
+        team: /^TWPY/i.test(name),
+        posLabel: r ? '#' + r.pos : 'S/R',
+        posColor: top ? 'rgb(63,209,231)' : r ? 'rgba(255,255,255,.6)' : 'rgba(255,255,255,.28)',
+        ptsLabel: r ? r.pts + ' PTS' : 'SIN PUNTOS',
+        ptsColor: r ? 'rgb(var(--color-primary-500))' : 'rgba(255,255,255,.3)',
+        dot: top ? 'rgb(63,209,231)' : r ? 'rgb(245,10,100)' : 'rgba(255,255,255,.18)',
+        bg: top ? 'rgba(245,10,100,.15)' : r ? 'rgba(255,255,255,.055)' : 'rgba(255,255,255,.025)',
+        accent: top ? 'rgb(63,209,231)' : r ? 'rgb(245,10,100)' : 'rgba(255,255,255,.14)'
+      };
+    });
+  }
+
+  renderVals() {
+    const all = this.build();
+    const q = this.state.query.trim().toLowerCase();
+    const defs = [
+      ['todos', 'TODOS', () => true],
+      ['rankeados', 'RANKEADOS', c => c.ranked],
+      ['sinpuntos', 'SIN PUNTOS', c => !c.ranked]
+    ];
+
+    const filters = defs.map(([key, label, fn]) => {
+      const on = this.state.filter === key;
+      return {
+        label, count: all.filter(fn).length,
+        bg: on ? 'rgb(var(--color-primary-500))' : 'transparent',
+        fg: on ? '#fff' : 'rgba(255,255,255,.7)',
+        border: on ? 'rgb(var(--color-primary-500))' : 'rgba(255,255,255,.18)',
+        onClick: () => this.setState({ filter: key })
+      };
+    });
+
+    const active = defs.find(d => d[0] === this.state.filter) || defs[0];
+    let cards = all.filter(active[2]).filter(c => !q || c.name.toLowerCase().includes(q));
+    cards.sort((a, b) => this.state.byPoints
+      ? (b.pts - a.pts) || a.name.localeCompare(b.name)
+      : a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }));
+
+    const podium = all.filter(c => c.pos <= 3).sort((a, b) => a.pos - b.pos).map(c => ({
+      name: c.name, pts: c.pts, pos: c.pos,
+      tag: c.pos === 1 ? 'CAMPEÓN VIGENTE' : c.pos + '\u00BA DEL RANKING',
+      tagBg: c.pos === 1 ? 'rgb(var(--color-primary-500))' : 'rgb(63,209,231)',
+      tagFg: c.pos === 1 ? '#fff' : '#04121a'
+    }));
+
+    const m = this.state.mobile, open = this.state.navOpen;
+    return {
+      cards, filters, podium,
+      totalCount: all.length,
+      rankedCount: all.filter(c => c.ranked).length,
+      query: this.state.query,
+      isEmpty: cards.length === 0,
+      showPodium: this.props.showPodium ?? true,
+      sortLabel: this.state.byPoints ? 'POR PUNTOS' : 'A - Z',
+      onQuery: e => this.setState({ query: e.target.value }),
+      toggleSort: () => this.setState(s => ({ byPoints: !s.byPoints })),
+      navRowStyle: m
+        ? ('display:flex;flex-direction:column;align-items:flex-start;gap:4px;position:absolute;top:76px;left:0;right:0;background:rgb(var(--color-black-500));border-bottom:1px solid rgba(255,255,255,.1);padding:10px clamp(20px,4vw,56px) 20px;box-shadow:0 12px 24px rgba(0,0,0,.4);z-index:19;transition:opacity .25s ease,transform .25s ease;' + (open ? 'opacity:1;transform:translateY(0);pointer-events:auto' : 'opacity:0;transform:translateY(-10px);pointer-events:none'))
+        : 'display:flex;align-items:center;gap:clamp(18px,3vw,40px)',
+      hamburgerStyle: m
+        ? 'display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;cursor:pointer;position:relative;z-index:21'
+        : 'display:none',
+      line1Style: 'position:absolute;left:50%;width:20px;height:2px;background:#fff;border-radius:1px;transition:transform .3s ease,opacity .3s ease,top .3s ease;' + (open ? 'top:50%;transform:translate(-50%,-50%) rotate(45deg);opacity:1' : 'top:calc(50% - 7px);transform:translate(-50%,0) rotate(0deg);opacity:1'),
+      line2Style: 'position:absolute;left:50%;top:50%;width:20px;height:2px;background:#fff;border-radius:1px;transition:transform .3s ease,opacity .3s ease;' + (open ? 'transform:translate(-50%,-50%) rotate(0deg);opacity:0' : 'transform:translate(-50%,-50%) rotate(0deg);opacity:1'),
+      line3Style: 'position:absolute;left:50%;width:20px;height:2px;background:#fff;border-radius:1px;transition:transform .3s ease,opacity .3s ease,top .3s ease;' + (open ? 'top:50%;transform:translate(-50%,-50%) rotate(-45deg);opacity:1' : 'top:calc(50% + 7px);transform:translate(-50%,0) rotate(0deg);opacity:1'),
+      toggleNav: () => this.setState(s => ({ navOpen: !s.navOpen })),
+      closeNav: () => this.setState({ navOpen: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

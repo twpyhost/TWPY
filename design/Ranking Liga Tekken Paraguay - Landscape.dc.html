@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/colors.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/typography.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/effects.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/styles.css">
+<style>
+body{margin:0}
+a{color:var(--accent-primary);text-decoration:none}
+a:hover{color:var(--accent-cyan)}
+</style>
+<script src="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js"></script>
+</helmet>
+<div style="background:#000;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 0">
+<section id="ranking" data-screen-label="Ranking" style="position:relative;width:1300px;height:860px;flex:none;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body,'Source Sans 3',sans-serif)">
+
+  <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0%, rgb(20,44,56) 0%, rgb(6,16,22) 48%, #000 100%)"></div>
+  <div style="position:absolute;left:-12%;top:-18%;width:60%;height:60%;background:radial-gradient(circle at 45% 45%, rgba(230,0,0,.4) 0%, rgba(230,0,0,.1) 45%, transparent 72%);filter:blur(8px)"></div>
+  <div style="position:absolute;right:-12%;top:-18%;width:60%;height:60%;background:radial-gradient(circle at 55% 45%, rgba(63,209,231,.38) 0%, rgba(30,120,220,.12) 45%, transparent 72%);filter:blur(8px)"></div>
+  <div style="position:absolute;left:0;bottom:-14%;width:100%;height:45%;background:radial-gradient(60% 100% at 50% 90%, rgba(245,10,100,.22) 0%, transparent 70%)"></div>
+
+  <div style="position:relative;z-index:3;height:100%;box-sizing:border-box;padding:20px 30px 16px;display:flex;flex-direction:column;gap:16px">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;border-bottom:2px solid rgba(255,255,255,.14);padding-bottom:10px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div style="display:inline-flex;align-self:flex-start;background:rgb(var(--color-primary-500));clip-path:polygon(7% 0,100% 0,93% 100%,0 100%);padding:3px 20px">
+          <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.28em;line-height:1.3;color:#fff">TEMPORADA 2026 &middot; TEKKEN PARAGUAY</span>
+        </div>
+        <div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-style:italic;font-size:66px;line-height:.92;letter-spacing:.01em;margin-left:-5px;text-shadow:0 0 30px rgba(230,0,0,.7), 0 0 80px rgba(245,10,100,.4)">RANKING</div>
+      </div>
+      <img src="uploads/TWPY%20LOGO%20VARIANTES-04.png" alt="Tekken Warriors Paraguay" style="height:132px;width:auto;display:block;flex:none;filter:drop-shadow(0 0 22px rgba(255,255,255,.28))">
+    </div>
+
+    <div style="flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px;min-height:0">
+
+      <div style="display:flex;flex-direction:column;gap:8px;min-height:0">
+        <div style="display:grid;grid-template-columns:46px 1fr 62px 34px;align-items:center;gap:10px;background:rgb(var(--color-primary-500));clip-path:polygon(2% 0,100% 0,98% 100%,0 100%);padding:5px 14px;box-shadow:0 2px 20px rgba(245,10,100,.5)">
+          <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:18px;letter-spacing:.16em;line-height:1;color:#fff;text-align:center">POS</span>
+          <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:18px;letter-spacing:.16em;line-height:1;color:#fff">JUGADOR</span>
+          <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:18px;letter-spacing:.16em;line-height:1;color:#fff;text-align:right">PTS</span>
+          <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:18px;letter-spacing:.16em;line-height:1;color:#fff;text-align:center">MOV</span>
+        </div>
+        <div style="flex:1;display:grid;grid-template-rows:repeat(16,1fr);gap:5px;min-height:0">
+          <sc-for list="{{ colA }}" as="r" hint-placeholder-count="16">
+            <div style="display:grid;grid-template-columns:46px 1fr 62px 34px;align-items:center;gap:10px;background:{{ r.bg }};border-left:3px solid {{ r.accent }};padding:0 12px 0 10px;min-height:0">
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:26px;line-height:1;text-align:center;color:{{ r.posColor }}">{{ r.pos }}</span>
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:24px;line-height:1.05;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ r.nameColor }}">{{ r.name }}</span>
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:24px;line-height:1;text-align:right;color:rgb(var(--color-primary-500))">{{ r.pts }}</span>
+              <span style="font-size:16px;font-weight:700;line-height:1;text-align:center;color:{{ r.movColor }}">{{ r.mov }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;min-height:0">
+        <div style="display:grid;grid-template-columns:46px 1fr 62px 34px;align-items:center;gap:10px;background:rgb(var(--color-primary-500));clip-path:polygon(2% 0,100% 0,98% 100%,0 100%);padding:5px 14px;box-shadow:0 2px 20px rgba(245,10,100,.5)">
+          <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:18px;letter-spacing:.16em;line-height:1;color:#fff;text-align:center">POS</span>
+          <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:18px;letter-spacing:.16em;line-height:1;color:#fff">JUGADOR</span>
+          <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:18px;letter-spacing:.16em;line-height:1;color:#fff;text-align:right">PTS</span>
+          <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:18px;letter-spacing:.16em;line-height:1;color:#fff;text-align:center">MOV</span>
+        </div>
+        <div style="flex:1;display:grid;grid-template-rows:repeat(16,1fr);gap:5px;min-height:0">
+          <sc-for list="{{ colB }}" as="r" hint-placeholder-count="16">
+            <div style="display:grid;grid-template-columns:46px 1fr 62px 34px;align-items:center;gap:10px;background:{{ r.bg }};border-left:3px solid {{ r.accent }};padding:0 12px 0 10px;min-height:0">
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:26px;line-height:1;text-align:center;color:{{ r.posColor }}">{{ r.pos }}</span>
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:24px;line-height:1.05;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ r.nameColor }}">{{ r.name }}</span>
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:24px;line-height:1;text-align:right;color:rgb(var(--color-primary-500))">{{ r.pts }}</span>
+              <span style="font-size:16px;font-weight:700;line-height:1;text-align:center;color:{{ r.movColor }}">{{ r.mov }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;border-top:2px solid rgba(255,255,255,.14);padding-top:10px">
+      <div style="display:flex;align-items:center;gap:22px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:17px;letter-spacing:.2em;color:rgba(255,255,255,.62)">
+        <span>31 JUGADORES RANKEADOS</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="color:rgb(63,209,231);font-family:var(--font-body,'Source Sans 3',sans-serif);font-weight:700">&uarr;</span> SUBE</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="color:rgb(var(--color-primary-500));font-family:var(--font-body,'Source Sans 3',sans-serif);font-weight:700">&darr;</span> BAJA</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="color:rgba(255,255,255,.45);font-family:var(--font-body,'Source Sans 3',sans-serif);font-weight:700">=</span> IGUAL</span>
+      </div>
+      <div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.24em;color:rgb(var(--color-primary-500))">TEKKEN WARRIORS PARAGUAY</div>
+    </div>
+
+  </div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const DATA = [
+  [1,'RushadorCuidadoso',1350,'='],
+  [2,'DEER_Hosco',1110,'up'],
+  [3,'Danns_',1090,'down'],
+  [4,'WARIOTWPY',1000,'down'],
+  [5,'gonzykkes',830,'='],
+  [6,"Mandi'o Colo",820,'up'],
+  [7,'SaikeN',660,'down'],
+  [8,'TrunksEsp',420,'='],
+  [9,'DamianCp',400,'='],
+  [10,'Yuyincarlos',370,'='],
+  [11,'LMDTLightGear',360,'up'],
+  [12,'TWPY | tsukigazin',330,'down'],
+  [13,'TWPY_ROX',300,'up'],
+  [14,'Peepo_Rolon93',250,'down'],
+  [15,'RVNT I DSS',220,'down'],
+  [16,'Jarrinqui',190,'='],
+  [17,'SsnakePy86',180,'='],
+  [18,'Gsus1801',140,'='],
+  [19,'Lagann18',130,'up'],
+  [20,'TWPYShaka',120,'down'],
+  [21,'TWPYpalolo',120,'down'],
+  [22,'Serafin',110,'down'],
+  [23,'Focus_Pocus_',100,'down'],
+  [24,'TWPYNucita',100,'down'],
+  [25,'Salwafle',90,'down'],
+  [26,'ssnakepy',90,'down'],
+  [27,'TWPYpollito',80,'down'],
+  [28,'Myers',70,'down'],
+  [29,'JJ',70,'down'],
+  [30,'KikeCarlsen',70,'down'],
+  [31,'Dragon_sex',70,'down']
+];
+
+class Component extends DCLogic {
+  row([pos, name, pts, mov]) {
+    const glyph = mov === 'up' ? '\u2191' : mov === 'down' ? '\u2193' : '=';
+    const movColor = mov === 'up' ? 'rgb(63,209,231)' : mov === 'down' ? 'rgb(245,10,100)' : 'rgba(255,255,255,.42)';
+    const top = pos <= 3;
+    return {
+      pos, name, pts, mov: glyph, movColor,
+      bg: top ? 'rgba(245,10,100,.16)' : 'rgba(255,255,255,.05)',
+      accent: top ? 'rgb(63,209,231)' : 'rgb(245,10,100)',
+      posColor: top ? '#fff' : 'rgba(255,255,255,.55)',
+      nameColor: top ? '#fff' : 'rgba(255,255,255,.92)'
+    };
+  }
+  renderVals() {
+    const rows = DATA.map(r => this.row(r));
+    return { colA: rows.slice(0, 16), colB: rows.slice(16) };
+  }
+}
+</script>
+</body>
+</html>

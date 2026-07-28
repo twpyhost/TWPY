@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/colors.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/typography.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/effects.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/styles.css">
+<style>
+body{margin:0;background:#03060a}
+a{color:rgb(var(--color-primary-500));text-decoration:none}
+a:hover{color:rgb(var(--color-tekken-blue-400))}
+input,select,textarea,button{font-family:'Source Sans 3',sans-serif}
+::placeholder{color:rgba(255,255,255,.32)}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes modalIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.25}}
+</style>
+<script src="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js"></script>
+</helmet>
+
+<div data-screen-label="Admin" style="display:flex;min-height:100vh;background:#03060a;color:#fff;font-family:var(--font-body,'Source Sans 3',sans-serif)">
+
+  <aside style="position:sticky;top:0;align-self:flex-start;height:100vh;flex:0 0 250px;width:250px;background:#000;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;z-index:60;overflow-y:auto;display:{{ sb.display }};position:{{ sb.position }};box-shadow:{{ sb.shadow }}">
+    <div style="padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:25px;font-style:italic;letter-spacing:.02em;line-height:1">TEKKEN PY</span>
+        <span style="font-family:var(--font-body,'Source Sans 3',sans-serif);font-size:10px;font-weight:700;letter-spacing:.22em;color:rgb(var(--color-primary-500))">PANEL ADMIN</span>
+      </div>
+      <button onClick="{{ closeDrawer }}" aria-label="Cerrar menú" style="display:none;align-items:center;justify-content:center;width:36px;height:36px;background:rgba(255,255,255,.06);border:none;color:#fff;font-size:20px;cursor:pointer;display:{{ sb.closeBtn }}">×</button>
+    </div>
+
+    <nav style="display:flex;flex-direction:column;padding:12px 0;gap:2px">
+      <a href="#identidades" onClick="{{ goIdent }}" style="display:flex;align-items:center;gap:11px;padding:12px 16px;border-left:3px solid transparent;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;text-transform:uppercase;transition:background .2s var(--ease-standard),color .2s var(--ease-standard);color:{{ nv.ident.c }};background:{{ nv.ident.bg }};border-left-color:{{ nv.ident.bc }}" style-hover="background:rgba(255,255,255,.06);color:#fff">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h7l3 3"></path><path d="M4 17h7l3-3"></path><circle cx="18" cy="12" r="3"></circle></svg>
+        <span style="flex:1">Identidades</span>
+        <span style="font-family:var(--font-body,'Source Sans 3',sans-serif);font-size:11px;font-weight:700;padding:2px 8px;background:rgb(var(--color-primary-500));clip-path:var(--clip-banner-right);color:#fff">{{ pendingCount }}</span>
+      </a>
+      <a href="#jugadores" onClick="{{ goPlayers }}" style="display:flex;align-items:center;gap:11px;padding:12px 16px;border-left:3px solid transparent;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;text-transform:uppercase;transition:background .2s var(--ease-standard),color .2s var(--ease-standard);color:{{ nv.players.c }};background:{{ nv.players.bg }};border-left-color:{{ nv.players.bc }}" style-hover="background:rgba(255,255,255,.06);color:#fff">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"></path><path d="M16 8.2a3 3 0 0 1 0 5.6"></path><path d="M17.5 19c0-2 .5-3.4-1-4.6"></path></svg>
+        <span style="flex:1">Jugadores</span>
+      </a>
+      <a href="#torneos" onClick="{{ goTours }}" style="display:flex;align-items:center;gap:11px;padding:12px 16px;border-left:3px solid transparent;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;text-transform:uppercase;transition:background .2s var(--ease-standard),color .2s var(--ease-standard);color:{{ nv.tours.c }};background:{{ nv.tours.bg }};border-left-color:{{ nv.tours.bc }}" style-hover="background:rgba(255,255,255,.06);color:#fff">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h5v6H4z"></path><path d="M4 15h5v4H4z"></path><path d="M9 8h4v9h-4"></path><path d="M13 12.5h6"></path></svg>
+        <span style="flex:1">Torneos</span>
+        <span style="font-family:var(--font-body,'Source Sans 3',sans-serif);font-size:11px;font-weight:700;color:rgb(var(--color-warning-500))">{{ syncIssues }}</span>
+      </a>
+      <a href="#rankings" onClick="{{ goRanks }}" style="display:flex;align-items:center;gap:11px;padding:12px 16px;border-left:3px solid transparent;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;text-transform:uppercase;transition:background .2s var(--ease-standard),color .2s var(--ease-standard);color:{{ nv.ranks.c }};background:{{ nv.ranks.bg }};border-left-color:{{ nv.ranks.bc }}" style-hover="background:rgba(255,255,255,.06);color:#fff">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 19V11"></path><path d="M12 19V5"></path><path d="M19 19v-6"></path></svg>
+        <span style="flex:1">Rankings</span>
+      </a>
+      <a href="#contenido" onClick="{{ goContent }}" style="display:flex;align-items:center;gap:11px;padding:12px 16px;border-left:3px solid transparent;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;text-transform:uppercase;transition:background .2s var(--ease-standard),color .2s var(--ease-standard);color:{{ nv.content.c }};background:{{ nv.content.bg }};border-left-color:{{ nv.content.bc }}" style-hover="background:rgba(255,255,255,.06);color:#fff">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h9l5 5v11H5z"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
+        <span style="flex:1">Contenido</span>
+      </a>
+      <a href="#sistema" onClick="{{ goSystem }}" style="display:flex;align-items:center;gap:11px;padding:12px 16px;border-left:3px solid transparent;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;text-transform:uppercase;transition:background .2s var(--ease-standard),color .2s var(--ease-standard);color:{{ nv.system.c }};background:{{ nv.system.bg }};border-left-color:{{ nv.system.bc }}" style-hover="background:rgba(255,255,255,.06);color:#fff">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2.5-6 3 12 2.5-6h6"></path></svg>
+        <span style="flex:1">Sistema</span>
+        <span style="width:8px;height:8px;background:rgb(var(--color-warning-500));border-radius:50%;animation:pulseDot 2s infinite"></span>
+      </a>
+    </nav>
+
+    <div style="margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:11px">
+      <span style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgb(var(--color-primary-500));font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:17px">DB</span>
+      <div style="display:flex;flex-direction:column;min-width:0">
+        <span style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Denis Barrios</span>
+        <span style="font-size:11px;color:rgba(255,255,255,.45)">Admin · TWPY</span>
+      </div>
+    </div>
+  </aside>
+
+  <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column">
+
+    <header style="position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:14px;padding:14px clamp(16px,3vw,32px);background:rgba(0,0,0,.88);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08)">
+      <button onClick="{{ openDrawer }}" aria-label="Abrir menú" style="align-items:center;justify-content:center;width:44px;height:44px;flex:0 0 44px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;cursor:pointer;display:{{ sb.burger }}">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
+      </button>
+      <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+        <span style="font-size:10px;font-weight:700;letter-spacing:.2em;color:rgba(255,255,255,.4)">LIGA TEKKEN PARAGUAY</span>
+        <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px;letter-spacing:.03em;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sectionTitle }}</span>
+      </div>
+      <span style="display:flex;align-items:center;gap:7px;padding:7px 12px;background:rgba(94,192,105,.12);border:1px solid rgba(94,192,105,.35);font-size:11px;font-weight:700;letter-spacing:.06em;color:rgb(var(--color-success-500));white-space:nowrap">
+        <span style="width:7px;height:7px;border-radius:50%;background:rgb(var(--color-success-500))"></span>SUPABASE OK
+      </span>
+    </header>
+
+    <main style="flex:1;padding:clamp(16px,2.6vw,30px);display:flex;flex-direction:column;gap:clamp(18px,2.2vw,26px);max-width:1440px;width:100%;box-sizing:border-box">
+
+      <sc-if value="{{ isIdent }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:22px">
+
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:8px;max-width:640px">
+            <span style="align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:rgb(var(--color-primary-500));clip-path:var(--clip-banner-both);padding:4px 18px">Cola de trabajo</span>
+            <h1 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:clamp(30px,4.4vw,46px);line-height:1;letter-spacing:.01em">Resolución de identidades</h1>
+            <p style="margin:0;font-size:14px;line-height:1.55;color:rgba(255,255,255,.6);text-wrap:pretty">Participantes de Challonge sin jugador asociado. Vinculá o creá desde la misma fila — sin salir de esta pantalla.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(96px,1fr));gap:10px">
+            <div style="padding:12px 14px;background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);border-top:2px solid rgb(var(--color-primary-500))">
+              <div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:30px;line-height:1">{{ pendingCount }}</div>
+              <div style="font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.5);text-transform:uppercase">Pendientes</div>
+            </div>
+            <div style="padding:12px 14px;background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);border-top:2px solid rgb(var(--color-tekken-blue-500))">
+              <div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:30px;line-height:1">{{ resolvedToday }}</div>
+              <div style="font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.5);text-transform:uppercase">Hoy</div>
+            </div>
+            <div style="padding:12px 14px;background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);border-top:2px solid rgba(255,255,255,.25)">
+              <div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:30px;line-height:1">{{ mergeCount }}</div>
+              <div style="font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.5);text-transform:uppercase">Fusiones</div>
+            </div>
+          </div>
+        </div>
+
+        <section style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.09)">
+            <h2 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:21px;letter-spacing:.04em">Participantes sin vincular</h2>
+            <span style="font-size:12px;color:rgba(255,255,255,.45)">Orden: torneo más reciente</span>
+          </div>
+
+          <sc-for list="{{ queue }}" as="row" hint-placeholder-count="4">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.06);transition:background .2s var(--ease-standard)" style-hover="background:rgba(255,255,255,.025)">
+              <div style="flex:1 1 210px;min-width:0;display:flex;flex-direction:column;gap:5px">
+                <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:16px;font-weight:700;color:#fff;word-break:break-all">{{ row.handle }}</span>
+                <span style="font-size:12px;color:rgba(255,255,255,.5)">{{ row.tour }} · {{ row.date }} · seed {{ row.seed }}</span>
+              </div>
+
+              <div style="flex:0 1 auto">
+                <sc-if value="{{ row.hasSuggest }}">
+                  <button onClick="{{ row.onAccept }}" style="display:flex;align-items:center;gap:8px;padding:7px 16px;background:rgba(63,209,231,.1);border:1px solid rgba(63,209,231,.4);color:rgb(var(--color-tekken-blue-400));font-size:12px;font-weight:700;letter-spacing:.04em;cursor:pointer;clip-path:var(--clip-banner-right);transition:background .2s var(--ease-standard)" style-hover="background:rgba(63,209,231,.22)">
+                    {{ row.suggestPct }}% {{ row.suggestName }} <span style="opacity:.7">· ACEPTAR</span>
+                  </button>
+                </sc-if>
+                <sc-if value="{{ row.noSuggest }}">
+                  <span style="display:inline-flex;padding:7px 14px;border:1px dashed rgba(255,255,255,.18);font-size:12px;color:rgba(255,255,255,.4);letter-spacing:.04em">SIN COINCIDENCIA</span>
+                </sc-if>
+              </div>
+
+              <div style="flex:1 1 330px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0">
+                <div style="position:relative;flex:1 1 170px;min-width:150px">
+                  <input type="text" placeholder="Buscar jugador…" value="{{ row.q }}" onFocus="{{ row.onFocus }}" onChange="{{ row.onQuery }}" style="width:100%;box-sizing:border-box;height:40px;padding:0 12px;background:#000;border:1px solid rgba(255,255,255,.16);color:#fff;font-size:14px;outline:none;transition:border-color .2s var(--ease-standard)" style-focus="border-color:rgb(var(--color-primary-500))">
+                  <sc-if value="{{ row.open }}">
+                    <div style="position:absolute;top:44px;left:0;right:0;z-index:20;background:#000;border:1px solid rgba(255,255,255,.16);box-shadow:0 6px 20px rgba(0,0,0,.6);max-height:210px;overflow-y:auto">
+                      <sc-for list="{{ row.matches }}" as="m" hint-placeholder-count="3">
+                        <button onClick="{{ m.onPick }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.06);color:#fff;font-size:13px;text-align:left;cursor:pointer;transition:background .15s var(--ease-standard)" style-hover="background:rgba(245,10,100,.16)">
+                          <span style="display:flex;align-items:center;justify-content:center;width:26px;height:26px;flex:0 0 26px;border-radius:50%;background:rgba(255,255,255,.1);font-size:11px;font-weight:700">{{ m.init }}</span>
+                          <span style="flex:1;font-weight:700">{{ m.name }}</span>
+                          <span style="color:rgba(255,255,255,.45);font-size:11px">#{{ m.rank }} · {{ m.tours }} trn</span>
+                        </button>
+                      </sc-for>
+                      <sc-if value="{{ row.noMatches }}">
+                        <div style="padding:10px 12px;font-size:12px;color:rgba(255,255,255,.45)">Sin resultados</div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                </div>
+                <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="primary" onClick="{{ row.onLink }}" hint-size="auto,40px">Vincular</x-import>
+                <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="secondary" onClick="{{ row.onCreate }}" hint-size="auto,40px">Crear nuevo</x-import>
+              </div>
+            </div>
+          </sc-for>
+
+          <sc-if value="{{ queueEmpty }}">
+            <div style="padding:44px 18px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center">
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:26px;color:rgb(var(--color-tekken-blue-400))">Cola vacía</span>
+              <span style="font-size:13px;color:rgba(255,255,255,.5)">Todos los participantes importados están vinculados.</span>
+            </div>
+          </sc-if>
+        </section>
+
+        <section style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);padding:18px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px">
+          <div style="flex:1 1 260px;display:flex;flex-direction:column;gap:6px">
+            <h2 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:21px;letter-spacing:.04em">Registrar jugador manualmente</h2>
+            <p style="margin:0;font-size:13px;line-height:1.5;color:rgba(255,255,255,.55);text-wrap:pretty">Para participantes sin cuenta de Challonge. No entran a la cola de vinculación; si más adelante crean cuenta, se les agrega el alias desde su ficha.</p>
+          </div>
+          <div style="flex:1 1 300px;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+            <input type="text" placeholder="Nombre del jugador" value="{{ manualName }}" onChange="{{ onManualName }}" style="flex:1 1 170px;min-width:150px;height:44px;padding:0 12px;background:#000;border:1px solid rgba(255,255,255,.16);color:#fff;font-size:14px;outline:none;transition:border-color .2s var(--ease-standard)" style-focus="border-color:rgb(var(--color-primary-500))">
+            <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="primary" onClick="{{ onManualCreate }}" hint-size="auto,40px">Registrar</x-import>
+          </div>
+        </section>
+
+        <section style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08)">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.09)">
+            <h2 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:21px;letter-spacing:.04em">Jugadores duplicados · fusionar</h2>
+            <span style="font-size:12px;color:rgba(255,255,255,.45)">Reasigna matches, torneos y puntos al jugador base</span>
+          </div>
+
+          <div style="padding:18px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px">
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <label style="font-size:11px;font-weight:700;letter-spacing:.12em;color:rgb(var(--color-tekken-blue-400))">JUGADOR BASE (SE CONSERVA)</label>
+                <select value="{{ mergeA }}" onChange="{{ onMergeA }}" style="height:44px;padding:0 12px;background:#000;border:1px solid rgba(63,209,231,.45);color:#fff;font-size:14px;border-radius:22px;outline:none">
+                  <sc-for list="{{ players }}" as="p" hint-placeholder-count="4">
+                    <option value="{{ p.id }}">{{ p.name }}</option>
+                  </sc-for>
+                </select>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <label style="font-size:11px;font-weight:700;letter-spacing:.12em;color:rgb(var(--color-primary-400))">DUPLICADO (SE ABSORBE)</label>
+                <select value="{{ mergeB }}" onChange="{{ onMergeB }}" style="height:44px;padding:0 12px;background:#000;border:1px solid rgba(245,10,100,.5);color:#fff;font-size:14px;border-radius:22px;outline:none">
+                  <sc-for list="{{ players }}" as="p" hint-placeholder-count="4">
+                    <option value="{{ p.id }}">{{ p.name }}</option>
+                  </sc-for>
+                </select>
+              </div>
+            </div>
+
+            <sc-if value="{{ isMobile }}">
+              <div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:#000;border:1px solid rgba(255,255,255,.12)">
+                <span style="font-size:12px;letter-spacing:.08em;color:rgba(255,255,255,.5)">RESUMEN DE LA FUSIÓN</span>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-left:3px solid rgb(var(--color-tekken-blue-500));background:rgba(63,209,231,.08)">
+                    <span style="flex:1;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:20px">{{ pa.name }}</span>
+                    <span style="font-size:12px;color:rgba(255,255,255,.6)">{{ pa.tours }} trn · {{ pa.pts }} pts</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-left:3px solid rgb(var(--color-primary-500));background:rgba(245,10,100,.08)">
+                    <span style="flex:1;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:20px">{{ pb.name }}</span>
+                    <span style="font-size:12px;color:rgba(255,255,255,.6)">{{ pb.tours }} trn · {{ pb.pts }} pts</span>
+                  </div>
+                </div>
+                <span style="font-size:12px;color:rgba(255,255,255,.45);text-wrap:pretty">La comparación completa de stats, matches y aliases se ve en desktop.</span>
+              </div>
+            </sc-if>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;display:{{ cmpGrid }}">
+              <div style="background:#000;border:1px solid rgba(63,209,231,.3);padding:16px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;align-items:center;gap:11px">
+                  <span style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:rgba(63,209,231,.18);border:2px solid rgb(var(--color-tekken-blue-500));font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:17px">{{ pa.init }}</span>
+                  <div style="display:flex;flex-direction:column">
+                    <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px;letter-spacing:.02em">{{ pa.name }}</span>
+                    <span style="font-size:12px;color:rgba(255,255,255,.5)">{{ pa.real }} · main {{ pa.main }}</span>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+                  <div style="padding:9px 11px;background:rgba(255,255,255,.04)"><div style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">TORNEOS</div><div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px">{{ pa.tours }}</div></div>
+                  <div style="padding:9px 11px;background:rgba(255,255,255,.04)"><div style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">MATCHES</div><div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px">{{ pa.record }}</div></div>
+                  <div style="padding:9px 11px;background:rgba(255,255,255,.04)"><div style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">PUNTOS</div><div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px">{{ pa.pts }}</div></div>
+                  <div style="padding:9px 11px;background:rgba(255,255,255,.04)"><div style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">RANKING</div><div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px">#{{ pa.rank }}</div></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <span style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">ALIASES CHALLONGE</span>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px">
+                    <sc-for list="{{ pa.aliases }}" as="al" hint-placeholder-count="2">
+                      <span style="padding:4px 10px;background:rgba(63,209,231,.12);border:1px solid rgba(63,209,231,.3);font-family:ui-monospace,Menlo,monospace;font-size:11px;color:rgb(var(--color-tekken-blue-400))">{{ al }}</span>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background:#000;border:1px solid rgba(245,10,100,.35);padding:16px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;align-items:center;gap:11px">
+                  <span style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:rgba(245,10,100,.18);border:2px solid rgb(var(--color-primary-500));font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:17px">{{ pb.init }}</span>
+                  <div style="display:flex;flex-direction:column">
+                    <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px;letter-spacing:.02em">{{ pb.name }}</span>
+                    <span style="font-size:12px;color:rgba(255,255,255,.5)">{{ pb.real }} · main {{ pb.main }}</span>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+                  <div style="padding:9px 11px;background:rgba(255,255,255,.04)"><div style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">TORNEOS</div><div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px">{{ pb.tours }}</div></div>
+                  <div style="padding:9px 11px;background:rgba(255,255,255,.04)"><div style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">MATCHES</div><div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px">{{ pb.record }}</div></div>
+                  <div style="padding:9px 11px;background:rgba(255,255,255,.04)"><div style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">PUNTOS</div><div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px">{{ pb.pts }}</div></div>
+                  <div style="padding:9px 11px;background:rgba(255,255,255,.04)"><div style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">RANKING</div><div style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px">#{{ pb.rank }}</div></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <span style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">ALIASES CHALLONGE</span>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px">
+                    <sc-for list="{{ pb.aliases }}" as="al" hint-placeholder-count="2">
+                      <span style="padding:4px 10px;background:rgba(245,10,100,.12);border:1px solid rgba(245,10,100,.32);font-family:ui-monospace,Menlo,monospace;font-size:11px;color:rgb(var(--color-primary-300))">{{ al }}</span>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;background:rgba(230,0,0,.07);border-left:3px solid rgb(var(--color-error-500))">
+              <div style="display:flex;gap:11px;flex:1 1 320px">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="rgb(230,0,0)" stroke-width="2" style="flex:0 0 20px;margin-top:2px"><path d="M12 3 2 20h20z"></path><path d="M12 9v5"></path><path d="M12 17h.01"></path></svg>
+                <p style="margin:0;font-size:13px;line-height:1.5;color:rgba(255,255,255,.8);text-wrap:pretty">Acción irreversible desde la UI: <strong>{{ mergeLoad }}</strong> se reasignan al jugador base y el duplicado se elimina. Los rankings quedan desactualizados hasta recalcular.</p>
+              </div>
+              <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="primary" onClick="{{ askMerge }}" hint-size="auto,40px">Confirmar fusión</x-import>
+            </div>
+          </div>
+        </section>
+
+        <section style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08)">
+          <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.09)">
+            <h2 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:21px;letter-spacing:.04em">Fusiones y vinculaciones recientes</h2>
+          </div>
+          <sc-for list="{{ merges }}" as="m" hint-placeholder-count="3">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.06)">
+              <span style="padding:3px 11px;font-size:10px;font-weight:700;letter-spacing:.07em;clip-path:var(--clip-banner-right);background:{{ m.kindBg }};color:{{ m.kindFg }}">{{ m.kindLabel }}</span>
+              <div style="flex:1 1 240px;display:flex;flex-direction:column;gap:3px;min-width:0">
+                <span style="font-size:14px"><strong>{{ m.into }}</strong> <span style="color:rgba(255,255,255,.4)">←</span> <span style="font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.75)">{{ m.from }}</span></span>
+                <span style="font-size:12px;color:rgba(255,255,255,.45)">{{ m.by }} · {{ m.when }} · {{ m.note }}</span>
+              </div>
+              <button onClick="{{ m.onUndo }}" style="padding:8px 14px;background:transparent;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:12px;font-weight:700;letter-spacing:.05em;cursor:pointer;transition:border-color .2s var(--ease-standard),color .2s var(--ease-standard)" style-hover="border-color:rgb(var(--color-primary-500));color:rgb(var(--color-primary-400))">DESHACER</button>
+            </div>
+          </sc-for>
+        </section>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isPlayers }}">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <sc-if value="{{ noPlayerSel }}">
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px">
+              <h1 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:clamp(28px,4vw,42px);letter-spacing:.01em;line-height:1">Jugadores <span style="color:rgba(255,255,255,.35);font-size:.6em">{{ playerTotal }}</span></h1>
+              <input type="text" placeholder="Buscar por nombre o alias…" value="{{ playerQuery }}" onChange="{{ onPlayerQuery }}" style="flex:1 1 260px;max-width:360px;height:44px;padding:0 14px;background:#000;border:1px solid rgba(255,255,255,.16);color:#fff;font-size:14px;outline:none;transition:border-color .2s var(--ease-standard)" style-focus="border-color:rgb(var(--color-primary-500))">
+            </div>
+
+            <sc-if value="{{ isMobile }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ playerRows }}" as="p" hint-placeholder-count="5">
+                  <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);padding:14px;display:flex;flex-direction:column;gap:11px">
+                    <div style="display:flex;align-items:center;gap:11px">
+                      <span style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;flex:0 0 40px;border-radius:50%;background:rgba(255,255,255,.09);font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:17px">{{ p.init }}</span>
+                      <div style="display:flex;flex-direction:column;min-width:0;flex:1">
+                        <span style="font-size:15px;font-weight:700">{{ p.name }}</span>
+                        <span style="font-size:12px;color:rgba(255,255,255,.45)">{{ p.real }} · main {{ p.main }}</span>
+                      </div>
+                      <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:24px;color:rgb(var(--color-primary-400))">#{{ p.rank }}</span>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:rgba(255,255,255,.6)">
+                      <span>{{ p.tours }} torneos</span>
+                      <span>{{ p.pts }} pts</span>
+                      <span style="color:{{ p.aliasColor }};font-family:ui-monospace,Menlo,monospace">{{ p.aliasLabel }}</span>
+                    </div>
+                    <button onClick="{{ p.onOpen }}" style="height:44px;background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:12px;font-weight:700;letter-spacing:.05em;cursor:pointer">VER PERFIL</button>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);overflow-x:auto;display:{{ tableDisplay }}">
+              <table style="width:100%;min-width:640px;border-collapse:collapse">
+                <thead>
+                  <tr style="background:#000">
+                    <th style="text-align:left;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Jugador</th>
+                    <th style="text-align:left;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Aliases</th>
+                    <th style="text-align:right;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Torneos</th>
+                    <th style="text-align:right;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Ranking</th>
+                    <th style="text-align:right;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ playerRows }}" as="p" hint-placeholder-count="7">
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.06);transition:background .2s var(--ease-standard)" style-hover="background:rgba(255,255,255,.03)">
+                      <td style="padding:{{ padY }} 16px">
+                        <div style="display:flex;align-items:center;gap:11px">
+                          <span style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:rgba(255,255,255,.09);font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px">{{ p.init }}</span>
+                          <div style="display:flex;flex-direction:column">
+                            <span style="font-size:14px;font-weight:700">{{ p.name }}</span>
+                            <span style="font-size:11px;color:rgba(255,255,255,.45)">{{ p.real }}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td style="padding:{{ padY }} 16px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:rgba(255,255,255,.6)">{{ p.aliasLabel }}</td>
+                      <td style="padding:{{ padY }} 16px;text-align:right;font-size:14px">{{ p.tours }}</td>
+                      <td style="padding:{{ padY }} 16px;text-align:right;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:20px;color:rgb(var(--color-primary-400))">#{{ p.rank }}</td>
+                      <td style="padding:{{ padY }} 16px;text-align:right">
+                        <button onClick="{{ p.onOpen }}" style="padding:8px 14px;background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:12px;font-weight:700;letter-spacing:.05em;cursor:pointer;white-space:nowrap;transition:border-color .2s var(--ease-standard),color .2s var(--ease-standard)" style-hover="border-color:rgb(var(--color-primary-500));color:rgb(var(--color-primary-400))">VER PERFIL</button>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ playerSel }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <button onClick="{{ backToPlayers }}" style="align-self:flex-start;padding:8px 0;background:transparent;border:none;color:rgb(var(--color-tekken-blue-400));font-size:13px;font-weight:700;letter-spacing:.05em;cursor:pointer">← VOLVER A JUGADORES</button>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px">
+              <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);padding:18px;display:flex;flex-direction:column;gap:14px">
+                <div style="display:flex;align-items:center;gap:13px">
+                  <span style="display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:rgb(var(--color-primary-500));font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px">{{ psel.init }}</span>
+                  <div style="display:flex;flex-direction:column">
+                    <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:28px;line-height:1.05">{{ psel.name }}</span>
+                    <span style="font-size:12px;color:rgba(255,255,255,.5)">#{{ psel.rank }} · {{ psel.pts }} pts · {{ psel.tours }} torneos</span>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.45)">GAMERTAG</span><input type="text" value="{{ psel.name }}" onChange="{{ noop }}" style="height:42px;padding:0 12px;background:#000;border:1px solid rgba(255,255,255,.16);color:#fff;font-size:14px;outline:none" style-focus="border-color:rgb(var(--color-primary-500))"></label>
+                  <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.45)">NOMBRE REAL</span><input type="text" value="{{ psel.real }}" onChange="{{ noop }}" style="height:42px;padding:0 12px;background:#000;border:1px solid rgba(255,255,255,.16);color:#fff;font-size:14px;outline:none" style-focus="border-color:rgb(var(--color-primary-500))"></label>
+                  <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.45)">MAIN</span><input type="text" value="{{ psel.main }}" onChange="{{ noop }}" style="height:42px;padding:0 12px;background:#000;border:1px solid rgba(255,255,255,.16);color:#fff;font-size:14px;outline:none" style-focus="border-color:rgb(var(--color-primary-500))"></label>
+                </div>
+                <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="primary" onClick="{{ savePlayer }}" hint-size="auto,40px">Guardar cambios</x-import>
+              </div>
+
+              <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);padding:18px;display:flex;flex-direction:column;gap:12px">
+                <h3 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.04em">Cuentas de Challonge</h3>
+                <div style="display:flex;flex-direction:column;gap:7px">
+                  <sc-for list="{{ pselAliases }}" as="al" hint-placeholder-count="3">
+                    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:9px 12px;background:#000;border:1px solid {{ al.bd }}">
+                      <span style="flex:1 1 130px;font-family:ui-monospace,Menlo,monospace;font-size:13px;color:rgba(255,255,255,.85);min-width:0;word-break:break-all">{{ al.name }}</span>
+                      <sc-if value="{{ al.isActive }}">
+                        <span style="padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:.07em;clip-path:var(--clip-banner-right);background:rgba(63,209,231,.18);color:rgb(var(--color-tekken-blue-400))">ACTIVA</span>
+                      </sc-if>
+                      <sc-if value="{{ al.notActive }}">
+                        <button onClick="{{ al.onActivate }}" style="padding:5px 10px;background:transparent;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);font-size:10px;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:border-color .2s var(--ease-standard)" style-hover="border-color:rgb(var(--color-tekken-blue-500));color:rgb(var(--color-tekken-blue-400))">MARCAR ACTIVA</button>
+                      </sc-if>
+                      <button onClick="{{ al.onRemove }}" style="background:transparent;border:none;color:rgba(255,255,255,.4);font-size:16px;cursor:pointer;padding:0 4px;transition:color .2s var(--ease-standard)" style-hover="color:rgb(var(--color-error-500))">×</button>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ pselNoAliases }}">
+                    <div style="padding:11px 12px;background:#000;border:1px dashed rgba(255,255,255,.16);font-size:12px;color:rgba(255,255,255,.5)">Jugador registrado manualmente · sin cuenta de Challonge todavía.</div>
+                  </sc-if>
+                </div>
+                <span style="font-size:12px;color:rgba(255,255,255,.45);text-wrap:pretty">Un jugador puede tener varias cuentas de Challonge. La cuenta activa es la que se usa al importar torneos nuevos.</span>
+              </div>
+            </div>
+
+            <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);overflow-x:auto">
+              <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.09)">
+                <h3 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.04em">Historial de matches</h3>
+              </div>
+              <table style="width:100%;min-width:560px;border-collapse:collapse">
+                <thead><tr style="background:#000">
+                  <th style="text-align:left;padding:11px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:14px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Torneo</th>
+                  <th style="text-align:left;padding:11px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:14px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Rival</th>
+                  <th style="text-align:left;padding:11px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:14px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Ronda</th>
+                  <th style="text-align:right;padding:11px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:14px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Resultado</th>
+                </tr></thead>
+                <tbody>
+                  <sc-for list="{{ pselHistory }}" as="h" hint-placeholder-count="4">
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.06)">
+                      <td style="padding:12px 16px;font-size:13px">{{ h.tour }}</td>
+                      <td style="padding:12px 16px;font-size:13px;font-weight:700">{{ h.rival }}</td>
+                      <td style="padding:12px 16px;font-size:13px;color:rgba(255,255,255,.55)">{{ h.round }}</td>
+                      <td style="padding:12px 16px;text-align:right;font-size:13px;font-weight:700;color:{{ h.color }}">{{ h.res }} {{ h.score }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isTours }}">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <sc-if value="{{ noTourSel }}">
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <h1 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:clamp(28px,4vw,42px);letter-spacing:.01em;line-height:1">Torneos importados</h1>
+                <span style="font-size:13px;color:rgba(255,255,255,.55)">Fuente: Challonge API · sincronización automática cada 6 h</span>
+                <div style="display:flex;flex-wrap:wrap;gap:10px;padding-top:6px">
+                  <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="primary" onClick="{{ onSyncNew }}" hint-size="auto,40px">{{ syncLabel }}</x-import>
+                  <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="secondary" onClick="{{ openImport }}" hint-size="auto,40px">Importar torneo histórico</x-import>
+                </div>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;flex:1 1 320px;justify-content:flex-end">
+                <select value="{{ acctFilter }}" onChange="{{ onAcctFilter }}" style="height:44px;padding:0 14px;background:#000;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:13px;border-radius:22px;outline:none;cursor:pointer">
+                  <option value="all">Todas las cuentas de Challonge</option>
+                  <option value="A">Cuenta A · histórica ({{ acctCountA }})</option>
+                  <option value="B">Cuenta B · actual ({{ acctCountB }})</option>
+                </select>
+                <input type="text" placeholder="Buscar torneo…" value="{{ tourQuery }}" onChange="{{ onTourQuery }}" style="flex:1 1 180px;max-width:280px;height:44px;padding:0 14px;background:#000;border:1px solid rgba(255,255,255,.16);color:#fff;font-size:14px;outline:none" style-focus="border-color:rgb(var(--color-primary-500))">
+              </div>
+            </div>
+
+            <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);overflow-x:auto">
+              <table style="width:100%;min-width:720px;border-collapse:collapse">
+                <thead><tr style="background:#000">
+                  <th style="text-align:left;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Torneo</th>
+
+                  <th style="text-align:left;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Cuenta origen</th>
+                  <th style="text-align:left;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Fecha</th>
+                  <th style="text-align:left;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Sincronización</th>
+                  <th style="text-align:right;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Sin vincular</th>
+                  <th style="text-align:right;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400"></th>
+                </tr></thead>
+                <tbody>
+                  <sc-for list="{{ tourRows }}" as="t" hint-placeholder-count="5">
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.06);transition:background .2s var(--ease-standard)" style-hover="background:rgba(255,255,255,.03)">
+                      <td style="padding:{{ padY }} 16px">
+                        <div style="display:flex;flex-direction:column;gap:2px">
+                          <span style="font-size:14px;font-weight:700">{{ t.name }}</span>
+                          <span style="font-size:11px;color:rgba(255,255,255,.45)">{{ t.parts }} participantes · {{ t.format }}</span>
+                        </div>
+                      </td>
+                      <td style="padding:{{ padY }} 16px"><span style="display:inline-flex;padding:4px 20px 4px 11px;font-size:11px;font-weight:700;letter-spacing:.05em;white-space:nowrap;clip-path:var(--clip-banner-right);background:{{ t.acctBg }};color:{{ t.acctFg }}">{{ t.acctLabel }}</span></td>
+                      <td style="padding:{{ padY }} 16px;font-size:13px;color:rgba(255,255,255,.7)">{{ t.date }}</td>
+                      <td style="padding:{{ padY }} 16px">
+                        <div style="display:flex;flex-direction:column;gap:3px">
+                          <span style="display:inline-flex;align-items:center;gap:7px;padding:4px 11px;font-size:11px;font-weight:700;letter-spacing:.06em;clip-path:var(--clip-banner-right);background:{{ t.bg }};color:{{ t.fg }}">{{ t.statusLabel }}</span>
+                          <span style="font-size:11px;color:rgba(255,255,255,.45)">{{ t.statusNote }}</span>
+                        </div>
+                      </td>
+                      <td style="padding:{{ padY }} 16px;text-align:right;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:20px;color:{{ t.pendColor }}">{{ t.pending }}</td>
+                      <td style="padding:{{ padY }} 16px">
+                        <div style="display:flex;gap:8px;justify-content:flex-end">
+                          <button onClick="{{ t.onReimport }}" style="padding:8px 14px;background:rgba(245,10,100,.14);border:1px solid rgba(245,10,100,.45);color:rgb(var(--color-primary-300));font-size:12px;font-weight:700;letter-spacing:.05em;cursor:pointer;white-space:nowrap;transition:background .2s var(--ease-standard)" style-hover="background:rgba(245,10,100,.3)">REIMPORTAR</button>
+                          <button onClick="{{ t.onOpen }}" style="padding:8px 14px;background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:12px;font-weight:700;letter-spacing:.05em;cursor:pointer;white-space:nowrap;transition:border-color .2s var(--ease-standard)" style-hover="border-color:#fff">DETALLE</button>
+                        </div>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tourSel }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <button onClick="{{ backToTours }}" style="align-self:flex-start;padding:8px 0;background:transparent;border:none;color:rgb(var(--color-tekken-blue-400));font-size:13px;font-weight:700;letter-spacing:.05em;cursor:pointer">← VOLVER A TORNEOS</button>
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <h1 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:clamp(26px,3.6vw,38px);line-height:1.05">{{ tsel.name }}</h1>
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+                  <span style="display:inline-flex;padding:4px 22px 4px 12px;font-size:11px;font-weight:700;letter-spacing:.05em;clip-path:var(--clip-banner-right);background:{{ tsel.acctBg }};color:{{ tsel.acctFg }}">{{ tsel.acctLabel }}</span>
+                  <span style="font-size:13px;color:rgba(255,255,255,.55)">{{ tsel.date }} · {{ tsel.parts }} participantes · {{ tsel.format }}</span>
+                </div>
+              </div>
+              <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="primary" onClick="{{ tsel.onReimport }}" hint-size="auto,40px">Reimportar bracket</x-import>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+              <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);padding:18px;display:flex;flex-direction:column;gap:14px">
+                <h3 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.04em">Top 4</h3>
+                <sc-for list="{{ tselTop }}" as="tp" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:#000;border-left:3px solid {{ tp.color }}">
+                    <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:24px;width:30px;color:{{ tp.color }}">{{ tp.pos }}</span>
+                    <span style="flex:1;font-size:14px;font-weight:700">{{ tp.name }}</span>
+                    <span style="font-size:12px;color:rgba(255,255,255,.5)">+{{ tp.pts }} pts</span>
+                  </div>
+                </sc-for>
+                <div style="display:flex;align-items:center;justify-content:center;height:120px;background:#000;border:1px dashed rgba(255,255,255,.16);font-size:12px;letter-spacing:.1em;color:rgba(255,255,255,.4)">BRACKET EMBEBIDO · CHALLONGE IFRAME</div>
+              </div>
+
+              <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.09)">
+                  <h3 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.04em">Participantes</h3>
+                  <span style="font-size:12px;color:rgba(255,255,255,.45)">{{ tsel.pending }} sin vincular</span>
+                </div>
+                <div style="max-height:340px;overflow-y:auto">
+                  <sc-for list="{{ tselParts }}" as="pp" hint-placeholder-count="6">
+                    <div style="display:flex;align-items:center;gap:10px;padding:11px 18px;border-bottom:1px solid rgba(255,255,255,.05)">
+                      <span style="flex:1;font-family:ui-monospace,Menlo,monospace;font-size:13px;min-width:0;word-break:break-all">{{ pp.handle }}</span>
+                      <span style="padding:3px 10px;font-size:11px;font-weight:700;letter-spacing:.05em;clip-path:var(--clip-banner-right);background:{{ pp.bg }};color:{{ pp.fg }}">{{ pp.label }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isRanks }}">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <h1 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:clamp(28px,4vw,42px);line-height:1">Ranking nacional</h1>
+            <span style="font-size:13px;color:rgba(255,255,255,.55)">{{ rankSubtitle }}</span>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;padding-top:4px">
+              <select value="{{ year }}" onChange="{{ onYear }}" style="height:40px;padding:0 12px;background:#000;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:13px;border-radius:20px;outline:none;cursor:pointer">
+                <sc-for list="{{ years }}" as="y" hint-placeholder-count="3">
+                  <option value="{{ y }}">Año {{ y }}</option>
+                </sc-for>
+              </select>
+            </div>
+          </div>
+          <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="primary" onClick="{{ askRecalc }}" hint-size="auto,40px">Recalcular rankings</x-import>
+        </div>
+
+        <sc-if value="{{ ranksStale }}">
+          <div style="display:flex;gap:11px;padding:13px 16px;background:rgba(245,244,79,.08);border-left:3px solid rgb(var(--color-warning-500))">
+            <span style="font-size:13px;line-height:1.5;color:rgba(255,255,255,.82);text-wrap:pretty">Hubo fusiones de jugadores después del último cálculo. Los puntos mostrados pueden estar desactualizados.</span>
+          </div>
+        </sc-if>
+
+        <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);overflow-x:auto">
+          <table style="width:100%;min-width:620px;border-collapse:collapse">
+            <thead><tr style="background:#000">
+              <th style="text-align:left;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Pos</th>
+              <th style="text-align:left;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Jugador</th>
+              <th style="text-align:right;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Torneos</th>
+              <th style="text-align:right;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Puntos</th>
+              <th style="text-align:right;padding:12px 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:15px;letter-spacing:.09em;color:rgba(255,255,255,.5);font-weight:400">Tendencia</th>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{ rankRows }}" as="r" hint-placeholder-count="8">
+                <tr style="border-bottom:1px solid rgba(255,255,255,.06);transition:background .2s var(--ease-standard)" style-hover="background:rgba(255,255,255,.03)">
+                  <td style="padding:{{ padY }} 16px;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:24px;color:{{ r.posColor }}">{{ r.rank }}</td>
+                  <td style="padding:{{ padY }} 16px">
+                    <div style="display:flex;align-items:center;gap:11px">
+                      <span style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;flex:0 0 32px;border-radius:50%;background:rgba(255,255,255,.09);font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:14px">{{ r.init }}</span>
+                      <div style="display:flex;flex-direction:column">
+                        <span style="font-size:14px;font-weight:700">{{ r.name }}</span>
+                        <span style="font-size:11px;color:rgba(255,255,255,.45)">main {{ r.main }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="padding:{{ padY }} 16px;text-align:right;font-size:14px;color:rgba(255,255,255,.7)">{{ r.tours }}</td>
+                  <td style="padding:{{ padY }} 16px;text-align:right;font-size:15px;font-weight:700">{{ r.pts }}</td>
+                  <td style="padding:{{ padY }} 16px;text-align:right;font-size:13px;font-weight:700;color:{{ r.trendColor }}">{{ r.trendLabel }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isContent }}">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <h1 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:clamp(28px,4vw,42px);line-height:1">Contenido</h1>
+            <span style="font-size:13px;color:rgba(255,255,255,.55)">Noticias y eventos publicados en el sitio público</span>
+          </div>
+          <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="primary" onClick="{{ newPost }}" hint-size="auto,40px">Nueva entrada</x-import>
+        </div>
+
+        <sc-if value="{{ editingPost }}">
+          <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(245,10,100,.35);padding:18px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+              <h3 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:20px;letter-spacing:.04em">{{ editorTitle }}</h3>
+              <button onClick="{{ closeEditor }}" style="background:transparent;border:none;color:rgba(255,255,255,.5);font-size:22px;cursor:pointer">×</button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px">
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.45)">TÍTULO</span><input type="text" value="{{ postTitle }}" onChange="{{ onPostTitle }}" style="height:44px;padding:0 12px;background:#000;border:1px solid rgba(255,255,255,.16);color:#fff;font-size:14px;outline:none" style-focus="border-color:rgb(var(--color-primary-500))"></label>
+                <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.45)">CUERPO</span><textarea rows="6" value="{{ postBody }}" onChange="{{ onPostBody }}" style="padding:11px 12px;background:#000;border:1px solid rgba(255,255,255,.16);color:#fff;font-size:14px;line-height:1.55;outline:none;resize:vertical" style-focus="border-color:rgb(var(--color-primary-500))"></textarea></label>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <span style="font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.45)">IMAGEN DE PORTADA · SUPABASE STORAGE</span>
+                <div style="flex:1;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#000;border:1px dashed rgba(255,255,255,.2);cursor:pointer;transition:border-color .2s var(--ease-standard)" style-hover="border-color:rgb(var(--color-primary-500))">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.6"><path d="M12 16V4"></path><path d="M7 9l5-5 5 5"></path><path d="M4 20h16"></path></svg>
+                  <span style="font-size:13px;color:rgba(255,255,255,.6)">Arrastrá una imagen o hacé clic</span>
+                  <span style="font-size:11px;color:rgba(255,255,255,.35)">JPG / PNG / WEBP · máx 4 MB</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+              <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="primary" onClick="{{ savePost }}" hint-size="auto,40px">Guardar y publicar</x-import>
+              <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="secondary" onClick="{{ saveDraft }}" hint-size="auto,40px">Guardar borrador</x-import>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
+          <sc-for list="{{ postRows }}" as="po" hint-placeholder-count="4">
+            <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column">
+              <div style="height:96px;background:linear-gradient(135deg,rgba(245,10,100,.28),rgba(3,15,20,.9));display:flex;align-items:flex-end;padding:11px">
+                <span style="padding:3px 11px;font-size:11px;font-weight:700;letter-spacing:.06em;clip-path:var(--clip-banner-right);background:{{ po.bg }};color:{{ po.fg }}">{{ po.stateLabel }}</span>
+              </div>
+              <div style="padding:14px;display:flex;flex-direction:column;gap:8px;flex:1">
+                <span style="font-size:15px;font-weight:700;line-height:1.35;text-wrap:pretty">{{ po.title }}</span>
+                <span style="font-size:12px;color:rgba(255,255,255,.45)">{{ po.date }} · {{ po.author }}</span>
+                <div style="margin-top:auto;display:flex;gap:8px;padding-top:10px">
+                  <button onClick="{{ po.onEdit }}" style="flex:1;padding:9px 12px;background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:12px;font-weight:700;letter-spacing:.05em;cursor:pointer;transition:border-color .2s var(--ease-standard)" style-hover="border-color:#fff">EDITAR</button>
+                  <button onClick="{{ po.onToggle }}" style="flex:1;padding:9px 12px;background:rgba(245,10,100,.14);border:1px solid rgba(245,10,100,.45);color:rgb(var(--color-primary-300));font-size:12px;font-weight:700;letter-spacing:.05em;cursor:pointer;transition:background .2s var(--ease-standard)" style-hover="background:rgba(245,10,100,.3)">{{ po.toggleLabel }}</button>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isSystem }}">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <h1 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:clamp(28px,4vw,42px);line-height:1">Estado del sistema</h1>
+          <span style="font-size:13px;color:rgba(255,255,255,.55)">Health checks de los servicios que alimentan la plataforma</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+          <sc-for list="{{ services }}" as="sv" hint-placeholder-count="4">
+            <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08);padding:16px;display:flex;flex-direction:column;gap:11px;border-top:2px solid {{ sv.color }}">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+                <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.04em">{{ sv.name }}</span>
+                <span style="width:10px;height:10px;border-radius:50%;background:{{ sv.color }}"></span>
+              </div>
+              <span style="font-size:12px;font-weight:700;letter-spacing:.06em;color:{{ sv.color }}">{{ sv.label }}</span>
+              <span style="font-size:12px;color:rgba(255,255,255,.55);line-height:1.5;text-wrap:pretty">{{ sv.detail }}</span>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:9px;border-top:1px solid rgba(255,255,255,.07)">
+                <span style="font-size:11px;color:rgba(255,255,255,.4)">{{ sv.metricLabel }}</span>
+                <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:rgba(255,255,255,.8)">{{ sv.metric }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.08)">
+          <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.09)">
+            <h3 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.04em">Log de eventos</h3>
+          </div>
+          <sc-for list="{{ logs }}" as="lg" hint-placeholder-count="5">
+            <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;padding:11px 18px;border-bottom:1px solid rgba(255,255,255,.05)">
+              <span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:rgba(255,255,255,.4);flex:0 0 108px">{{ lg.time }}</span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.06em;flex:0 0 66px;color:{{ lg.color }}">{{ lg.level }}</span>
+              <span style="flex:1 1 220px;font-size:13px;color:rgba(255,255,255,.8);min-width:0">{{ lg.msg }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+    </main>
+  </div>
+
+  <sc-if value="{{ drawerOpen }}">
+    <div onClick="{{ closeDrawer }}" style="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50"></div>
+  </sc-if>
+
+  <sc-if value="{{ importOpen }}">
+    <div style="position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.78);overflow-y:auto">
+      <div style="width:100%;max-width:520px;background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.14);border-top:3px solid rgb(var(--color-tekken-blue-500));padding:22px;display:flex;flex-direction:column;gap:16px;animation:modalIn .22s var(--ease-standard) both">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h3 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:26px;letter-spacing:.02em;line-height:1.05">Importar torneo histórico</h3>
+            <span style="font-size:13px;color:rgba(255,255,255,.55)">Traé un torneo viejo pegando su URL o ID de Challonge.</span>
+          </div>
+          <button onClick="{{ closeImport }}" aria-label="Cerrar" style="background:transparent;border:none;color:rgba(255,255,255,.5);font-size:24px;line-height:1;cursor:pointer;padding:0 4px">×</button>
+        </div>
+
+        <label style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.45)">CUENTA DE ORIGEN</span>
+          <select value="{{ importAcct }}" onChange="{{ onImportAcct }}" style="height:44px;padding:0 12px;background:#000;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:14px;border-radius:22px;outline:none;cursor:pointer">
+            <option value="A">Cuenta A · histórica</option>
+            <option value="B">Cuenta B · actual</option>
+          </select>
+        </label>
+
+        <label style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.45)">URL O ID DEL TORNEO</span>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <input type="text" placeholder="challonge.com/es/twpy_cup_2023" value="{{ importUrl }}" onChange="{{ onImportUrl }}" style="flex:1 1 200px;min-width:0;height:44px;padding:0 12px;background:#000;border:1px solid rgba(255,255,255,.18);color:#fff;font-size:14px;outline:none;transition:border-color .2s var(--ease-standard)" style-focus="border-color:rgb(var(--color-tekken-blue-500))">
+            <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="secondary" onClick="{{ onSearchImport }}" hint-size="auto,40px">{{ searchLabel }}</x-import>
+          </div>
+        </label>
+
+        <sc-if value="{{ importPreview }}">
+          <div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:#000;border:1px solid rgba(63,209,231,.4)">
+            <span style="font-size:11px;font-weight:700;letter-spacing:.1em;color:rgb(var(--color-tekken-blue-400))">TORNEO ENCONTRADO</span>
+            <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:24px;line-height:1.1">{{ importPreview.name }}</span>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">
+              <div style="padding:9px 11px;background:rgba(255,255,255,.04)"><div style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">FECHA</div><div style="font-size:14px;font-weight:700">{{ importPreview.date }}</div></div>
+              <div style="padding:9px 11px;background:rgba(255,255,255,.04)"><div style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">PARTICIPANTES</div><div style="font-size:14px;font-weight:700">{{ importPreview.parts }}</div></div>
+              <div style="padding:9px 11px;background:rgba(255,255,255,.04)"><div style="font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)">FORMATO</div><div style="font-size:14px;font-weight:700">{{ importPreview.format }}</div></div>
+            </div>
+            <span style="font-size:12px;color:rgba(255,255,255,.5);text-wrap:pretty">Se importa como {{ importAcctLabel }}. Los participantes entran a la cola de resolución de identidades.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noImportPreview }}">
+          <div style="padding:16px;background:#000;border:1px dashed rgba(255,255,255,.16);font-size:12px;color:rgba(255,255,255,.45);text-align:center">Buscá el torneo para ver el preview antes de confirmar.</div>
+        </sc-if>
+
+        <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end">
+          <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="secondary" onClick="{{ closeImport }}" hint-size="auto,40px">Cancelar</x-import>
+          <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="primary" disabled="{{ cannotImport }}" onClick="{{ onConfirmImport }}" hint-size="auto,40px">Confirmar importación</x-import>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ confirm }}">
+    <div style="position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.78)">
+      <div style="width:100%;max-width:480px;background:rgb(var(--color-dark-gray-3-500));border:1px solid rgba(255,255,255,.14);border-top:3px solid rgb(var(--color-primary-500));padding:22px;display:flex;flex-direction:column;gap:14px;animation:modalIn .22s var(--ease-standard) both">
+        <h3 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:26px;letter-spacing:.02em;line-height:1.05">{{ confirm.title }}</h3>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:rgba(255,255,255,.75);text-wrap:pretty">{{ confirm.body }}</p>
+        <div style="padding:11px 13px;background:rgba(230,0,0,.09);border-left:3px solid rgb(var(--color-error-500));font-size:12px;color:rgba(255,255,255,.8)">{{ confirm.warn }}</div>
+        <label style="display:flex;align-items:center;gap:9px;font-size:13px;color:rgba(255,255,255,.8);cursor:pointer">
+          <input type="checkbox" checked="{{ ack }}" onChange="{{ onAck }}" style="width:18px;height:18px;accent-color:rgb(var(--color-primary-500));cursor:pointer">
+          Entiendo las consecuencias de esta acción
+        </label>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end">
+          <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="secondary" onClick="{{ closeConfirm }}" hint-size="auto,40px">Cancelar</x-import>
+          <x-import component-from-global-scope="Tekken8DesignSystem_a208c3.Button" from="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/_ds_bundle.js" size="small" variant="primary" disabled="{{ notAck }}" onClick="{{ runConfirm }}" hint-size="auto,40px">{{ confirm.cta }}</x-import>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toast }}">
+    <div style="position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:90;display:flex;align-items:center;gap:10px;padding:13px 20px;background:#000;border:1px solid rgba(63,209,231,.5);box-shadow:0 8px 30px rgba(0,0,0,.7);animation:toastIn .25s var(--ease-standard) both;max-width:90vw">
+      <span style="width:8px;height:8px;border-radius:50%;background:rgb(var(--color-tekken-blue-500));flex:0 0 8px"></span>
+      <span style="font-size:13px;font-weight:700;letter-spacing:.02em">{{ toast }}</span>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;comfortable&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;compact&quot;,&quot;tsType&quot;:&quot;'comfortable'|'compact'&quot;,&quot;section&quot;:&quot;Tablas&quot;},&quot;showSuggestions&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Identidades&quot;},&quot;defaultSection&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;identidades&quot;,&quot;jugadores&quot;,&quot;torneos&quot;,&quot;rankings&quot;,&quot;contenido&quot;,&quot;sistema&quot;],&quot;default&quot;:&quot;identidades&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Navegación&quot;}}">
+const P0 = [
+  {id:'p1',name:'Fate',real:'Rodrigo Ayala',init:'FA',tours:14,pts:2480,main:'Kazuya',record:'48-12',aliases:['fate','Fate_TWPY']},
+  {id:'p2',name:'Rushador Cuidadoso',real:'Denis Barrios',init:'RC',tours:12,pts:2310,main:'Bryan',record:'41-16',aliases:['rushador','denis_b']},
+  {id:'p3',name:'Rox',real:'Roxana Giménez',init:'RX',tours:11,pts:2145,main:'Nina',record:'38-15',aliases:['rox_py']},
+  {id:'p4',name:'Kaneda',real:'Iván Sosa',init:'KN',tours:10,pts:1980,main:'Jin',record:'33-18',aliases:['kaneda']},
+  {id:'p5',name:'Mishimaníaco',real:'Luis Duarte',init:'MI',tours:9,pts:1875,main:'Heihachi',record:'29-19',aliases:['mishimaniaco']},
+  {id:'p6',name:'NinaGod',real:'Carla Ortiz',init:'NG',tours:8,pts:1740,main:'Nina',record:'26-20',aliases:['ninagod']},
+  {id:'p7',name:'Yoshi PY',real:'Marcos Rolón',init:'YP',tours:7,pts:1620,main:'Yoshimitsu',record:'22-21',aliases:['yoshi_py']},
+  {id:'p8',name:'Karateka',real:'Diego Cabral',init:'KA',tours:6,pts:1510,main:'Reina',record:'19-22',aliases:['karateka']},
+  {id:'p9',name:'LeoKing',real:'Fabián Vera',init:'LK',tours:5,pts:1395,main:'Leo',record:'15-19',aliases:['leoking']},
+  {id:'p10',name:'Panteón',real:'Hugo Meza',init:'PN',tours:5,pts:1280,main:'King',record:'13-20',aliases:['panteon']},
+  {id:'p11',name:'Fate PY',real:'Rodrigo Ayala',init:'FP',tours:3,pts:410,main:'Kazuya',record:'9-5',aliases:['fate.py','rodri']}
+];
+
+const Q0 = [
+  {id:'q1',handle:'fate_py2',tour:'Torneo Mensual Julio #14',date:'19 Jul 2026',seed:1,sid:'p1',pct:92},
+  {id:'q2',handle:'rushador.c',tour:'Torneo Mensual Julio #14',date:'19 Jul 2026',seed:3,sid:'p2',pct:88},
+  {id:'q3',handle:'ninagod_py',tour:'Copa Asunción 2026',date:'05 Jul 2026',seed:7,sid:'p6',pct:95},
+  {id:'q4',handle:'elkaneda',tour:'Copa Asunción 2026',date:'05 Jul 2026',seed:12,sid:'p4',pct:79},
+  {id:'q5',handle:'j.acosta',tour:'Ranked Night #7',date:'28 Jun 2026',seed:9,sid:null,pct:0},
+  {id:'q6',handle:'TKN_Sergio',tour:'Ranked Night #7',date:'28 Jun 2026',seed:14,sid:null,pct:0}
+];
+
+const T0 = [
+  {id:'t1',name:'Torneo Mensual Julio #14',date:'19 Jul 2026',acct:'B',parts:32,pending:2,status:'error',format:'Double elimination',note:'Timeout de Challonge API · hace 2 h'},
+  {id:'t2',name:'Copa Asunción 2026',date:'05 Jul 2026',acct:'B',parts:48,pending:2,status:'pend',format:'Double elimination',note:'Importación parcial · 44/48 sets'},
+  {id:'t3',name:'Ranked Night #7',date:'28 Jun 2026',acct:'B',parts:16,pending:2,status:'ok',format:'Single elimination',note:'Sincronizado hace 6 h'},
+  {id:'t4',name:'Torneo Mensual Junio #13',date:'14 Jun 2026',acct:'A',parts:28,pending:0,status:'ok',format:'Double elimination',note:'Sincronizado hace 3 d'},
+  {id:'t5',name:'Winter Clash PY',date:'24 May 2026',acct:'A',parts:64,pending:0,status:'ok',format:'Double elimination',note:'Sincronizado hace 2 sem'}
+];
+
+const M0 = [
+  {id:'m1',into:'NinaGod',from:'Nina_PY',by:'Rox',when:'hoy 09:12',moved:14},
+  {id:'m2',into:'Kaneda',from:'Kaneda_PY2',by:'Denis',when:'22 Jul 18:40',moved:9},
+  {id:'m3',into:'Yoshi PY',from:'yoshimitsu.py',by:'Denis',when:'14 Jul 21:05',moved:6}
+];
+
+const PO0 = [
+  {id:'n1',title:'Resultados Torneo Mensual Julio #14',date:'20 Jul 2026',author:'Denis',pub:true},
+  {id:'n2',title:'Inscripciones abiertas: Copa Asunción 2026',date:'11 Jul 2026',author:'Rox',pub:true},
+  {id:'n3',title:'Nuevo reglamento de ranking temporada 2026',date:'02 Jul 2026',author:'Denis',pub:false},
+  {id:'n4',title:'Entrevista: Fate, campeón nacional',date:'28 Jun 2026',author:'Rox',pub:false}
+];
+
+const HIST = [
+  {tour:'Torneo Mensual Julio #14',rival:'Rushador Cuidadoso',round:'Grand Final',res:'W',score:'3-2'},
+  {tour:'Torneo Mensual Julio #14',rival:'Rox',round:'Winners Final',res:'W',score:'2-1'},
+  {tour:'Copa Asunción 2026',rival:'Kaneda',round:'Top 8',res:'L',score:'1-2'},
+  {tour:'Copa Asunción 2026',rival:'NinaGod',round:'Top 16',res:'W',score:'2-0'},
+  {tour:'Ranked Night #7',rival:'Karateka',round:'Semifinal',res:'W',score:'2-0'}
+];
+
+const OK = 'rgb(94,192,105)', WARN = 'rgb(245,244,79)', ERR = 'rgb(230,0,0)', PINK = 'rgb(245,10,100)', CYAN = 'rgb(92,216,235)';
+
+class Component extends DCLogic {
+  state = {
+    nav: this.props.defaultSection || 'identidades',
+    mobile: false, drawer: false, toast: null, confirm: null, ack: false,
+    openRow: null, rowQuery: '', playerQuery: '', tourQuery: '',
+    selPlayer: null, selTour: null, editPost: null,
+    postTitle: '', postBody: '',
+    mergeA: 'p1', mergeB: 'p11',
+    year: '2026', game: 'Tekken 8', manualName: '', activeAlias: {}, acctFilter: 'all',
+    importOpen: false, importAcct: 'A', importUrl: '', importPreview: null, importBusy: false, syncing: false,
+    players: P0, queue: Q0, tours: T0, merges: M0, posts: PO0,
+    resolvedToday: 7, stale: true, lastRecalc: 'hoy 08:40'
+  };
+
+  componentDidMount() {
+    this._rz = () => this.setState({ mobile: window.innerWidth < 900 });
+    this._rz();
+    window.addEventListener('resize', this._rz);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._rz);
+    clearTimeout(this._tt);
+  }
+
+  say(msg) {
+    clearTimeout(this._tt);
+    this.setState({ toast: msg });
+    this._tt = setTimeout(() => this.setState({ toast: null }), 2800);
+  }
+  go(nav) {
+    return e => {
+      if (e && e.preventDefault) e.preventDefault();
+      this.setState({ nav, drawer: false, selPlayer: null, selTour: null, editPost: null });
+    };
+  }
+
+  link(rowId, pid) {
+    const row = this.state.queue.find(q => q.id === rowId);
+    const p = this.state.players.find(x => x.id === pid);
+    if (!row || !p) return;
+    this.setState(s => ({
+      queue: s.queue.filter(q => q.id !== rowId),
+      players: s.players.map(x => x.id === pid ? Object.assign({}, x, { aliases: x.aliases.concat([row.handle]) }) : x),
+      openRow: null, rowQuery: '', resolvedToday: s.resolvedToday + 1,
+      merges: [{ id: 'l' + Date.now(), kind: 'link', into: p.name, from: row.handle, by: 'Denis', when: 'ahora', moved: 0 }].concat(s.merges)
+    }));
+    this.say('“' + row.handle + '” vinculado a ' + p.name);
+  }
+
+  manualCreate() {
+    const n = (this.state.manualName || '').trim();
+    if (!n) { this.say('Ingresá un nombre para registrar'); return; }
+    this.setState(s => ({
+      manualName: '',
+      players: s.players.concat([{
+        id: 'man' + Date.now(), name: n, real: '—', init: n.slice(0, 2).toUpperCase(),
+        tours: 0, pts: 0, main: '—', record: '0-0', aliases: [], noAccount: true
+      }]),
+      merges: [{ id: 'r' + Date.now(), kind: 'manual', into: n, from: 'sin cuenta de Challonge', by: 'Denis', when: 'ahora', moved: 0 }].concat(s.merges)
+    }));
+    this.say('“' + n + '” registrado sin cuenta de Challonge');
+  }
+
+  create(rowId) {
+    const row = this.state.queue.find(q => q.id === rowId);
+    if (!row) return;
+    this.setState(s => ({
+      queue: s.queue.filter(q => q.id !== rowId),
+      players: s.players.concat([{
+        id: 'new' + rowId, name: row.handle, real: '—', init: row.handle.slice(0, 2).toUpperCase(),
+        tours: 1, pts: 0, main: '—', record: '0-0', aliases: [row.handle]
+      }]),
+      openRow: null, rowQuery: '', resolvedToday: s.resolvedToday + 1
+    }));
+    this.say('Jugador nuevo creado: ' + row.handle);
+  }
+
+  doMerge() {
+    const s = this.state;
+    const a = s.players.find(p => p.id === s.mergeA);
+    const b = s.players.find(p => p.id === s.mergeB);
+    if (!a || !b || a.id === b.id) { this.say('Elegí dos jugadores distintos'); return; }
+    const rest = s.players.filter(p => p.id !== b.id).map(p => p.id === a.id
+      ? Object.assign({}, p, { aliases: p.aliases.concat(b.aliases), tours: p.tours + b.tours, pts: p.pts + b.pts })
+      : p);
+    this.setState({
+      players: rest,
+      merges: [{ id: 'm' + Date.now(), into: a.name, from: b.name, by: 'Denis', when: 'ahora', moved: b.tours * 4 }].concat(s.merges),
+      mergeB: rest.length ? rest[rest.length - 1].id : '',
+      stale: true
+    });
+    this.say('Fusión aplicada · historial reasignado a ' + a.name);
+  }
+
+  reimport(tid) {
+    this.setState(s => ({ tours: s.tours.map(t => t.id === tid ? Object.assign({}, t, { status: 'pend', note: 'Importando desde Challonge…' }) : t) }));
+    setTimeout(() => {
+      this.setState(s => ({ tours: s.tours.map(t => t.id === tid ? Object.assign({}, t, { status: 'ok', note: 'Sincronizado hace instantes' }) : t) }));
+      this.say('Reimportación completada');
+    }, 1100);
+  }
+
+  syncNew() {
+    if (this.state.syncing) return;
+    this.setState({ syncing: true });
+    setTimeout(() => {
+      this.setState(s => ({
+        syncing: false,
+        tours: [{
+          id: 'sy' + Date.now(), name: 'Ranked Night #8', date: '26 Jul 2026', acct: 'B',
+          parts: 18, pending: 3, status: 'ok', format: 'Single elimination', note: 'Sincronizado hace instantes'
+        }].concat(s.tours),
+        queue: s.queue.concat([
+          { id: 'sq1' + Date.now(), handle: 'nico_tkn', tour: 'Ranked Night #8', date: '26 Jul 2026', seed: 4, sid: null, pct: 0 },
+          { id: 'sq2' + Date.now(), handle: 'rox.py', tour: 'Ranked Night #8', date: '26 Jul 2026', seed: 2, sid: 'p3', pct: 91 },
+          { id: 'sq3' + Date.now(), handle: 'karateka_2', tour: 'Ranked Night #8', date: '26 Jul 2026', seed: 8, sid: 'p8', pct: 84 }
+        ])
+      }));
+      this.say('1 torneo nuevo importado · 3 participantes sin vincular');
+    }, 1200);
+  }
+
+  searchImport() {
+    const v = (this.state.importUrl || '').trim();
+    if (!v) { this.say('Pegá la URL o el ID del torneo'); return; }
+    this.setState({ importBusy: true, importPreview: null });
+    setTimeout(() => {
+      const slug = v.split('/').filter(Boolean).pop();
+      this.setState({
+        importBusy: false,
+        importPreview: {
+          name: 'Tekken Warriors Cup ' + (slug || '').replace(/[^a-z0-9]/gi, '').slice(0, 8).toUpperCase(),
+          date: '12 Nov 2023', parts: 42, format: 'Double elimination', slug: slug || v
+        }
+      });
+    }, 900);
+  }
+
+  confirmImport() {
+    const p = this.state.importPreview;
+    if (!p) return;
+    this.setState(s => ({
+      importOpen: false, importUrl: '', importPreview: null,
+      tours: s.tours.concat([{
+        id: 'im' + Date.now(), name: p.name, date: p.date, acct: s.importAcct,
+        parts: p.parts, pending: 5, status: 'pend', format: p.format, note: 'Importación histórica · vinculación pendiente'
+      }])
+    }));
+    this.say('“' + p.name + '” importado desde la cuenta ' + this.state.importAcct);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const mob = s.mobile;
+    const drawer = mob && s.drawer;
+    const titles = {
+      identidades: 'Resolución de identidades', jugadores: 'Jugadores', torneos: 'Torneos',
+      rankings: 'Rankings', contenido: 'Contenido', sistema: 'Sistema'
+    };
+    const on = k => ({
+      c: s.nav === k ? '#fff' : 'rgba(255,255,255,.6)',
+      bg: s.nav === k ? 'rgba(245,10,100,.14)' : 'transparent',
+      bc: s.nav === k ? PINK : 'transparent'
+    });
+
+    const ranked = s.players.slice().sort((a, b) => b.pts - a.pts).map((p, i) => Object.assign({}, p, { rank: i + 1 }));
+    const rankOf = id => { const f = ranked.find(p => p.id === id); return f ? f.rank : '—'; };
+    const pq = s.playerQuery.toLowerCase();
+
+    const queue = s.queue.map(r => {
+      const sug = r.sid ? s.players.find(p => p.id === r.sid) : null;
+      const q = s.openRow === r.id ? s.rowQuery : '';
+      const matches = s.players
+        .filter(p => !q || p.name.toLowerCase().indexOf(q.toLowerCase()) >= 0 || p.aliases.join(' ').toLowerCase().indexOf(q.toLowerCase()) >= 0)
+        .slice(0, 6)
+        .map(p => ({ init: p.init, name: p.name, rank: rankOf(p.id), tours: p.tours, onPick: () => this.link(r.id, p.id) }));
+      const showSug = (this.props.showSuggestions !== false) && !!sug;
+      return {
+        id: r.id, handle: r.handle, tour: r.tour, date: r.date, seed: r.seed,
+        hasSuggest: showSug, noSuggest: !showSug, suggestName: sug ? sug.name.toUpperCase() : '', suggestPct: r.pct,
+        q, open: s.openRow === r.id, matches, noMatches: matches.length === 0,
+        onFocus: () => this.setState({ openRow: r.id, rowQuery: '' }),
+        onQuery: e => this.setState({ openRow: r.id, rowQuery: e.target.value }),
+        onAccept: () => this.link(r.id, r.sid),
+        onLink: () => { const m = matches[0]; if (s.openRow === r.id && m) m.onPick(); else if (sug) this.link(r.id, r.sid); else this.say('Buscá y elegí un jugador de la lista'); },
+        onCreate: () => this.create(r.id)
+      };
+    });
+
+    const pa = ranked.find(p => p.id === s.mergeA) || ranked[0];
+    const pb = ranked.find(p => p.id === s.mergeB) || ranked[ranked.length - 1];
+
+    const psel = s.selPlayer ? ranked.find(p => p.id === s.selPlayer) : null;
+    const tsel = s.selTour ? s.tours.find(t => t.id === s.selTour) : null;
+
+    const stMap = {
+      ok: { statusLabel: 'SINCRONIZADO', bg: 'rgba(94,192,105,.18)', fg: OK },
+      pend: { statusLabel: 'PENDIENTE', bg: 'rgba(245,244,79,.18)', fg: WARN },
+      error: { statusLabel: 'ERROR', bg: 'rgba(230,0,0,.22)', fg: 'rgb(255,120,120)' }
+    };
+    const tq = s.tourQuery.toLowerCase();
+
+    const partsFor = t => {
+      const linked = s.players.slice(0, Math.max(3, Math.min(8, t.parts - t.pending)));
+      const rows = linked.map(p => p.aliases.length
+        ? { handle: p.aliases[0], label: 'VINCULADO', bg: 'rgba(94,192,105,.16)', fg: OK }
+        : { handle: p.name + ' (manual)', label: 'SIN CUENTA', bg: 'rgba(255,255,255,.12)', fg: 'rgba(255,255,255,.8)' });
+      const pend = s.queue.filter(q => q.tour === t.name).slice(0, t.pending)
+        .map(q => ({ handle: q.handle, label: 'PENDIENTE', bg: 'rgba(245,10,100,.2)', fg: 'rgb(250,133,178)' }));
+      return pend.concat(rows);
+    };
+
+    const posColors = ['rgb(246,183,0)', 'rgba(255,255,255,.85)', 'rgb(205,127,50)'];
+
+    return {
+      sb: {
+        display: mob ? (drawer ? 'flex' : 'none') : 'flex',
+        position: mob ? 'fixed' : 'sticky',
+        shadow: mob ? '0 0 40px rgba(0,0,0,.8)' : 'none',
+        closeBtn: mob ? 'flex' : 'none',
+        burger: mob ? 'flex' : 'none'
+      },
+      drawerOpen: drawer,
+      openDrawer: () => this.setState({ drawer: true }),
+      closeDrawer: () => this.setState({ drawer: false }),
+      nv: { ident: on('identidades'), players: on('jugadores'), tours: on('torneos'), ranks: on('rankings'), content: on('contenido'), system: on('sistema') },
+      goIdent: this.go('identidades'), goPlayers: this.go('jugadores'), goTours: this.go('torneos'),
+      goRanks: this.go('rankings'), goContent: this.go('contenido'), goSystem: this.go('sistema'),
+      sectionTitle: titles[s.nav],
+      isIdent: s.nav === 'identidades', isPlayers: s.nav === 'jugadores', isTours: s.nav === 'torneos',
+      isRanks: s.nav === 'rankings', isContent: s.nav === 'contenido', isSystem: s.nav === 'sistema',
+      padY: this.props.density === 'compact' ? '9px' : '14px',
+      isMobile: mob, isDesk: !mob, cmpGrid: mob ? 'none' : 'grid', tableDisplay: mob ? 'none' : 'block',
+      manualName: s.manualName,
+      onManualName: e => this.setState({ manualName: e.target.value }),
+      onManualCreate: () => this.manualCreate(),
+      pendingCount: s.queue.length, syncIssues: s.tours.filter(t => t.status !== 'ok').length || '',
+      resolvedToday: s.resolvedToday, mergeCount: s.merges.length,
+      queue, queueEmpty: s.queue.length === 0,
+      players: ranked,
+      mergeA: s.mergeA, mergeB: s.mergeB,
+      onMergeA: e => this.setState({ mergeA: e.target.value }),
+      onMergeB: e => this.setState({ mergeB: e.target.value }),
+      pa, pb,
+      mergeLoad: (pb ? pb.tours * 4 : 0) + ' matches y ' + (pb ? pb.tours : 0) + ' torneos',
+      askMerge: () => this.setState({
+        ack: false,
+        confirm: {
+          title: 'Fusionar jugadores', cta: 'Fusionar',
+          body: '“' + (pb ? pb.name : '') + '” será eliminado y todo su historial pasará a “' + (pa ? pa.name : '') + '”, junto con sus aliases de Challonge.',
+          warn: 'Reasigna historial competitivo. Sólo se puede revertir desde el log de fusiones.',
+          kind: 'merge'
+        }
+      }),
+      merges: s.merges.map(m => Object.assign({}, m, {
+        kindLabel: m.kind === 'link' ? 'VINCULACIÓN' : m.kind === 'manual' ? 'REGISTRO MANUAL' : 'FUSIÓN',
+        kindBg: m.kind === 'link' ? 'rgba(63,209,231,.16)' : m.kind === 'manual' ? 'rgba(255,255,255,.12)' : 'rgba(245,10,100,.2)',
+        kindFg: m.kind === 'link' ? CYAN : m.kind === 'manual' ? 'rgba(255,255,255,.8)' : 'rgb(250,133,178)',
+        note: m.kind === 'link' ? 'alias agregado a la ficha' : m.kind === 'manual' ? 'jugador creado a pedido' : m.moved + ' matches reasignados',
+        onUndo: () => { this.setState(st => ({ merges: st.merges.filter(x => x.id !== m.id) })); this.say('Acción deshecha · ' + m.from + ' restaurado'); }
+      })),
+
+      playerTotal: ranked.length,
+      playerQuery: s.playerQuery,
+      onPlayerQuery: e => this.setState({ playerQuery: e.target.value }),
+      playerRows: ranked.filter(p => !pq || p.name.toLowerCase().indexOf(pq) >= 0 || p.real.toLowerCase().indexOf(pq) >= 0 || p.aliases.join(' ').toLowerCase().indexOf(pq) >= 0)
+        .map(p => Object.assign({}, p, {
+          aliasLabel: p.aliases.length ? p.aliases.join(', ') : 'sin cuenta de Challonge',
+          aliasColor: p.aliases.length ? 'rgba(255,255,255,.6)' : 'rgba(255,255,255,.35)',
+          onOpen: () => this.setState({ selPlayer: p.id })
+        })),
+      noPlayerSel: !psel, playerSel: !!psel, psel: psel || {},
+      backToPlayers: () => this.setState({ selPlayer: null }),
+      pselAliases: psel ? psel.aliases.map((a, i) => {
+        const act = (s.activeAlias[psel.id] || psel.aliases[0]) === a;
+        return {
+          name: a, isActive: act, notActive: !act,
+          bd: act ? 'rgba(63,209,231,.45)' : 'rgba(255,255,255,.1)',
+          onActivate: () => { this.setState(st => ({ activeAlias: Object.assign({}, st.activeAlias, { [psel.id]: a }) })); this.say('“' + a + '” es ahora la cuenta activa'); },
+          onRemove: () => this.say('Cuenta “' + a + '” desvinculada')
+        };
+      }) : [],
+      pselNoAliases: !!psel && psel.aliases.length === 0,
+      pselHistory: HIST.map(h => Object.assign({}, h, { color: h.res === 'W' ? OK : 'rgb(255,120,120)' })),
+      savePlayer: () => this.say('Perfil guardado'),
+      noop: () => {},
+
+      tourQuery: s.tourQuery,
+      onTourQuery: e => this.setState({ tourQuery: e.target.value }),
+      acctFilter: s.acctFilter,
+      syncLabel: s.syncing ? 'Sincronizando…' : 'Sincronizar nuevos torneos',
+      onSyncNew: () => this.syncNew(),
+      openImport: () => this.setState({ importOpen: true, importUrl: '', importPreview: null }),
+      closeImport: () => this.setState({ importOpen: false, importPreview: null }),
+      importOpen: s.importOpen, importUrl: s.importUrl, importAcct: s.importAcct,
+      onImportUrl: e => this.setState({ importUrl: e.target.value, importPreview: null }),
+      onImportAcct: e => this.setState({ importAcct: e.target.value, importPreview: null }),
+      onSearchImport: () => this.searchImport(),
+      searchLabel: s.importBusy ? 'Buscando…' : 'Buscar',
+      importPreview: s.importPreview, noImportPreview: !s.importPreview && !s.importBusy,
+      importAcctLabel: s.importAcct === 'A' ? 'Cuenta A · histórica' : 'Cuenta B · actual',
+      onConfirmImport: () => this.confirmImport(),
+      cannotImport: !s.importPreview,
+      onAcctFilter: e => this.setState({ acctFilter: e.target.value }),
+      acctCountA: s.tours.filter(t => t.acct === 'A').length,
+      acctCountB: s.tours.filter(t => t.acct === 'B').length,
+      tourRows: s.tours
+        .filter(t => (!tq || t.name.toLowerCase().indexOf(tq) >= 0) && (s.acctFilter === 'all' || t.acct === s.acctFilter))
+        .map(t => Object.assign({}, t, stMap[t.status], {
+        acctLabel: t.acct === 'A' ? 'CUENTA A · HISTÓRICA' : 'CUENTA B · ACTUAL',
+        acctBg: t.acct === 'A' ? 'rgba(150,150,150,.16)' : 'rgba(63,209,231,.16)',
+        acctFg: t.acct === 'A' ? 'rgb(182,182,182)' : CYAN,
+        acctBd: t.acct === 'A' ? 'rgba(255,255,255,.22)' : 'rgba(63,209,231,.45)',
+        statusNote: t.note,
+        pendColor: t.pending ? PINK : 'rgba(255,255,255,.35)',
+        onReimport: () => this.reimport(t.id),
+        onOpen: () => this.setState({ selTour: t.id })
+      })),
+      noTourSel: !tsel, tourSel: !!tsel,
+      tsel: tsel ? Object.assign({}, tsel, {
+        onReimport: () => this.reimport(tsel.id),
+        acctLabel: tsel.acct === 'A' ? 'CUENTA A · HISTÓRICA' : 'CUENTA B · ACTUAL',
+        acctBg: tsel.acct === 'A' ? 'rgba(150,150,150,.16)' : 'rgba(63,209,231,.16)',
+        acctFg: tsel.acct === 'A' ? 'rgb(182,182,182)' : CYAN,
+        acctBd: tsel.acct === 'A' ? 'rgba(255,255,255,.22)' : 'rgba(63,209,231,.45)'
+      }) : {},
+      backToTours: () => this.setState({ selTour: null }),
+      tselTop: ranked.slice(0, 4).map((p, i) => ({ pos: i + 1, name: p.name, pts: [400, 260, 170, 110][i], color: posColors[i] || 'rgba(255,255,255,.4)' })),
+      tselParts: tsel ? partsFor(tsel) : [],
+
+      lastRecalc: s.lastRecalc, ranksStale: s.stale,
+      year: s.year, game: s.game,
+      years: ['2026', '2025', '2024'], games: ['Tekken 8', 'Tekken 7'],
+      onYear: e => this.setState({ year: e.target.value }),
+      onGame: e => this.setState({ game: e.target.value }),
+      rankSubtitle: 'Temporada ' + s.year + ' · Tekken 8 · último cálculo ' + s.lastRecalc,
+      rankRows: ranked
+        .map(p => Object.assign({}, p, {
+          spts: Math.round(p.pts * (s.year === '2026' ? 1 : s.year === '2025' ? .74 : .55))
+        }))
+        .sort((a, b) => b.spts - a.spts)
+        .map((p, i) => ({
+          rank: i + 1, init: p.init, name: p.name, main: p.main, tours: p.tours, pts: p.spts,
+          posColor: i < 3 ? PINK : 'rgba(255,255,255,.55)',
+          trendLabel: (i + 1) % 3 === 0 ? '▼ 1' : (i + 1) % 3 === 1 ? '▲ 2' : '—',
+          trendColor: (i + 1) % 3 === 0 ? 'rgb(255,120,120)' : (i + 1) % 3 === 1 ? OK : 'rgba(255,255,255,.4)'
+        })),
+      askRecalc: () => this.setState({
+        ack: false,
+        confirm: {
+          title: 'Recalcular rankings', cta: 'Recalcular',
+          body: 'Se recalculan los puntos de las ' + s.players.length + ' fichas de jugador a partir de todos los torneos importados.',
+          warn: 'Proceso de ~40 s. El ranking público queda en modo lectura mientras corre.',
+          kind: 'recalc'
+        }
+      }),
+
+      postRows: s.posts.map(p => ({
+        title: p.title, date: p.date, author: p.author,
+        stateLabel: p.pub ? 'PUBLICADO' : 'BORRADOR',
+        bg: p.pub ? 'rgba(94,192,105,.22)' : 'rgba(255,255,255,.14)',
+        fg: p.pub ? OK : 'rgba(255,255,255,.8)',
+        toggleLabel: p.pub ? 'DESPUBLICAR' : 'PUBLICAR',
+        onToggle: () => {
+          this.setState(st => ({ posts: st.posts.map(x => x.id === p.id ? Object.assign({}, x, { pub: !x.pub }) : x) }));
+          this.say(p.pub ? 'Entrada despublicada' : 'Entrada publicada');
+        },
+        onEdit: () => this.setState({ editPost: p.id, postTitle: p.title, postBody: 'Cuerpo de la nota…' })
+      })),
+      editingPost: !!s.editPost,
+      editorTitle: s.editPost === 'new' ? 'Nueva entrada' : 'Editar entrada',
+      postTitle: s.postTitle, postBody: s.postBody,
+      onPostTitle: e => this.setState({ postTitle: e.target.value }),
+      onPostBody: e => this.setState({ postBody: e.target.value }),
+      newPost: () => this.setState({ editPost: 'new', postTitle: '', postBody: '' }),
+      closeEditor: () => this.setState({ editPost: null }),
+      savePost: () => { this.setState({ editPost: null }); this.say('Entrada publicada'); },
+      saveDraft: () => { this.setState({ editPost: null }); this.say('Borrador guardado'); },
+
+      services: [
+        { name: 'Supabase', label: 'TODO OK', color: OK, detail: 'Base de datos y auth respondiendo con normalidad.', metricLabel: 'Último ping', metric: 'hace 45 s' },
+        { name: 'Bot de Discord', label: 'ATENCIÓN REQUERIDA', color: WARN, detail: 'Gateway reconectando: 3 reintentos en la última hora.', metricLabel: 'Última respuesta', metric: 'hace 12 min' },
+        { name: 'Challonge API', label: 'TODO OK', color: OK, detail: 'Última importación automática sin errores.', metricLabel: 'Última importación', metric: 'hace 3 h' },
+        { name: 'Storage', label: 'TODO OK', color: OK, detail: 'Bucket público de imágenes de noticias.', metricLabel: 'Uso', metric: '62% de 1 GB' }
+      ],
+      logs: [
+        { time: '28/07 10:42', level: 'INFO', color: CYAN, msg: 'Health check Supabase OK (128 ms)' },
+        { time: '28/07 10:30', level: 'WARN', color: WARN, msg: 'Discord gateway reconnect · intento 3' },
+        { time: '28/07 07:40', level: 'INFO', color: CYAN, msg: 'Recálculo de rankings completado · 11 jugadores' },
+        { time: '28/07 07:12', level: 'ERROR', color: 'rgb(255,120,120)', msg: 'Challonge 504 al importar Torneo Mensual Julio #14' },
+        { time: '27/07 22:05', level: 'INFO', color: CYAN, msg: 'Importación Copa Asunción 2026 · 44/48 sets' }
+      ],
+
+      confirm: s.confirm, ack: s.ack, notAck: !s.ack,
+      onAck: e => this.setState({ ack: e.target.checked }),
+      closeConfirm: () => this.setState({ confirm: null, ack: false }),
+      runConfirm: () => {
+        const c = s.confirm;
+        this.setState({ confirm: null, ack: false });
+        if (!c) return;
+        if (c.kind === 'merge') this.doMerge();
+        else { this.setState({ stale: false, lastRecalc: 'hace instantes' }); this.say('Rankings recalculados'); }
+      },
+      toast: s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>
