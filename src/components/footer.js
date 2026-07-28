@@ -1,111 +1,112 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import logotwpy from "../../public/images/LOGO TWPY/PNG/TWPY LOGO VARIANTES-12.png";
+import { usePathname } from "next/navigation";
+
+import twpyLogo from "../../public/images/LOGO TWPY/PNG/TWPY LOGO VARIANTES-04.png";
+
+const SOCIAL_LINKS = [
+  {
+    name: "Discord",
+    href: "#",
+    icon: (
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M20.317 4.369A19.79 19.79 0 0 0 15.885 3c-.211.375-.457.881-.63 1.283a18.27 18.27 0 0 0-5.51 0A11.5 11.5 0 0 0 9.115 3 19.79 19.79 0 0 0 4.683 4.369C1.61 8.86.79 13.24 1.16 17.56a19.9 19.9 0 0 0 5.993 3.04c.483-.66.913-1.36 1.28-2.098a12.9 12.9 0 0 1-2.02-.98c.17-.125.336-.256.497-.39 3.797 1.75 7.898 1.75 11.652 0 .163.134.328.265.497.39-.643.383-1.32.71-2.02.98.367.737.797 1.437 1.28 2.098a19.86 19.86 0 0 0 5.993-3.04c.44-4.998-.738-9.337-2.995-13.19ZM8.68 14.81c-.99 0-1.8-.916-1.8-2.045 0-1.13.79-2.046 1.8-2.046 1.02 0 1.827.926 1.8 2.046 0 1.13-.79 2.045-1.8 2.045Zm6.64 0c-.99 0-1.8-.916-1.8-2.045 0-1.13.79-2.046 1.8-2.046 1.02 0 1.826.926 1.8 2.046 0 1.13-.78 2.045-1.8 2.045Z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Instagram",
+    href: "#",
+    icon: (
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+  },
+  {
+    name: "X",
+    href: "#",
+    icon: (
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path d="M18.244 2H21.5l-7.51 8.59L22.5 22h-6.94l-5.43-7.11L3.8 22H.5l8.04-9.19L1 2h7.06l4.9 6.49L18.244 2Zm-2.44 18h1.92L8.31 4H6.28l9.524 16Z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Facebook",
+    href: "#",
+    icon: (
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M13.5 21v-7.6h2.55l.4-3h-2.95V8.4c0-.87.24-1.46 1.5-1.46h1.6V4.24C16.24 4.17 15.24 4 14.08 4c-2.6 0-4.38 1.58-4.38 4.5v2.9H6.9v3h2.8V21h3.8Z" />
+      </svg>
+    ),
+  },
+];
+
+const CREDITS = ['Denis "Rushador Cuidadoso"', 'Roxana "Rox"', 'Rodrigo "Fate"'];
 
 export default function Footer() {
-  const svgs = [
-    [
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-        <path d="M524.5 69.8a1.5 1.5 0 0 0 -.8-.7A485.1 485.1 0 0 0 404.1 32a1.8 1.8 0 0 0 -1.9 .9 337.5 337.5 0 0 0 -14.9 30.6 447.8 447.8 0 0 0 -134.4 0 309.5 309.5 0 0 0 -15.1-30.6 1.9 1.9 0 0 0 -1.9-.9A483.7 483.7 0 0 0 116.1 69.1a1.7 1.7 0 0 0 -.8 .7C39.1 183.7 18.2 294.7 28.4 404.4a2 2 0 0 0 .8 1.4A487.7 487.7 0 0 0 176 479.9a1.9 1.9 0 0 0 2.1-.7A348.2 348.2 0 0 0 208.1 430.4a1.9 1.9 0 0 0 -1-2.6 321.2 321.2 0 0 1 -45.9-21.9 1.9 1.9 0 0 1 -.2-3.1c3.1-2.3 6.2-4.7 9.1-7.1a1.8 1.8 0 0 1 1.9-.3c96.2 43.9 200.4 43.9 295.5 0a1.8 1.8 0 0 1 1.9 .2c2.9 2.4 6 4.9 9.1 7.2a1.9 1.9 0 0 1 -.2 3.1 301.4 301.4 0 0 1 -45.9 21.8 1.9 1.9 0 0 0 -1 2.6 391.1 391.1 0 0 0 30 48.8 1.9 1.9 0 0 0 2.1 .7A486 486 0 0 0 610.7 405.7a1.9 1.9 0 0 0 .8-1.4C623.7 277.6 590.9 167.5 524.5 69.8zM222.5 337.6c-29 0-52.8-26.6-52.8-59.2S193.1 219.1 222.5 219.1c29.7 0 53.3 26.8 52.8 59.2C275.3 311 251.9 337.6 222.5 337.6zm195.4 0c-29 0-52.8-26.6-52.8-59.2S388.4 219.1 417.9 219.1c29.7 0 53.3 26.8 52.8 59.2C470.7 311 447.5 337.6 417.9 337.6z" />
-      </svg>,
-      "Discord",
-    ],
-    [
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-        <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" />
-      </svg>,
-      "Instagram",
-    ],
-    [
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-        <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-      </svg>,
-      "Twitter",
-    ],
-    [
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-        <path d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z" />
-      </svg>,
-      "Facebook",
-    ],
-  ];
+  const pathname = usePathname();
+
+  if (pathname === "/auth/login") {
+    return null;
+  }
 
   return (
-    <div className="mx-auto flex w-full max-w-screen-2xl flex-col bg-black p-4 text-2xl sm:text-3xl lg:text-4xl">
-      <div className="flex w-full flex-col items-center sm:flex-row">
+    <footer className="flex flex-col gap-10 bg-black px-5 py-10 sm:px-8 lg:px-14">
+      <div className="flex flex-wrap items-start gap-9">
         <Image
-          src={logotwpy}
-          alt="Logo Tekken Warriors Paraguay"
-          priority={true}
-          width={200}
+          src={twpyLogo}
+          alt="Tekken Warriors Paraguay"
+          width={110}
+          className="h-auto w-[110px] flex-shrink-0"
         />
-        <div className="flex flex-col justify-center">
-          <span>Sobre nosotros:</span>
-          <div className="text-xl sm:text-2xl lg:text-3xl">
-            Tekken Warriors Paraguay es una comunidad con más de 15 años de
-            trayectoria a nivel nacional e internacional. Su objetivo es
-            promover la competencia y el compañerismo entre players mediante
-            torneos y encuentros.
-          </div>
+        <div className="flex max-w-[900px] flex-col gap-2.5">
+          <h2 className="m-0 font-display text-[22px] tracking-[0.04em] text-primary-500">
+            Sobre nosotros:
+          </h2>
+          <p className="m-0 font-body text-base leading-[1.6] text-white/85">
+            Tekken Warriors Paraguay es una comunidad con más de 15 años de trayectoria a
+            nivel nacional e internacional. Su objetivo es promover la competencia y el
+            compañerismo entre players mediante torneos y encuentros.
+          </p>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center py-4 text-center sm:flex-row">
-        <div className="flex flex-col justify-center md:w-1/2">
-          Síguenos:
-          <div className="mt-2 flex grid-cols-2 items-center justify-center gap-x-4">
-            {svgs.map((svg, index) => (
+
+      <div className="flex flex-wrap items-end justify-between gap-8 border-t border-white/[.08] pt-6">
+        <div className="flex flex-col gap-3.5">
+          <span className="font-display text-[17px] tracking-[0.06em] text-white/75">
+            Síguenos:
+          </span>
+          <div className="flex gap-3.5">
+            {SOCIAL_LINKS.map((social) => (
               <Link
-                key={index}
-                href={`${svg[1]}`}
-                className="w-12 fill-white transition-all duration-300 ease-out first:w-16 hover:fill-tekken-pink"
+                key={social.name}
+                href={social.href}
+                aria-label={social.name}
+                className="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-white/[.08] text-white transition-all duration-300 hover:-translate-y-[3px] hover:scale-[1.08] hover:bg-primary-500"
               >
-                {svg[0]}
+                {social.icon}
               </Link>
             ))}
           </div>
         </div>
-        <div className="mt-4 flex flex-col justify-center">
-          Creado con 💔 por:
-          <div className="flex w-full justify-center gap-4 text-xl sm:text-2xl">
-            <span>Denis "Rushador Cuidadoso"</span>
-            <span>Roxana "Rox"</span>
-            <span>Rodrigo "Fate"</span>
+
+        <div className="flex flex-col items-end gap-2 text-right">
+          <span className="font-display text-base tracking-[0.04em] text-white/75">
+            Creado con 💔 por:
+          </span>
+          <div className="flex flex-wrap justify-end gap-4 font-body text-sm font-bold text-tekken-blue-400">
+            {CREDITS.map((name) => (
+              <span key={name}>{name}</span>
+            ))}
           </div>
         </div>
       </div>
-    </div>
+    </footer>
   );
-}
-
-{
-  /* <Link
-              href={"/"}
-              className="w-16 fill-tekken-pink transition-all duration-1000 ease-out hover:brightness-75"
-            >
-              {svgs[0]}
-            </Link>
-            <Link
-              href={"/"}
-              className="w-12 fill-tekken-pink transition-all duration-1000 ease-out hover:brightness-75"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" />
-              </svg>
-            </Link>
-            <Link
-              href={"/"}
-              className="w-12 fill-tekken-pink transition-all duration-1000 ease-out hover:brightness-75"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-              </svg>
-            </Link>
-            <Link
-              href={"/"}
-              className="w-12 fill-tekken-pink transition-all duration-1000 ease-out hover:brightness-75"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                <path d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z" />
-              </svg>
-            </Link> */
 }
