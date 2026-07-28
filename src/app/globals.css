@@ -3,23 +3,62 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --background: #000000;
+  --foreground: #ffffff;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Tekken 8 design system color tokens. Space-separated triplets (not the
+     source design system's comma-separated tokens/colors.css format) so
+     Tailwind's rgb(var(--x) / <alpha-value>) syntax works. */
+  --color-primary-50: 254 226 236;
+  --color-primary-100: 252 182 209;
+  --color-primary-200: 250 133 178;
+  --color-primary-300: 248 84 147;
+  --color-primary-400: 247 47 123;
+  --color-primary-500: 245 10 100;
+  --color-primary-600: 213 9 87;
+  --color-primary-700: 172 7 70;
+  --color-primary-800: 132 5 54;
+  --color-primary-900: 61 3 25;
+
+  --color-tekken-blue-50: 232 249 252;
+  --color-tekken-blue-100: 197 241 248;
+  --color-tekken-blue-200: 159 232 243;
+  --color-tekken-blue-300: 121 223 238;
+  --color-tekken-blue-400: 92 216 235;
+  --color-tekken-blue-500: 63 209 231;
+  --color-tekken-blue-600: 55 182 201;
+  --color-tekken-blue-700: 44 146 162;
+  --color-tekken-blue-800: 34 113 125;
+  --color-tekken-blue-900: 16 52 58;
+
+  --color-dark-gray-3-50: 226 226 227;
+  --color-dark-gray-3-100: 182 183 185;
+  --color-dark-gray-3-200: 133 135 139;
+  --color-dark-gray-3-300: 84 87 93;
+  --color-dark-gray-3-400: 48 51 58;
+  --color-dark-gray-3-500: 11 15 23;
+  --color-dark-gray-3-600: 10 13 20;
+  --color-dark-gray-3-700: 8 11 16;
+  --color-dark-gray-3-800: 6 8 12;
+  --color-dark-gray-3-900: 3 4 6;
+
+  --color-success-500: 94 192 105;
+  --color-warning-500: 245 244 79;
+  --color-error-500: 230 0 0;
+
+  --clip-banner-both: polygon(10% 0%, 100% 0, 90% 100%, 0% 100%);
+  --clip-banner-right: polygon(0% 0%, 100% 0, 82% 100%, 0% 100%);
+  --clip-banner-left: polygon(0% 0%, 100% 0, 100% 100%, 18% 100%);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Legacy utility — still used by src/app/torneos, src/app/auth/register,
+   src/components/seeRankingButton.js. Do not remove. */
 .clip-path-cta {
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
 }
