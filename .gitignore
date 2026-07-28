@@ -49,3 +49,6 @@ next-env.d.ts
 .claude/settings.local.json
 .claude/skills/
 .agents/skills/
+
+# subagent-driven-development scratch workspace (ledgers, review packages)
+.superpowers/
