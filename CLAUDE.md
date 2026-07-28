@@ -31,6 +31,15 @@ Users → Cloudflare (DNS/CDN) → Vercel (Next.js frontend) → Supabase (DB/Au
 
 ---
 
+## Design & specs
+
+- `design/` — Claude Design handoff for the Tekken 8 visual system (source of truth for UI). Read `design/README.md` first; the `.dc.html` files are interactive design references, not code to copy verbatim (see that README for why). The live Claude Design project is `a8f8a0e5-4dfe-4ac2-8e1b-39351e40cd7a`.
+- `docs/superpowers/specs/` — feature design specs (brainstorming output) written before implementation plans.
+- `docs/superpowers/plans/` — implementation plans, one per spec.
+- `docs/admin-dashboard-brief.md`, `docs/infrastructure.md` — standalone briefs referenced elsewhere in this file.
+
+---
+
 ## Core domain model & business rules
 
 ### Player identity (important — read before touching player/tournament tables)
