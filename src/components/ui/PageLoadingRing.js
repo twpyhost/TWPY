@@ -81,7 +81,7 @@ export default function PageLoadingRing() {
 
   return (
     <div
-      className="flex min-h-[70dvh] flex-1 items-center justify-center overflow-hidden bg-[radial-gradient(120%_90%_at_50%_45%,rgba(12,35,44,.94)_0%,rgba(3,9,13,.97)_70%)] transition-opacity duration-300 ease-out"
+      className="flex min-h-[70dvh] flex-1 items-center justify-center overflow-hidden bg-[radial-gradient(120%_90%_at_50%_45%,rgba(12,35,44,.94)_0%,rgba(3,9,13,.97)_70%)] transition-opacity duration-500 ease-out"
       style={{ opacity: fadeOpacity(p, mounted) }}
     >
       <div className="flex flex-col items-center gap-6 px-6 text-center">
