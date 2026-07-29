@@ -5,7 +5,13 @@ import Image from "next/image";
 
 import twpyLogo from "../../../public/images/LOGO TWPY/PNG/TWPY LOGO VARIANTES-04.png";
 
-const ASSETS = ["ranking.json", "fixture.json", "competidores.json", "torneos.json", "media.cdn"];
+const ASSETS = [
+  "ranking.json",
+  "fixture.json",
+  "competidores.json",
+  "torneos.json",
+  "media.cdn",
+];
 
 const TIPS = [
   "Doble eliminación: una derrota en Winners no te saca del torneo.",
@@ -28,7 +34,7 @@ function statusFor(p) {
 }
 
 export default function PageLoadingRing() {
-  const [p, setP] = useState(0);
+  const [p, setP] = useState(8);
   const [assetIndex, setAssetIndex] = useState(0);
   const tip = useMemo(() => TIPS[Math.floor(Math.random() * TIPS.length)], []);
 
@@ -38,7 +44,9 @@ export default function PageLoadingRing() {
         if (prev >= PROGRESS_CEILING) return prev;
         const slow = prev > 84 ? 0.35 : prev > 58 ? 0.75 : 1.35;
         const jitter = 0.4 + Math.random() * 1.4;
-        return Math.min(PROGRESS_CEILING, prev + STEP * slow * jitter);
+        const next = Math.min(PROGRESS_CEILING, prev + STEP * slow * jitter);
+        if (next >= PROGRESS_CEILING) clearInterval(progressTimer);
+        return next;
       });
     }, TICK_MS);
     return () => clearInterval(progressTimer);
@@ -54,15 +62,16 @@ export default function PageLoadingRing() {
   const pct = Math.floor(p);
 
   return (
-    <div className="flex flex-1 min-h-[70dvh] items-center justify-center overflow-hidden bg-[radial-gradient(120%_90%_at_50%_45%,rgba(12,35,44,.94)_0%,rgba(3,9,13,.97)_70%)]">
+    <div className="flex min-h-[70dvh] flex-1 items-center justify-center overflow-hidden bg-[radial-gradient(120%_90%_at_50%_45%,rgba(12,35,44,.94)_0%,rgba(3,9,13,.97)_70%)]">
       <div className="flex flex-col items-center gap-6 px-6 text-center">
         <div className="relative flex h-[clamp(120px,15vw,168px)] w-[clamp(120px,15vw,168px)] items-center justify-center">
+          <div className="absolute -inset-3.5 animate-ring-pulse rounded-full bg-[radial-gradient(circle,rgba(245,10,100,.35)_0%,transparent_68%)] blur-[12px]" />
           <div className="absolute inset-0 animate-ring-spin rounded-full border border-primary-500/30 border-t-primary-500" />
           <div className="absolute inset-3 animate-ring-spin-rev rounded-full border border-dashed border-tekken-blue-400/30" />
-          <div className="absolute -inset-3.5 animate-ring-pulse rounded-full bg-[radial-gradient(circle,rgba(245,10,100,.35)_0%,transparent_68%)] blur-[12px]" />
           <Image
             src={twpyLogo}
             alt=""
+            sizes="168px"
             className="relative h-auto w-[62%] drop-shadow-[0_0_18px_rgba(245,10,100,.65)]"
           />
         </div>
@@ -90,11 +99,14 @@ export default function PageLoadingRing() {
           </div>
           <div className="flex items-center justify-between font-display text-sm tracking-[0.16em] text-white/55">
             <span>Cargando…</span>
-            <span className="text-xl tabular-nums text-primary-500">{pct}%</span>
+            <span className="text-xl tabular-nums text-primary-500">
+              {pct}%
+            </span>
           </div>
         </div>
 
         <div className="flex max-w-[min(600px,84vw)] items-stretch">
+          {/* Not RibbonTag: needs --clip-banner-right + items-stretch, RibbonTag hardcodes --clip-banner-both + self-start. */}
           <span className="flex flex-shrink-0 items-center bg-primary-500 px-5 py-1.5 font-display text-sm tracking-[0.24em] text-white [clip-path:var(--clip-banner-right)]">
             TIP
           </span>

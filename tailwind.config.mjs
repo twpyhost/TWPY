@@ -75,18 +75,36 @@ export default {
           from: { opacity: 0, transform: "translateY(24px)" },
           to: { opacity: 1, transform: "translateY(0)" },
         },
-        ringSpin: { from: { transform: "rotate(0deg)" }, to: { transform: "rotate(360deg)" } },
-        ringSpinRev: { from: { transform: "rotate(360deg)" }, to: { transform: "rotate(0deg)" } },
+        ringSpin: {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
+        ringSpinRev: {
+          from: { transform: "rotate(360deg)" },
+          to: { transform: "rotate(0deg)" },
+        },
         ringPulse: {
           "0%, 100%": { opacity: 0.5, transform: "scale(1)" },
           "50%": { opacity: 1, transform: "scale(1.07)" },
         },
         dotBlink: { "0%, 100%": { opacity: 1 }, "50%": { opacity: 0.12 } },
         textGlitch: {
-          "0%, 92%, 100%": { clipPath: "inset(0 0 0 0)", transform: "translateX(0)" },
-          "94%": { clipPath: "inset(18% 0 62% 0)", transform: "translateX(-4px)" },
-          "96%": { clipPath: "inset(58% 0 22% 0)", transform: "translateX(5px)" },
-          "98%": { clipPath: "inset(38% 0 44% 0)", transform: "translateX(-2px)" },
+          "0%, 92%, 100%": {
+            clipPath: "inset(0 0 0 0)",
+            transform: "translateX(0)",
+          },
+          "94%": {
+            clipPath: "inset(18% 0 62% 0)",
+            transform: "translateX(-4px)",
+          },
+          "96%": {
+            clipPath: "inset(58% 0 22% 0)",
+            transform: "translateX(5px)",
+          },
+          "98%": {
+            clipPath: "inset(38% 0 44% 0)",
+            transform: "translateX(-2px)",
+          },
         },
         barShimmer: {
           "0%": { transform: "translateX(-140%)" },
