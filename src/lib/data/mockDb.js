@@ -39,6 +39,7 @@ const getCompetidores = async () => {
   resultado.torneos.forEach((torneo) => {
     torneo.competidores.forEach((competidor) => {
       competidores.set(competidor.id, {
+        id: competidor.id,
         challonge_username: competidor.name,
       });
     });

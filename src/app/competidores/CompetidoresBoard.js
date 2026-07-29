@@ -11,7 +11,7 @@ const FILTERS = [
   { key: "sin-puntos", label: "Sin puntos" },
 ];
 
-export default function CompetidoresBoard({ roster }) {
+export default function CompetidoresBoard({ roster, temporada }) {
   const [filter, setFilter] = useState("todos");
   const [query, setQuery] = useState("");
   const [sortByPoints, setSortByPoints] = useState(true);
@@ -50,7 +50,7 @@ export default function CompetidoresBoard({ roster }) {
       <HeroSection className="px-5 pb-11 pt-11 sm:px-8 sm:pt-16 lg:px-14 lg:pt-[84px]">
         <div className="mx-auto flex max-w-[1240px] flex-wrap items-end justify-between gap-8">
           <div className="flex flex-col gap-1.5">
-            <RibbonTag>ROSTER OFICIAL &middot; TEMPORADA 2025</RibbonTag>
+            <RibbonTag>{`ROSTER OFICIAL · TEMPORADA ${temporada}`}</RibbonTag>
             <h1 className="-ml-1.5 m-0 font-display text-[clamp(58px,8.4vw,116px)] italic leading-[.88] tracking-[0.01em] [text-shadow:0_0_34px_rgba(230,0,0,.65),0_0_90px_rgba(245,10,100,.38)]">
               COMPETIDORES
             </h1>
@@ -78,7 +78,7 @@ export default function CompetidoresBoard({ roster }) {
             <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
               {podium.map((player) => (
                 <div
-                  key={player.username}
+                  key={player.id}
                   className="relative overflow-hidden border border-white/10 bg-dark-gray-3-500 p-6"
                 >
                   <span className="pointer-events-none absolute -right-2 -top-6 font-display text-[120px] leading-none text-white/[.06]">
@@ -143,7 +143,7 @@ export default function CompetidoresBoard({ roster }) {
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {filtered.map((player) => (
                 <div
-                  key={player.username}
+                  key={player.id}
                   className={`flex flex-col gap-2 border border-white/10 bg-white/[.03] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary-500/60 hover:shadow-glow-primary ${
                     player.posicion !== null && player.posicion <= 3
                       ? "border-tekken-blue-400/40"

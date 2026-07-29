@@ -86,7 +86,7 @@ const getCompetidores = async () => {
   }
 
   return data
-    .map((usuario) => ({ challonge_username: getDisplayName(usuario) }))
+    .map((usuario) => ({ id: usuario.id, challonge_username: getDisplayName(usuario) }))
     .sort((a, b) => a.challonge_username.localeCompare(b.challonge_username));
 };
 

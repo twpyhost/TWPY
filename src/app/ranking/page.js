@@ -1,7 +1,7 @@
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 
-import { getRankings } from "../utils/db";
+import { getFiltroAno, getRankings } from "../utils/db";
 
 // Revalida cada 60s para reflejar torneos nuevos sin redeploy
 // (y cachea las consultas a la BD).
@@ -19,14 +19,15 @@ function tierBorderClass(posicion) {
 }
 
 export default async function RankingPage() {
-  const rankings = await getRankings();
+  const [rankings, anos] = await Promise.all([getRankings(), getFiltroAno()]);
+  const temporada = anos[0] ?? String(new Date().getFullYear());
 
   return (
     <>
       <HeroSection className="px-5 pb-11 pt-11 sm:px-8 sm:pt-16 lg:px-14 lg:pt-[84px]">
         <div className="mx-auto flex max-w-[1240px] flex-wrap items-end justify-between gap-8">
           <div className="flex flex-col gap-1.5">
-            <RibbonTag>RANKING OFICIAL &middot; TEMPORADA 2025</RibbonTag>
+            <RibbonTag>{`RANKING OFICIAL · TEMPORADA ${temporada}`}</RibbonTag>
             <h1 className="-ml-1.5 m-0 font-display text-[clamp(58px,8.4vw,116px)] italic leading-[.88] tracking-[0.01em] [text-shadow:0_0_34px_rgba(230,0,0,.65),0_0_90px_rgba(245,10,100,.38)]">
               RANKING
             </h1>
@@ -50,7 +51,7 @@ export default async function RankingPage() {
 
             return (
               <div
-                key={ranking.challonge_username}
+                key={ranking.posicion}
                 className={`grid grid-cols-[56px_1fr_auto_56px] items-center gap-4 border-l-[3px] px-5 py-3.5 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${tierBorderClass(
                   ranking.posicion,
                 )} ${index % 2 === 1 ? "bg-white/[.055]" : "bg-white/[.03]"}`}
@@ -66,6 +67,11 @@ export default async function RankingPage() {
               </div>
             );
           })}
+          {rankings.length === 0 && (
+            <p className="py-10 text-center font-body text-white/50">
+              No hay rankings todavía para esta temporada.
+            </p>
+          )}
         </div>
       </section>
     </>
