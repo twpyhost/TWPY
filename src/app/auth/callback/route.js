@@ -1,23 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabaseServer";
-
-// Sanitiza `next` resolviendolo contra `origin` y verificando que el
-// resultado siga siendo del mismo origen. Un prefix-check tipo
-// startsWith("/") es insuficiente: payloads como "/\evil.example" pasan
-// ese chequeo pero WHATWG URL normaliza la barra invertida a "/" antes de
-// resolver, terminando en un origen distinto. Resolver primero y comparar
-// origin cierra esa clase de bypass.
-function safeNext(rawNext, origin) {
-  if (!rawNext) return "/";
-  try {
-    const resolved = new URL(rawNext, origin);
-    return resolved.origin === origin
-      ? `${resolved.pathname}${resolved.search}${resolved.hash}`
-      : "/";
-  } catch {
-    return "/";
-  }
-}
+import { safeNext } from "@/lib/safeNext";
 
 // Destino del redirect OAuth de Supabase (Discord). Intercambia el `code`
 // por una sesion y redirige a `next` (por defecto, home). Distinto de
