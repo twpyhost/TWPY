@@ -110,6 +110,30 @@ export default {
           "0%": { transform: "translateX(-140%)" },
           "100%": { transform: "translateX(340%)" },
         },
+        heroSweep: {
+          "0%": { transform: "translateX(-60%) rotate(-16deg)" },
+          "55%, 100%": { transform: "translateX(260%) rotate(-16deg)" },
+        },
+        heroFloat: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        heroInLeft: {
+          from: { opacity: 0, transform: "translateX(-90px) scale(.98)" },
+          to: { opacity: 1, transform: "translateX(0) scale(1)" },
+        },
+        heroInRight: {
+          from: { opacity: 0, transform: "translateX(90px) scale(.98)" },
+          to: { opacity: 1, transform: "translateX(0) scale(1)" },
+        },
+        cueBounce: {
+          "0%, 100%": { transform: "translateY(0)", opacity: 0.5 },
+          "50%": { transform: "translateY(8px)", opacity: 1 },
+        },
+        lineGrow: {
+          from: { transform: "scaleX(0)" },
+          to: { transform: "scaleX(1)" },
+        },
       },
       animation: {
         "glow-pulse": "glowPulse 7s ease-in-out infinite",
@@ -120,6 +144,12 @@ export default {
         "dot-blink": "dotBlink 1s steps(1,end) infinite",
         "text-glitch": "textGlitch 3.4s steps(1,end) infinite",
         "bar-shimmer": "barShimmer 1.7s linear infinite",
+        "hero-sweep": "heroSweep 9s cubic-bezier(.4,0,.2,1) infinite",
+        "hero-float": "heroFloat 8s ease-in-out infinite",
+        "hero-in-left": "heroInLeft 1.2s cubic-bezier(.16,.84,.24,1) both",
+        "hero-in-right": "heroInRight 1.2s cubic-bezier(.16,.84,.24,1) both",
+        "cue-bounce": "cueBounce 2.2s ease-in-out infinite",
+        "line-grow": "lineGrow .9s cubic-bezier(.16,.84,.24,1) both",
       },
     },
   },

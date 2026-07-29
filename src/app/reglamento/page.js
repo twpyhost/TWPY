@@ -1,6 +1,7 @@
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
+import { fadeDelay } from "@/lib/fadeDelay";
 
 const QUICK_FACTS = [
   { label: "FORMATO", value: "ELIMINACIÓN DOBLE", detail: "FT2 en toda la llave" },
@@ -164,6 +165,7 @@ const SECTIONS = [
 
 export default function ReglamentoPage() {
   const totalRules = SECTIONS.reduce((sum, s) => sum + s.rules.length, 0);
+  let ruleIndex = 0;
 
   return (
     <>
@@ -191,8 +193,12 @@ export default function ReglamentoPage() {
       <section className="bg-black px-5 pb-24 sm:px-8 lg:px-14">
         <div className="mx-auto max-w-[1240px]">
           <div className="mt-10 grid grid-cols-1 gap-3.5 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4">
-            {QUICK_FACTS.map((fact) => (
-              <div key={fact.label} className="border border-white/10 bg-dark-gray-3-700 p-5">
+            {QUICK_FACTS.map((fact, index) => (
+              <div
+                key={fact.label}
+                style={fadeDelay(index)}
+                className="animate-fade-up border border-white/10 bg-dark-gray-3-700 p-5"
+              >
                 <span className="block font-display text-sm tracking-[0.24em] text-white/60">
                   {fact.label}
                 </span>
@@ -207,7 +213,7 @@ export default function ReglamentoPage() {
           </div>
 
           <div className="mt-12 flex flex-wrap items-start gap-10 lg:flex-nowrap">
-            <aside className="sticky top-[100px] hidden flex-none flex-col gap-3.5 lg:flex lg:w-[216px]">
+            <aside className="sticky top-[100px] hidden animate-fade-up flex-none flex-col gap-3.5 lg:flex lg:w-[216px]">
               <span className="font-display text-[15px] tracking-[0.22em] text-white/45">
                 ÍNDICE
               </span>
@@ -243,7 +249,8 @@ export default function ReglamentoPage() {
                     {section.rules.map((rule) => (
                       <div
                         key={rule.n}
-                        className={`grid grid-cols-[56px_1fr] items-start gap-4 border-l-[3px] px-5 py-4 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${ACCENT_BORDER[section.accent]} ${
+                        style={fadeDelay(ruleIndex++, { step: 25, max: 300 })}
+                        className={`grid animate-fade-up grid-cols-[56px_1fr] items-start gap-4 border-l-[3px] px-5 py-4 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${ACCENT_BORDER[section.accent]} ${
                           rule.critical ? "bg-primary-500/10" : "bg-white/[.04]"
                         }`}
                       >

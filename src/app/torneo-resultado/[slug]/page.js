@@ -8,6 +8,7 @@ import Button from "@/components/ui/Button";
 import ChallongeLinkButton from "./ChallongeLinkButton";
 import { getTorneoResultados, getTorneos } from "@/app/utils/db";
 import { withMinDelay } from "@/lib/withMinDelay";
+import { fadeDelay } from "@/lib/fadeDelay";
 import twpyLogo from "../../../../public/images/LOGO TWPY/PNG/TWPY LOGO VARIANTES-04.png";
 
 const MESES = [
@@ -96,7 +97,8 @@ export default async function Resultados({ params }) {
               return (
                 <div
                   key={`${r.posicion}-${r.jugador.nombre}`}
-                  className={`relative flex min-h-[196px] flex-col justify-between gap-3.5 overflow-hidden border bg-gradient-to-br p-6 pb-5 ${tag.border} ${tag.gradient}`}
+                  style={fadeDelay(index)}
+                  className={`relative flex min-h-[196px] animate-fade-up flex-col justify-between gap-3.5 overflow-hidden border bg-gradient-to-br p-6 pb-5 ${tag.border} ${tag.gradient}`}
                 >
                   <RibbonTag variant={tag.variant} className="relative w-fit">
                     {tag.label}
@@ -133,7 +135,7 @@ export default async function Resultados({ params }) {
             </span>
           </div>
 
-          <div className="grid grid-cols-[56px_minmax(0,1fr)_70px] items-center gap-4 bg-primary-500 px-5 py-2.5 [clip-path:polygon(8px_0,100%_0,calc(100%_-_8px)_100%,0_100%)] sm:grid-cols-[88px_minmax(0,1fr)_120px] sm:gap-5">
+          <div className="grid animate-fade-up grid-cols-[56px_minmax(0,1fr)_70px] items-center gap-4 bg-primary-500 px-5 py-2.5 [clip-path:polygon(8px_0,100%_0,calc(100%_-_8px)_100%,0_100%)] sm:grid-cols-[88px_minmax(0,1fr)_120px] sm:gap-5">
             <span className="font-display text-sm tracking-[0.18em] text-white sm:text-base sm:tracking-[0.22em]">
               POSICIÓN
             </span>
@@ -146,12 +148,13 @@ export default async function Resultados({ params }) {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            {resultados.map((r) => {
+            {resultados.map((r, index) => {
               const top = r.posicion <= 3;
               return (
                 <div
                   key={`${r.posicion}-${r.jugador.nombre}`}
-                  className={`grid grid-cols-[56px_minmax(0,1fr)_70px] items-center gap-4 border-l-[3px] px-5 py-3.5 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 sm:grid-cols-[88px_minmax(0,1fr)_120px] sm:gap-5 ${tierBorderClass(
+                  style={fadeDelay(index)}
+                  className={`grid animate-fade-up grid-cols-[56px_minmax(0,1fr)_70px] items-center gap-4 border-l-[3px] px-5 py-3.5 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 sm:grid-cols-[88px_minmax(0,1fr)_120px] sm:gap-5 ${tierBorderClass(
                     r.posicion,
                   )} ${top ? "bg-primary-500/10" : "bg-white/[.03]"}`}
                 >

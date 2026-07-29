@@ -57,7 +57,10 @@ export default function Footer() {
   }
 
   return (
-    <footer className="flex flex-col gap-10 bg-black px-5 py-10 sm:px-8 lg:px-14">
+    <footer
+      id="sobre-nosotros"
+      className="flex flex-col gap-10 bg-black px-5 py-10 sm:px-8 lg:px-14"
+    >
       <div className="flex flex-wrap items-start gap-9">
         <Image
           src={twpyLogo}

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
+import { fadeDelay } from "@/lib/fadeDelay";
 
 const FILTERS = [
   { key: "todos", label: "Todos" },
@@ -76,10 +77,11 @@ export default function CompetidoresBoard({ roster, temporada }) {
         <div className="mx-auto flex max-w-[1240px] flex-col gap-10">
           {podium.length > 0 && (
             <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-              {podium.map((player) => (
+              {podium.map((player, index) => (
                 <div
                   key={player.id}
-                  className="relative overflow-hidden border border-white/10 bg-dark-gray-3-500 p-6"
+                  style={fadeDelay(index)}
+                  className="relative animate-fade-up overflow-hidden border border-white/10 bg-dark-gray-3-500 p-6"
                 >
                   <span className="pointer-events-none absolute -right-2 -top-6 font-display text-[120px] leading-none text-white/[.06]">
                     {player.posicion}
@@ -99,7 +101,7 @@ export default function CompetidoresBoard({ roster, temporada }) {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex animate-fade-up flex-wrap items-center justify-between gap-4 [animation-delay:.08s]">
             <div className="flex flex-wrap gap-2">
               {FILTERS.map((f) => (
                 <button
@@ -141,10 +143,11 @@ export default function CompetidoresBoard({ roster, temporada }) {
             </p>
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {filtered.map((player) => (
+              {filtered.map((player, index) => (
                 <div
                   key={player.id}
-                  className={`flex flex-col gap-2 border border-white/10 bg-white/[.03] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary-500/60 hover:shadow-glow-primary ${
+                  style={fadeDelay(index)}
+                  className={`flex animate-fade-up flex-col gap-2 border border-white/10 bg-white/[.03] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary-500/60 hover:shadow-glow-primary ${
                     player.posicion !== null && player.posicion <= 3
                       ? "border-tekken-blue-400/40"
                       : ""

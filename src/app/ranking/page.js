@@ -3,6 +3,7 @@ import RibbonTag from "@/components/ui/RibbonTag";
 
 import { getFiltroAno, getRankings } from "../utils/db";
 import { withMinDelay } from "@/lib/withMinDelay";
+import { fadeDelay } from "@/lib/fadeDelay";
 
 // Revalida cada 60s para reflejar torneos nuevos sin redeploy
 // (y cachea las consultas a la BD).
@@ -53,7 +54,8 @@ export default async function RankingPage() {
             return (
               <div
                 key={ranking.posicion}
-                className={`grid grid-cols-[56px_minmax(0,1fr)_auto_56px] items-center gap-4 border-l-[3px] px-5 py-3.5 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${tierBorderClass(
+                style={fadeDelay(index)}
+                className={`grid animate-fade-up grid-cols-[56px_minmax(0,1fr)_auto_56px] items-center gap-4 border-l-[3px] px-5 py-3.5 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${tierBorderClass(
                   ranking.posicion,
                 )} ${index % 2 === 1 ? "bg-white/[.055]" : "bg-white/[.03]"}`}
               >
