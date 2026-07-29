@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/colors.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/typography.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/tokens/effects.css">
+<link rel="stylesheet" href="_ds/tekken-8-design-system-a208c36d-90bf-49d5-8497-10656e55698d/styles.css">
+<style>
+body{margin:0;background:#000}
+a{color:rgb(var(--color-primary-500));text-decoration:none}
+a:hover{color:rgb(var(--color-tekken-blue-400))}
+@keyframes txSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes txSpinRev{from{transform:rotate(360deg)}to{transform:rotate(0)}}
+@keyframes txPulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
+@keyframes txShimmer{0%{transform:translateX(-140%)}100%{transform:translateX(340%)}}
+@keyframes txBlink{0%,100%{opacity:1}50%{opacity:.12}}
+@keyframes txScan{0%{transform:translateY(-30%);opacity:0}15%{opacity:.6}85%{opacity:.6}100%{transform:translateY(130%);opacity:0}}
+@keyframes txDrift{0%{background-position:0 0}100%{background-position:0 -220px}}
+@keyframes txIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes txSlash{0%{transform:translateX(-60%) skewX(-18deg);opacity:0}30%{opacity:1}100%{transform:translateX(260%) skewX(-18deg);opacity:0}}
+@keyframes txGlitch{0%,92%,100%{clip-path:inset(0 0 0 0);transform:translateX(0)}94%{clip-path:inset(18% 0 62% 0);transform:translateX(-4px)}96%{clip-path:inset(58% 0 22% 0);transform:translateX(5px)}98%{clip-path:inset(38% 0 44% 0);transform:translateX(-2px)}}
+@keyframes txDot{0%,80%,100%{opacity:.2;transform:translateY(0)}40%{opacity:1;transform:translateY(-5px)}}
+</style>
+</helmet>
+
+<div data-screen-label="Transicion de carga" style="min-height:100vh;display:flex;flex-direction:column;background:#05070A;font-family:var(--font-body,'Source Sans 3',sans-serif);color:#fff">
+
+  <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:18px clamp(20px,4vw,44px);background:rgb(var(--color-black-500));border-bottom:1px solid rgba(255,255,255,.08)">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:22px;letter-spacing:.06em;font-style:italic;color:#fff">TRANSICIÓN DE CARGA</span>
+      <span style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4)">Navegá entre secciones para ver la animación</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="3">
+        <button type="button" onClick="{{ v.onSelect }}" style="{{ v.style }}">{{ v.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(16px,3vw,40px)">
+    <div style="position:relative;width:min(1180px,100%);aspect-ratio:16/9.6;min-height:520px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:radial-gradient(120% 90% at 50% 0%,#12333F 0%,#0C232C 45%,#03090D 100%)">
+
+      <div style="position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.025) 0 1px,transparent 1px 4px);animation:txDrift 9s linear infinite"></div>
+
+      <nav style="position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 clamp(16px,3vw,32px);background:rgba(0,0,0,.55);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(4px)">
+        <img src="uploads/TWPY LOGO VARIANTES-04.png" alt="Tekken Warriors Paraguay" style="height:34px;width:auto;display:block">
+        <div style="display:flex;align-items:center;gap:clamp(6px,1.4vw,18px)">
+          <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="5">
+            <button type="button" onClick="{{ item.onGo }}" style="{{ item.style }}">{{ item.label }}</button>
+          </sc-for>
+        </div>
+      </nav>
+
+      <div style="position:relative;z-index:1;padding:clamp(20px,3.2vw,40px);display:flex;flex-direction:column;gap:clamp(16px,2.4vw,28px)">
+        <div style="display:flex;flex-direction:column;gap:8px;animation:txIn .5s cubic-bezier(.2,.8,.2,1) both">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="display:inline-block;padding:5px 20px 5px 14px;background:rgb(var(--color-primary-500));clip-path:polygon(0 0,100% 0,calc(100% - 11px) 100%,0 100%);font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:14px;letter-spacing:.2em">{{ pageTag }}</span>
+            <span style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.35)">{{ pageMeta }}</span>
+          </div>
+          <h2 style="margin:0;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:clamp(32px,4.4vw,54px);line-height:1;letter-spacing:.04em;font-style:italic;color:#fff">{{ pageTitle }}</h2>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px">
+          <sc-for list="{{ rows }}" as="row" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:14px;padding:16px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);border-left:3px solid rgb(var(--color-primary-500))">
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:30px;line-height:1;color:rgba(255,255,255,.22)">{{ row.num }}</span>
+              <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:19px;letter-spacing:.05em;color:#fff">{{ row.name }}</span>
+                <span style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4)">{{ row.meta }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="{{ barTrackStyle }}">
+        <div style="{{ barFillStyle }}"></div>
+      </div>
+
+      <div style="{{ skeletonStyle }}">
+        <sc-for list="{{ skeletonRows }}" as="sk" hint-placeholder-count="6">
+          <div style="position:relative;height:{{ sk.h }};background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);overflow:hidden">
+            <div style="position:absolute;inset:0;width:32%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.10),transparent);animation:txShimmer 1.5s linear infinite"></div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="{{ overlayStyle }}">
+        <div style="{{ panelTopStyle }}"></div>
+        <div style="{{ panelBottomStyle }}"></div>
+        <div style="{{ scrimStyle }}"></div>
+
+        <div style="{{ coreStyle }}">
+          <div style="position:relative;display:flex;align-items:center;justify-content:center;width:clamp(120px,15vw,168px);height:clamp(120px,15vw,168px)">
+            <div style="position:absolute;inset:0;border:1px solid rgba(245,10,100,.3);border-top-color:rgb(var(--color-primary-500));border-radius:50%;animation:txSpin 2.2s linear infinite"></div>
+            <div style="position:absolute;inset:12px;border:1px dashed rgba(63,209,231,.3);border-radius:50%;animation:txSpinRev 6s linear infinite"></div>
+            <div style="position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,rgba(245,10,100,.35) 0%,transparent 68%);filter:blur(12px);animation:txPulse 2.6s ease-in-out infinite"></div>
+            <img src="uploads/TWPY LOGO VARIANTES-04.png" alt="" style="position:relative;width:62%;height:auto;filter:drop-shadow(0 0 18px rgba(245,10,100,.65))">
+          </div>
+
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="width:7px;height:7px;background:rgb(var(--color-primary-500));animation:txBlink 1s steps(1,end) infinite"></span>
+              <span style="font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:clamp(20px,2.6vw,30px);letter-spacing:.26em;color:#fff;animation:txGlitch 3.4s steps(1,end) infinite">{{ statusText }}</span>
+              <span style="width:7px;height:7px;background:rgb(var(--color-tekken-blue-400));animation:txBlink 1s steps(1,end) .5s infinite"></span>
+            </div>
+            <span style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.45)">{{ assetLabel }}</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;width:min(460px,72vw)">
+            <div style="position:relative;height:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);overflow:hidden">
+              <div style="{{ overlayFillStyle }}"></div>
+              <div style="position:absolute;inset:0;width:26%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:txShimmer 1.7s linear infinite;pointer-events:none"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-family:var(--font-display,'Bebas Neue',sans-serif);letter-spacing:.16em;color:rgba(255,255,255,.55);font-size:14px">
+              <span>{{ destinationLabel }}</span>
+              <span style="color:rgb(var(--color-primary-500));font-size:20px;font-variant-numeric:tabular-nums">{{ pct }}%</span>
+            </div>
+          </div>
+
+          <sc-if value="{{ showTips }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:stretch;max-width:min(600px,84vw);animation:txIn .45s ease both">
+              <span style="flex-shrink:0;display:flex;align-items:center;padding:7px 20px 7px 14px;background:rgb(var(--color-primary-500));clip-path:polygon(0 0,100% 0,calc(100% - 11px) 100%,0 100%);font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:14px;letter-spacing:.2em">TIP</span>
+              <span style="padding:7px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-left:none;font-size:13.5px;line-height:1.45;color:rgba(255,255,255,.78)">{{ tipText }}</span>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="{{ slashStyle }}"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px clamp(20px,4vw,44px);background:rgb(var(--color-black-500));border-top:1px solid rgba(255,255,255,.08);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.38)">
+    <span style="display:flex;gap:5px;align-items:flex-end">
+      <span style="width:5px;height:5px;background:rgb(var(--color-primary-500));animation:txDot 1.2s ease-in-out infinite"></span>
+      <span style="width:5px;height:5px;background:rgb(var(--color-primary-500));animation:txDot 1.2s ease-in-out .15s infinite"></span>
+      <span style="width:5px;height:5px;background:rgb(var(--color-primary-500));animation:txDot 1.2s ease-in-out .3s infinite"></span>
+    </span>
+    <span>{{ footerNote }}</span>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;ring&quot;,&quot;options&quot;:[&quot;wipe&quot;,&quot;ring&quot;,&quot;bar&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Loader&quot;},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#F50A64&quot;,&quot;options&quot;:[&quot;#F50A64&quot;,&quot;#3FD1E7&quot;,&quot;#FF6A00&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Loader&quot;},&quot;speedSec&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:2.2,&quot;min&quot;:0.8,&quot;max&quot;:8,&quot;step&quot;:0.2,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Loader&quot;},&quot;showTips&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Loader&quot;}}">
+class Component extends DCLogic {
+  state = { view: 'fixture', target: null, phase: 'idle', p: 0, variant: null, tip: 0, asset: 0 };
+
+  componentWillUnmount() { this.clearAll(); }
+
+  clearAll() { clearInterval(this.tick); clearInterval(this.assetTimer); clearTimeout(this.t1); clearTimeout(this.t2); }
+
+  get variant() { return this.state.variant || this.props.variant || 'wipe'; }
+  get speed() { return Math.max(0.4, Number(this.props.speedSec ?? 2.2)); }
+
+  go(view) {
+    if (this.state.phase !== 'idle' || view === this.state.view) return;
+    this.clearAll();
+    const enter = this.variant === 'bar' ? 120 : 460;
+    this.setState({ phase: 'in', target: view, p: 0, tip: (this.state.tip + 1) });
+    this.t1 = setTimeout(() => {
+      this.setState({ phase: 'load' });
+      this.assetTimer = setInterval(() => this.setState(s => ({ asset: s.asset + 1 })), 620);
+      const step = 100 / (this.speed * 1000 / 70);
+      this.tick = setInterval(() => {
+        this.setState(s => {
+          const slow = s.p > 84 ? .35 : s.p > 58 ? .75 : 1.35;
+          const next = Math.min(100, s.p + step * slow * (.4 + Math.random() * 1.4));
+          if (next >= 100) {
+            this.clearAll();
+            this.t2 = setTimeout(() => {
+              this.setState(st => ({ view: st.target || st.view, target: null, phase: 'out' }));
+              this.t1 = setTimeout(() => this.setState({ phase: 'idle', p: 0 }), this.variant === 'bar' ? 420 : 620);
+            }, 260);
+          }
+          return { p: next };
+        });
+      }, 70);
+    }, enter);
+  }
+
+  renderVals() {
+    const { phase, p, view } = this.state;
+    const variant = this.variant;
+    const accent = this.props.accentColor || '#F50A64';
+    const active = phase !== 'idle';
+    const covering = phase === 'in' || phase === 'load';
+    const pct = Math.floor(p);
+
+    const pages = {
+      fixture: { label: 'Fixture', tag: 'Fase de grupos', title: 'FIXTURE — FECHA 4', meta: 'Actualizado hace 2 min', rows: [['01','Kazuya vs Jin','Grupo A · 19:00'],['02','King vs Paul','Grupo A · 19:20'],['03','Jun vs Reina','Grupo B · 19:40'],['04','Law vs Bryan','Grupo B · 20:00'],['05','Lili vs Asuka','Grupo C · 20:20'],['06','Steve vs Hwoarang','Grupo C · 20:40']] },
+      ranking: { label: 'Ranking', tag: 'Temporada 2026', title: 'RANKING GENERAL', meta: '48 competidores activos', rows: [['01','DannsBlanco','2.480 pts'],['02','MishimaPY','2.310 pts'],['03','KingAsu','2.145 pts'],['04','RedFang','1.980 pts'],['05','ZafinaPY','1.870 pts'],['06','LeoGuaraní','1.755 pts']] },
+      competidores: { label: 'Competidores', tag: 'Roster', title: 'COMPETIDORES', meta: 'Inscripciones abiertas', rows: [['01','Danns Blanco','Asunción · Kazuya'],['02','Marco Ruiz','Encarnación · King'],['03','Luis Ayala','CDE · Jin'],['04','Sofía Duarte','Luque · Lili'],['05','Iván Rojas','San Lorenzo · Bryan'],['06','Ale Benítez','Areguá · Reina']] },
+      torneos: { label: 'Torneos', tag: 'Calendario', title: 'TORNEOS 2026', meta: '3 eventos confirmados', rows: [['01','Iron Fist Cup','15 AGO · Asunción'],['02','Mishima Clash','12 SEP · Encarnación'],['03','TWPY Major','24 OCT · CDE'],['04','Devil Trials','08 NOV · Luque'],['05','Winter Brawl','06 DIC · Asunción'],['06','Season Finals','20 DIC · Asunción']] },
+      resultados: { label: 'Resultados', tag: 'Última fecha', title: 'RESULTADOS', meta: 'Fecha 3 cerrada', rows: [['01','Kazuya 3 — 1 Paul','Winners R2'],['02','Jin 3 — 2 King','Winners R2'],['03','Reina 3 — 0 Law','Losers R1'],['04','Asuka 2 — 3 Lili','Losers R1'],['05','Bryan 3 — 1 Steve','Winners R1'],['06','Jun 3 — 2 Hwoarang','Winners R1']] }
+    };
+    const page = pages[view];
+    const dest = pages[this.state.target || view];
+
+    const navItems = Object.keys(pages).map(k => ({
+      label: pages[k].label,
+      onGo: () => this.go(k),
+      style: 'padding:8px 14px;background:' + (k === view ? 'rgba(245,10,100,.16)' : 'transparent') +
+        ';border:none;border-bottom:2px solid ' + (k === view ? accent : 'transparent') +
+        ';font-family:var(--font-display,\'Bebas Neue\',sans-serif);font-size:17px;letter-spacing:.06em;font-style:italic;color:' +
+        (k === view ? '#fff' : 'rgba(255,255,255,.6)') + ';cursor:pointer;transition:color .2s ease,background .2s ease'
+    }));
+
+    const vDefs = [['wipe', 'Wipe diagonal'], ['ring', 'Ring + scrim'], ['bar', 'Barra + skeleton']];
+    const variants = vDefs.map(([k, label]) => ({
+      label,
+      onSelect: () => { if (this.state.phase === 'idle') this.setState({ variant: k }); },
+      style: 'padding:8px 22px 8px 14px;background:' + (variant === k ? accent : 'rgba(255,255,255,.06)') +
+        ';border:1px solid ' + (variant === k ? accent : 'rgba(255,255,255,.14)') +
+        ';clip-path:polygon(0 0,100% 0,calc(100% - 11px) 100%,0 100%);font-family:var(--font-display,\'Bebas Neue\',sans-serif);font-size:15px;letter-spacing:.16em;color:' +
+        (variant === k ? '#fff' : 'rgba(255,255,255,.65)') + ';cursor:pointer;transition:background .2s ease,color .2s ease'
+    }));
+
+    const assets = ['fixture.json', 'ranking.json', 'competidores.json', 'resultados.json', 'torneos.json', 'media.cdn'];
+    const tips = [
+      'Los datos se sincronizan con la nube en cada cambio de sección.',
+      'Doble eliminación: una derrota en Winners no te saca del torneo.',
+      'Confirmá tu asistencia antes del cierre de inscripciones.',
+      'Sets de grupos al mejor de 3; finales al mejor de 5.',
+      'Revisá tu seed en el fixture antes de que arranque la ronda.'
+    ];
+    const status = p < 20 ? 'CONECTANDO' : p < 52 ? 'DESCARGANDO' : p < 84 ? 'SINCRONIZANDO' : 'LISTO';
+
+    const isWipe = variant === 'wipe', isRing = variant === 'ring', isBar = variant === 'bar';
+    const ease = 'cubic-bezier(.76,0,.24,1)';
+
+    const overlayStyle = 'position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:' +
+      (active ? 'auto' : 'none') + ';opacity:' + (active ? 1 : 0) + ';transition:opacity .25s ease ' + (active ? '0s' : '.35s');
+
+    const panel = (from) => {
+      const hidden = from === 'top' ? 'translateY(-101%)' : 'translateY(101%)';
+      const clip = from === 'top'
+        ? 'polygon(0 0,100% 0,100% 100%,0 calc(100% - 9%))'
+        : 'polygon(0 9%,100% 0,100% 100%,0 100%)';
+      return 'position:absolute;left:0;right:0;height:56%;' + (from === 'top' ? 'top:0;' : 'bottom:0;') +
+        'background:linear-gradient(' + (from === 'top' ? '160deg' : '340deg') + ',#0C232C 0%,#050A0E 70%,#000 100%);' +
+        'border-' + (from === 'top' ? 'bottom' : 'top') + ':2px solid ' + (from === 'top' ? accent : '#3FD1E7') + ';' +
+        'clip-path:' + clip + ';transform:' + (isWipe && covering ? 'translateY(0)' : hidden) +
+        ';transition:transform .5s ' + ease + ';box-shadow:0 0 60px rgba(0,0,0,.8)';
+    };
+
+    const scrimStyle = 'position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 45%,rgba(12,35,44,.94) 0%,rgba(3,9,13,.97) 70%);backdrop-filter:blur(6px);opacity:' +
+      (isRing && covering ? 1 : 0) + ';transition:opacity .35s ease';
+
+    const coreVisible = covering && !isBar;
+    const coreStyle = 'position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:clamp(14px,2.2vw,24px);padding:24px;text-align:center;opacity:' +
+      (coreVisible ? 1 : 0) + ';transform:scale(' + (coreVisible ? 1 : .94) + ');transition:opacity .3s ease ' +
+      (coreVisible ? '.22s' : '0s') + ',transform .45s ' + ease;
+
+    const slashStyle = 'position:absolute;top:0;bottom:0;width:22%;background:linear-gradient(90deg,transparent,' + accent + '55,transparent);pointer-events:none;opacity:' +
+      (isWipe && phase === 'in' ? 1 : 0) + ';animation:' + (isWipe && phase === 'in' ? 'txSlash .55s ease-out both' : 'none');
+
+    const barActive = isBar && active;
+    const barWidth = phase === 'in' ? 12 : phase === 'load' ? Math.max(12, p) : 100;
+    const barTrackStyle = 'position:absolute;top:0;left:0;right:0;height:3px;z-index:20;background:rgba(255,255,255,.06);opacity:' +
+      (barActive ? 1 : 0) + ';transition:opacity .3s ease';
+    const barFillStyle = 'height:100%;width:' + barWidth + '%;background:linear-gradient(90deg,' + accent + ',#3FD1E7);box-shadow:0 0 14px ' + accent +
+      ';transition:width .18s linear';
+
+    const skelVisible = isBar && covering;
+    const skeletonStyle = 'position:absolute;left:0;right:0;top:64px;bottom:0;z-index:9;display:flex;flex-direction:column;gap:14px;padding:clamp(20px,3.2vw,40px);background:radial-gradient(120% 90% at 50% 0%,#12333F 0%,#0C232C 45%,#03090D 100%);opacity:' +
+      (skelVisible ? 1 : 0) + ';pointer-events:' + (skelVisible ? 'auto' : 'none') + ';transition:opacity .3s ease';
+
+    return {
+      navItems, variants,
+      pageTag: page.tag, pageTitle: page.title, pageMeta: page.meta,
+      rows: page.rows.map(r => ({ num: r[0], name: r[1], meta: r[2] })),
+      skeletonRows: [{ h: '46px' }, { h: '86px' }, { h: '64px' }, { h: '64px' }, { h: '64px' }],
+      pct, statusText: status,
+      assetLabel: 'GET /' + assets[this.state.asset % assets.length],
+      destinationLabel: 'Destino · ' + dest.label,
+      tipText: tips[this.state.tip % tips.length],
+      showTips: this.props.showTips ?? true,
+      footerNote: active ? 'Cargando ' + dest.label.toLowerCase() + ' desde la nube…' : 'Listo · datos sincronizados',
+      overlayStyle, panelTopStyle: panel('top'), panelBottomStyle: panel('bottom'),
+      scrimStyle, coreStyle, slashStyle, barTrackStyle, barFillStyle, skeletonStyle,
+      overlayFillStyle: 'position:absolute;inset:0 auto 0 0;width:' + p.toFixed(1) + '%;background:linear-gradient(90deg,' + accent + ' 0%,' + accent + ' 60%,#3FD1E7 100%);transition:width .1s linear'
+    };
+  }
+}
+
+</script>
+</body>
+</html>

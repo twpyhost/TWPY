@@ -39,7 +39,7 @@ project owner, not an oversight.
 
 ## Components
 
-### `src/components/pageLoadingRing.js` (new, client component)
+### `src/components/ui/PageLoadingRing.js` (new, client component)
 
 Renders the ring-variant visual only:
 
