@@ -96,6 +96,24 @@ export default function Footer() {
           </div>
         </div>
 
+        <div className="flex items-center gap-[18px] border border-white/10 bg-white/[.04] px-[18px] py-3.5">
+          <Image
+            src="/images/misc/whatsapp-qr.svg"
+            alt="Código QR del grupo de WhatsApp"
+            width={104}
+            height={104}
+            className="h-[104px] w-[104px] flex-shrink-0 object-contain"
+          />
+          <div className="flex max-w-[210px] flex-col gap-1.5">
+            <span className="font-display text-xl tracking-[0.06em] text-primary-500">
+              Sumate al grupo
+            </span>
+            <span className="font-body text-[13px] leading-[1.5] text-white/60">
+              Escaneá el código para entrar al WhatsApp de la liga.
+            </span>
+          </div>
+        </div>
+
         <div className="flex flex-col items-end gap-2 text-right">
           <span className="font-display text-base tracking-[0.04em] text-white/75">
             Creado con 💔 por:

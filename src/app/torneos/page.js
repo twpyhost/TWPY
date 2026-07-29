@@ -5,6 +5,7 @@ import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
 
 import { getTorneos, getFiltroAno } from "../utils/db";
+import { withMinDelay } from "@/lib/withMinDelay";
 
 // Revalida cada 60s para reflejar torneos nuevos sin redeploy
 // (y cachea las consultas a la BD).
@@ -21,7 +22,7 @@ function parseFecha(fechaISO) {
 }
 
 export default async function TorneosPage({ searchParams }) {
-  const [torneos, anos] = await Promise.all([getTorneos(), getFiltroAno()]);
+  const [torneos, anos] = await withMinDelay(Promise.all([getTorneos(), getFiltroAno()]));
   const params = await searchParams;
   const selectedYear = params?.year || "all";
 

@@ -144,11 +144,13 @@ export default function CargarTorneo() {
             {resumen.temporada})
           </p>
           <p>
-            <strong>Resultados cargados:</strong> {resumen.resultados}
+            <strong>Participantes cargados:</strong> {resumen.participantes}
           </p>
           <p>
-            <strong>Usuarios nuevos:</strong> {resumen.usuarios_creados} (
-            {resumen.usuarios_temporales} temporales)
+            <strong>Resueltos automaticamente:</strong> {resumen.resueltos}
+          </p>
+          <p>
+            <strong>Pendientes de resolucion:</strong> {resumen.sin_resolver}
           </p>
           {resumen.advertencias?.length > 0 && (
             <div className="mt-2">

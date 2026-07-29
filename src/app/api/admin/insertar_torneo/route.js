@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/adminAuth";
 import { extractTournamentId, fetchChallongeApi } from "@/lib/challonge";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { recalcularSnapshots } from "@/lib/rankings";
 
 export async function POST(req) {
   try {
@@ -183,21 +184,20 @@ async function insertarResultados(supabase, tournament, juegoId, temporada) {
   );
 
   const puntosPorPosicion = await obtenerPuntajes(supabase, juegoId);
-  const { porChallongeId, porNombre } = await obtenerUsuariosExistentes(
-    supabase,
-  );
+  const cuentasPorChallongeId = await obtenerCuentasChallonge(supabase);
 
   const filas = [];
-  const usuariosUsados = new Set();
-  let usuariosCreados = 0;
-  let usuariosTemporales = 0;
+  const challongeIdsUsados = new Set();
+  const playerIdsUsados = new Set();
+  let resueltos = 0;
+  let sinResolver = 0;
 
   for (const participante of participantes) {
     const challongeId = participante.challonge_user_id || null;
     const username =
       participante.challonge_username || participante.username || null;
     const displayName =
-      participante.display_name || participante.name || username;
+      participante.display_name || participante.name || username || "Desconocido";
     const posicion = participante.final_rank;
 
     if (!posicion) {
@@ -207,40 +207,15 @@ async function insertarResultados(supabase, tournament, juegoId, temporada) {
       continue;
     }
 
-    let usuario =
-      (challongeId && porChallongeId.get(challongeId)) ||
-      (displayName && porNombre.get(displayName.toLowerCase())) ||
-      (username && porNombre.get(username.toLowerCase())) ||
-      null;
-
-    if (!usuario) {
-      usuario = await crearUsuario(supabase, {
-        challongeId,
-        username,
-        displayName,
-      });
-
-      usuariosCreados += 1;
-      if (usuario.es_temporal) {
-        usuariosTemporales += 1;
+    if (challongeId) {
+      if (challongeIdsUsados.has(challongeId)) {
         advertencias.push(
-          `"${displayName}" no tiene cuenta de Challonge: se creo como usuario temporal`,
+          `"${displayName}" ya tiene un resultado en este torneo, se omite el duplicado`,
         );
+        continue;
       }
-
-      if (challongeId) {
-        porChallongeId.set(challongeId, usuario);
-      }
-      porNombre.set(displayName.toLowerCase(), usuario);
+      challongeIdsUsados.add(challongeId);
     }
-
-    if (usuariosUsados.has(usuario.id)) {
-      advertencias.push(
-        `"${displayName}" ya tiene un resultado en este torneo, se omite el duplicado`,
-      );
-      continue;
-    }
-    usuariosUsados.add(usuario.id);
 
     let puntaje = puntosPorPosicion.get(posicion);
     if (puntaje === undefined) {
@@ -250,32 +225,66 @@ async function insertarResultados(supabase, tournament, juegoId, temporada) {
       );
     }
 
-    filas.push({
-      torneo_id: tournament.id,
-      usuario_id: usuario.id,
-      posicion,
-      puntaje,
-    });
+    // Unico criterio de auto-resolucion: challonge_id exacto. Nunca por
+    // nombre (ver README: dos personas distintas pueden compartir nombre).
+    const cuenta = challongeId ? cuentasPorChallongeId.get(challongeId) : null;
+
+    if (cuenta) {
+      if (playerIdsUsados.has(cuenta.player_id)) {
+        advertencias.push(
+          `"${displayName}" ya tiene un resultado en este torneo bajo otra cuenta, se omite`,
+        );
+        continue;
+      }
+      playerIdsUsados.add(cuenta.player_id);
+      resueltos += 1;
+
+      filas.push({
+        torneo_id: tournament.id,
+        challonge_id: challongeId,
+        challonge_username: username,
+        nombre_participante: displayName,
+        posicion,
+        puntaje,
+        player_id: cuenta.player_id,
+        resolved_at: new Date().toISOString(),
+      });
+    } else {
+      sinResolver += 1;
+      advertencias.push(
+        `"${displayName}" no coincide con ninguna cuenta de Challonge conocida: queda pendiente en la cola de identidades`,
+      );
+
+      filas.push({
+        torneo_id: tournament.id,
+        challonge_id: challongeId,
+        challonge_username: username,
+        nombre_participante: displayName,
+        posicion,
+        puntaje,
+        player_id: null,
+      });
+    }
   }
 
   if (filas.length === 0) {
     throw new Error("El torneo no tiene participantes con posicion final");
   }
 
-  const { error: resultadosError } = await supabase
-    .from("resultados")
+  const { error: participantesError } = await supabase
+    .from("tournament_participants_raw")
     .insert(filas);
 
-  if (resultadosError) {
-    throw resultadosError;
+  if (participantesError) {
+    throw participantesError;
   }
 
   await recalcularSnapshots(supabase, temporada);
 
   return {
-    resultados: filas.length,
-    usuarios_creados: usuariosCreados,
-    usuarios_temporales: usuariosTemporales,
+    participantes: filas.length,
+    resueltos,
+    sin_resolver: sinResolver,
     advertencias,
   };
 }
@@ -293,133 +302,14 @@ async function obtenerPuntajes(supabase, juegoId) {
   return new Map(data.map((fila) => [fila.posicion, fila.puntos]));
 }
 
-async function obtenerUsuariosExistentes(supabase) {
+async function obtenerCuentasChallonge(supabase) {
   const { data, error } = await supabase
-    .from("usuarios")
-    .select(
-      "id, challonge_id, challonge_username, es_temporal, nombres_alternativos ( nombre, activo )",
-    );
+    .from("player_challonge_accounts")
+    .select("challonge_id, player_id, challonge_username");
 
   if (error) {
     throw error;
   }
 
-  const porChallongeId = new Map();
-  const porNombre = new Map();
-
-  for (const usuario of data) {
-    if (usuario.challonge_id) {
-      porChallongeId.set(usuario.challonge_id, usuario);
-    }
-
-    porNombre.set(usuario.challonge_username.toLowerCase(), usuario);
-    for (const alternativo of usuario.nombres_alternativos || []) {
-      if (alternativo.activo) {
-        porNombre.set(alternativo.nombre.toLowerCase(), usuario);
-      }
-    }
-  }
-
-  return { porChallongeId, porNombre };
-}
-
-async function crearUsuario(supabase, { challongeId, username, displayName }) {
-  const { data: usuario, error } = await supabase
-    .from("usuarios")
-    .insert({
-      challonge_id: challongeId,
-      challonge_username: username || displayName,
-      es_temporal: !challongeId,
-    })
-    .select("id, challonge_id, challonge_username, es_temporal")
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  // Registra el nombre visto en el torneo como nombre alternativo activo
-  // (README: se respeta hasta conocer su cuenta real de Challonge).
-  const { error: nombreError } = await supabase
-    .from("nombres_alternativos")
-    .insert({ usuario_id: usuario.id, nombre: displayName, activo: true });
-
-  if (nombreError) {
-    throw nombreError;
-  }
-
-  return usuario;
-}
-
-// Recalcula los cortes de ranking de toda la temporada en orden
-// cronologico, para que insertar un torneo viejo tambien deje la
-// historia consistente.
-async function recalcularSnapshots(supabase, temporada) {
-  const { data: torneos, error: torneosError } = await supabase
-    .from("torneos")
-    .select("id")
-    .eq("temporada", temporada)
-    .order("fecha_inicio", { ascending: true })
-    .order("id", { ascending: true });
-
-  if (torneosError) {
-    throw torneosError;
-  }
-
-  const torneoIds = torneos.map((torneo) => torneo.id);
-
-  const { data: resultados, error: resultadosError } = await supabase
-    .from("resultados")
-    .select("torneo_id, usuario_id, puntaje")
-    .in("torneo_id", torneoIds);
-
-  if (resultadosError) {
-    throw resultadosError;
-  }
-
-  const resultadosPorTorneo = new Map(torneoIds.map((id) => [id, []]));
-  for (const resultado of resultados) {
-    resultadosPorTorneo.get(resultado.torneo_id)?.push(resultado);
-  }
-
-  const acumulados = new Map();
-  const snapshots = [];
-
-  for (const torneoId of torneoIds) {
-    for (const resultado of resultadosPorTorneo.get(torneoId)) {
-      acumulados.set(
-        resultado.usuario_id,
-        (acumulados.get(resultado.usuario_id) || 0) + resultado.puntaje,
-      );
-    }
-
-    [...acumulados.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .forEach(([usuarioId, puntajeAcumulado], index) => {
-        snapshots.push({
-          torneo_id: torneoId,
-          usuario_id: usuarioId,
-          temporada,
-          puntaje_acumulado: puntajeAcumulado,
-          posicion_global: index + 1,
-        });
-      });
-  }
-
-  const { error: deleteError } = await supabase
-    .from("ranking_snapshots")
-    .delete()
-    .eq("temporada", temporada);
-
-  if (deleteError) {
-    throw deleteError;
-  }
-
-  const { error: insertError } = await supabase
-    .from("ranking_snapshots")
-    .insert(snapshots);
-
-  if (insertError) {
-    throw insertError;
-  }
+  return new Map(data.map((cuenta) => [cuenta.challonge_id, cuenta]));
 }

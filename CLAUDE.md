@@ -33,7 +33,7 @@ Users → Cloudflare (DNS/CDN) → Vercel (Next.js frontend) → Supabase (DB/Au
 
 ## Design & specs
 
-- `design/` — Claude Design handoff for the Tekken 8 visual system (source of truth for UI). Read `design/README.md` first; the `.dc.html` files are interactive design references, not code to copy verbatim (see that README for why). The live Claude Design project is `a8f8a0e5-4dfe-4ac2-8e1b-39351e40cd7a`.
+- `design/README.md` — analysis/spec of the Tekken 8 visual system (source of truth for UI): per-screen layout breakdowns, design tokens, fidelity notes, and discrepancies (mocked data, default-value mismatches) found while reviewing the source designs. The raw `.dc.html` prototype files themselves are **not** mirrored in this repo — read them live from the Claude Design project via the `DesignSync` tool (`get_file`/`list_files`, project ID `a8f8a0e5-4dfe-4ac2-8e1b-39351e40cd7a`) rather than expecting local copies. Historical specs/plans under `docs/superpowers/` may still reference `design/*.dc.html` paths from before this change — those are point-in-time records, not live pointers.
 - `docs/superpowers/specs/` — feature design specs (brainstorming output) written before implementation plans.
 - `docs/superpowers/plans/` — implementation plans, one per spec.
 - `docs/admin-dashboard-brief.md`, `docs/infrastructure.md` — standalone briefs referenced elsewhere in this file.
@@ -43,6 +43,8 @@ Users → Cloudflare (DNS/CDN) → Vercel (Next.js frontend) → Supabase (DB/Au
 ## Core domain model & business rules
 
 ### Player identity (important — read before touching player/tournament tables)
+
+**Status: this is the TARGET model, not yet implemented.** The current schema (`supabase/migrations/0001_init.sql` onward) has a simpler, flat design: `usuarios` (conflates player + Challonge account in one row, one `challonge_id` per row, `es_temporal` bool flags manual/no-account users) and `nombres_alternativos` (alias per `usuario_id`, not per `challonge_id`). There is no `players`/`player_challonge_accounts`/`player_aliases`/`tournament_participants_raw` split in the DB or in `src/lib/data/supabaseDb.js` or `mockDb.js` today — see the 5 scenarios below for exactly what does and doesn't work under the current schema. The target model described in this section is what a future migration should move toward; do not assume it already exists when reading code.
 
 A `players` record is the **canonical person**. It is deliberately decoupled from Challonge accounts because:
 
@@ -72,6 +74,18 @@ tournament_participants_raw
 ```
 
 **Do not merge `players` and `player_challonge_accounts` into one table.** The whole point of the split is to support account merges without losing history — an admin-only action that reassigns a `challonge_id` to a different `player_id`.
+
+#### The 5 identity scenarios this model must support
+
+Design/implementation target — checked against actual code on 2026-07-29 (see "Status" note above):
+
+1. **Player with only one Challonge account (ideal case).** ✅ Works today too — `usuarios.challonge_id` unique, matched on import (`supabaseDb.js:296-352`).
+2. **Player with multiple Challonge accounts over time.** ❌ Not supported today — one `challonge_id` column per `usuarios` row means a second account creates a fragmented duplicate player. This is exactly what `player_challonge_accounts` (plural, FK to one `player_id`) is for.
+3. **Player forgot their old account, admin registers manually — later needs reconciling with the old account.** ⚠️ Partially possible today (`es_temporal = true` record can exist) but there's no persisted "unlinked queue" — only an in-memory warning string during import, nothing queryable for later admin review. Target model's `tournament_participants_raw` + admin linking flow covers this.
+4. **Player has no Challonge account at all, admin-registered.** ⚠️ Schema allows it (`es_temporal`, `challonge_id = null`) but there's no standalone "register player manually" admin route/form — only reachable indirectly via tournament-import auto-creation today.
+5. **Player wants to link a manually-registered record into a new/recovered Challonge account.** ❌ Zero support today — no merge table, no reassignment path for `resultados`/`ranking_snapshots`, no route/UI. This is the admin-only "reassign `challonge_id` to a different `player_id`" merge action described above.
+
+Known extra risk in current import code (not one of the 5, but related): unknown participants are auto-matched by **lowercase display name** (`supabaseDb.js:212-214`) with no review step — two different real people sharing a name could be silently merged into one `usuarios` row. Any redesign should replace this with the `tournament_participants_raw` staging + review flow rather than eager auto-matching.
 
 ### Two Challonge organizer accounts
 

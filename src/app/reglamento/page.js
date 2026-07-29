@@ -77,7 +77,7 @@ const SECTIONS = [
           <>
             Cuando un player llega al setup, su contrincante tiene <strong>5 minutos</strong> para
             presentarse y comenzar el FT. Si no llega en ese plazo, o no consigue control o arcade
-            para jugar, queda descalificado.
+            para jugar, queda descalificado. La administración no se hace responsable de los inconvenientes que puedan surgir por no llevar control o arcade propio.
           </>
         ),
       },

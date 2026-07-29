@@ -10,6 +10,7 @@ const getTorneos = async () => {
       nombre_torneo: torneo.nombre,
       fecha_torneo,
       temporada: fecha_torneo.split("-")[0],
+      url_challonge: torneo.url_challonge ?? null,
     };
   });
 };
@@ -25,8 +26,9 @@ const getTorneoResultados = async (torneoId) => {
     torneo: {
       nombre_torneo: torneo.nombre,
     },
-    usuario: {
-      challonge_username: competidor.name,
+    jugador: {
+      id: competidor.id,
+      nombre: competidor.name,
     },
     posicion: competidor.position,
     puntaje: competidor.score,
@@ -40,13 +42,13 @@ const getCompetidores = async () => {
     torneo.competidores.forEach((competidor) => {
       competidores.set(competidor.id, {
         id: competidor.id,
-        challonge_username: competidor.name,
+        nombre: competidor.name,
       });
     });
   });
 
   return [...competidores.values()].sort((a, b) =>
-    a.challonge_username.localeCompare(b.challonge_username),
+    a.nombre.localeCompare(b.nombre),
   );
 };
 
@@ -60,7 +62,8 @@ const getRankings = async () => {
   resultado.torneos.forEach((torneo) => {
     torneo.competidores.forEach((competidor) => {
       const current = totals.get(competidor.id) || {
-        challonge_username: competidor.name,
+        id: competidor.id,
+        nombre: competidor.name,
         puntaje: 0,
       };
 
@@ -69,7 +72,8 @@ const getRankings = async () => {
 
       if (torneo.id !== latestTournamentId) {
         const previous = previousTotals.get(competidor.id) || {
-          challonge_username: competidor.name,
+          id: competidor.id,
+          nombre: competidor.name,
           puntaje: 0,
         };
 
@@ -83,9 +87,7 @@ const getRankings = async () => {
   const previousRankings = buildRanking(previousTotals);
 
   return rankings.map((ranking) => {
-    const previous = previousRankings.find(
-      (item) => item.challonge_username === ranking.challonge_username,
-    );
+    const previous = previousRankings.find((item) => item.id === ranking.id);
 
     return {
       ...ranking,
@@ -111,8 +113,9 @@ function buildRanking(totals) {
   return [...totals.values()]
     .sort((a, b) => b.puntaje - a.puntaje)
     .map((competidor, index) => ({
+      id: competidor.id,
       posicion: index + 1,
-      challonge_username: competidor.challonge_username,
+      nombre: competidor.nombre,
       puntaje: competidor.puntaje,
     }));
 }

@@ -14,20 +14,10 @@ function getClient() {
   return client;
 }
 
-// El nombre a mostrar es el nombre alternativo activo si existe,
-// si no el username de challonge.
-function getDisplayName(usuario) {
-  const activo = usuario?.nombres_alternativos?.find((n) => n.activo);
-  return activo?.nombre || usuario?.challonge_username || "Desconocido";
-}
-
-const USUARIO_SELECT =
-  "id, challonge_username, nombres_alternativos ( nombre, activo )";
-
 const getTorneos = async () => {
   const { data, error } = await getClient()
     .from("torneos")
-    .select("id, nombre, fecha_inicio, temporada")
+    .select("id, nombre, fecha_inicio, temporada, url_challonge")
     .order("fecha_inicio", { ascending: false });
 
   if (error) {
@@ -39,6 +29,7 @@ const getTorneos = async () => {
     nombre_torneo: torneo.nombre,
     fecha_torneo: torneo.fecha_inicio,
     temporada: String(torneo.temporada),
+    url_challonge: torneo.url_challonge ?? null,
   }));
 };
 
@@ -48,12 +39,15 @@ const getTorneoResultados = async (torneoId) => {
     return null;
   }
 
+  // Solo participantes ya resueltos a un jugador: uno pendiente en la cola
+  // de identidades nunca debe aparecer en una pagina publica.
   const { data, error } = await getClient()
-    .from("resultados")
+    .from("tournament_participants_raw")
     .select(
-      `posicion, puntaje, torneo:torneos ( nombre ), usuario:usuarios ( ${USUARIO_SELECT} )`,
+      "posicion, puntaje, torneo:torneos ( nombre ), jugador:players ( id, display_name )",
     )
     .eq("torneo_id", id)
+    .not("player_id", "is", null)
     .order("posicion", { ascending: true });
 
   if (error) {
@@ -68,8 +62,9 @@ const getTorneoResultados = async (torneoId) => {
     torneo: {
       nombre_torneo: resultado.torneo.nombre,
     },
-    usuario: {
-      challonge_username: getDisplayName(resultado.usuario),
+    jugador: {
+      id: resultado.jugador.id,
+      nombre: resultado.jugador.display_name,
     },
     posicion: resultado.posicion,
     puntaje: resultado.puntaje,
@@ -78,16 +73,16 @@ const getTorneoResultados = async (torneoId) => {
 
 const getCompetidores = async () => {
   const { data, error } = await getClient()
-    .from("usuarios")
-    .select(USUARIO_SELECT);
+    .from("players")
+    .select("id, display_name");
 
   if (error) {
     throw new Error(`Error al obtener competidores: ${error.message}`);
   }
 
   return data
-    .map((usuario) => ({ id: usuario.id, challonge_username: getDisplayName(usuario) }))
-    .sort((a, b) => a.challonge_username.localeCompare(b.challonge_username));
+    .map((jugador) => ({ id: jugador.id, nombre: jugador.display_name }))
+    .sort((a, b) => a.nombre.localeCompare(b.nombre));
 };
 
 const getRankings = async () => {
@@ -115,7 +110,7 @@ const getRankings = async () => {
   const { data: snapshots, error: snapshotsError } = await supabase
     .from("ranking_snapshots")
     .select(
-      `usuario_id, posicion_global, puntaje_acumulado, usuario:usuarios ( ${USUARIO_SELECT} )`,
+      "player_id, posicion_global, puntaje_acumulado, jugador:players ( id, display_name )",
     )
     .eq("torneo_id", ultimo.id)
     .order("posicion_global", { ascending: true });
@@ -128,7 +123,7 @@ const getRankings = async () => {
   if (anterior && anterior.temporada === ultimo.temporada) {
     const { data: previos, error: previosError } = await supabase
       .from("ranking_snapshots")
-      .select("usuario_id, posicion_global")
+      .select("player_id, posicion_global")
       .eq("torneo_id", anterior.id);
 
     if (previosError) {
@@ -138,17 +133,18 @@ const getRankings = async () => {
     }
 
     previos.forEach((snapshot) => {
-      posicionesAnteriores.set(snapshot.usuario_id, snapshot.posicion_global);
+      posicionesAnteriores.set(snapshot.player_id, snapshot.posicion_global);
     });
   }
 
   return snapshots.map((snapshot) => ({
+    id: snapshot.jugador.id,
     posicion: snapshot.posicion_global,
-    challonge_username: getDisplayName(snapshot.usuario),
+    nombre: snapshot.jugador.display_name,
     puntaje: snapshot.puntaje_acumulado,
     movimiento: getMovimiento(
       snapshot.posicion_global,
-      posicionesAnteriores.get(snapshot.usuario_id),
+      posicionesAnteriores.get(snapshot.player_id),
     ),
   }));
 };

@@ -2,6 +2,7 @@ import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 
 import { getFiltroAno, getRankings } from "../utils/db";
+import { withMinDelay } from "@/lib/withMinDelay";
 
 // Revalida cada 60s para reflejar torneos nuevos sin redeploy
 // (y cachea las consultas a la BD).
@@ -19,7 +20,7 @@ function tierBorderClass(posicion) {
 }
 
 export default async function RankingPage() {
-  const [rankings, anos] = await Promise.all([getRankings(), getFiltroAno()]);
+  const [rankings, anos] = await withMinDelay(Promise.all([getRankings(), getFiltroAno()]));
   const temporada = anos[0] ?? String(new Date().getFullYear());
 
   return (
@@ -52,13 +53,13 @@ export default async function RankingPage() {
             return (
               <div
                 key={ranking.posicion}
-                className={`grid grid-cols-[56px_1fr_auto_56px] items-center gap-4 border-l-[3px] px-5 py-3.5 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${tierBorderClass(
+                className={`grid grid-cols-[56px_minmax(0,1fr)_auto_56px] items-center gap-4 border-l-[3px] px-5 py-3.5 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${tierBorderClass(
                   ranking.posicion,
                 )} ${index % 2 === 1 ? "bg-white/[.055]" : "bg-white/[.03]"}`}
               >
                 <span className="font-display text-2xl text-white/50">{ranking.posicion}</span>
-                <span className="truncate font-body text-lg font-semibold">
-                  {ranking.challonge_username}
+                <span className="[overflow-wrap:anywhere] font-body text-lg font-semibold">
+                  {ranking.nombre}
                 </span>
                 <span className="font-display text-2xl">{ranking.puntaje} pts</span>
                 <span className={`text-center font-display text-xl ${trend.className}`}>

@@ -164,7 +164,7 @@ export default function CompetidoresBoard({ roster, temporada }) {
                       {player.posicion !== null ? `#${player.posicion}` : "S/R"}
                     </span>
                   </div>
-                  <p className="m-0 truncate font-display text-xl italic">{player.username}</p>
+                  <p className="m-0 [overflow-wrap:anywhere] font-display text-xl italic">{player.username}</p>
                   <p className="m-0 font-body text-xs text-white/50">
                     {player.puntaje !== null ? `${player.puntaje} pts` : "SIN PUNTOS"}
                   </p>

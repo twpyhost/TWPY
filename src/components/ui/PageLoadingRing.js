@@ -26,9 +26,6 @@ const TICK_MS = 70;
 const TARGET_MS = 2200;
 const STEP = 100 / (TARGET_MS / TICK_MS);
 
-const FADE_OUT_START = 80;
-const FADE_OUT_FLOOR = 0.4;
-
 function statusFor(p) {
   if (p < 20) return "CONECTANDO";
   if (p < 52) return "DESCARGANDO";
@@ -36,25 +33,13 @@ function statusFor(p) {
   return "CASI LISTO";
 }
 
-function fadeOpacity(p, mounted) {
-  if (!mounted) return 0;
-  if (p <= FADE_OUT_START) return 1;
-  const t = Math.min(
-    1,
-    (p - FADE_OUT_START) / (PROGRESS_CEILING - FADE_OUT_START),
-  );
-  return 1 - t * (1 - FADE_OUT_FLOOR);
-}
-
+// Deliberately does NOT animate its own opacity: progress ticks every 70ms,
+// so any opacity transition here gets retargeted mid-flight and visibly
+// flickers. PageTransition owns the fade in/out for this screen.
 export default function PageLoadingRing() {
   const [p, setP] = useState(8);
   const [assetIndex, setAssetIndex] = useState(0);
-  const [mounted, setMounted] = useState(false);
   const tip = useMemo(() => TIPS[Math.floor(Math.random() * TIPS.length)], []);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     const progressTimer = setInterval(() => {
@@ -80,10 +65,7 @@ export default function PageLoadingRing() {
   const pct = Math.floor(p);
 
   return (
-    <div
-      className="flex min-h-[70dvh] flex-1 items-center justify-center overflow-hidden bg-[radial-gradient(120%_90%_at_50%_45%,rgba(12,35,44,.94)_0%,rgba(3,9,13,.97)_70%)] transition-opacity duration-500 ease-out"
-      style={{ opacity: fadeOpacity(p, mounted) }}
-    >
+    <div className="flex min-h-[70dvh] flex-1 items-center justify-center overflow-hidden bg-[radial-gradient(120%_90%_at_50%_45%,rgba(12,35,44,.94)_0%,rgba(3,9,13,.97)_70%)]">
       <div className="flex flex-col items-center gap-6 px-6 text-center">
         <div className="relative flex h-[clamp(120px,15vw,168px)] w-[clamp(120px,15vw,168px)] items-center justify-center">
           <div className="absolute -inset-3.5 animate-ring-pulse rounded-full bg-[radial-gradient(circle,rgba(245,10,100,.35)_0%,transparent_68%)] blur-[12px]" />

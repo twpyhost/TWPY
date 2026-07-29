@@ -4,6 +4,7 @@ import "./globals.css";
 
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PageTransition from "@/components/ui/PageTransition";
 import { Toaster } from "react-hot-toast";
 
 const bebasNeue = Bebas_Neue({
@@ -46,7 +47,7 @@ export default function RootLayout({ children }) {
       >
         <Toaster />
         <Navbar />
-        {children}
+        <PageTransition>{children}</PageTransition>
         <Footer />
       </body>
     </html>
