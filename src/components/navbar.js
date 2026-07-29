@@ -91,7 +91,7 @@ export default function Navbar() {
               onClick={() => setMenuAdminOpen(!menuAdminOpen)}
               className="flex h-8 w-8 items-center justify-center rounded-full bg-tekken-blue-500 font-body text-sm font-bold text-black"
             >
-              {user.email[0].toUpperCase()}
+              {user.email?.[0]?.toUpperCase() ?? "U"}
             </button>
             {menuAdminOpen && (
               <div className="absolute right-0 z-50 mt-2 w-40 rounded bg-white text-right text-sm text-black shadow-lg">
