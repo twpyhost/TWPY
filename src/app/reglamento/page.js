@@ -190,7 +190,7 @@ export default function ReglamentoPage() {
 
       <section className="bg-black px-5 pb-24 sm:px-8 lg:px-14">
         <div className="mx-auto max-w-[1240px]">
-          <div className="-mt-8 grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid grid-cols-1 gap-3.5 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4">
             {QUICK_FACTS.map((fact) => (
               <div key={fact.label} className="border border-white/10 bg-dark-gray-3-700 p-5">
                 <span className="block font-display text-sm tracking-[0.24em] text-white/60">
