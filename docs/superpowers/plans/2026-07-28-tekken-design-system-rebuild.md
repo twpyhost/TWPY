@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Rebuild TWPY's public site (Home, Ranking, Competidores, Reglamento, Login) onto the Tekken 8 design system tokens/components, replacing the current ad-hoc styling.
+**Goal:** Rebuild TWPY's public site (Home, Ranking, Competidores, Reglamento, Torneos, Login) onto the Tekken 8 design system tokens/components, replacing the current ad-hoc styling.
 
 **Architecture:** A design-token foundation (Tailwind color/font/effect tokens copied from the Claude Design project, `globals.css` CSS custom properties) plus three shared primitives (`RibbonTag`, `Button`, `HeroSection`) that every page composes. `Navbar` and `Footer` are rebuilt once and shared by every page except Login, which keeps the distinct top-bar layout already in the design. Existing Next.js routes and the `src/lib/data` facade (`getRankings`, `getCompetidores`, etc.) are unchanged — only presentation, plus a new Discord OAuth path for Login.
 
@@ -12,7 +12,7 @@
 
 - Full spec: `docs/superpowers/specs/2026-07-28-tekken-design-system-rebuild-design.md`. Design source files: `design/*.dc.html` (read `design/README.md` first).
 - **No test framework exists in this repo** (no jest/vitest/RTL in `package.json`). Per `CLAUDE.md`, frontend changes are verified by running the dev server and checking the feature in a browser, not by unit tests. Every task's verification step is: `npm run build` (or `npm run lint`) passes, plus a Playwright MCP browser check (`mcp__plugin_playwright_playwright__browser_navigate` + `browser_snapshot`/`browser_take_screenshot`) against `npm run dev` on `localhost:3000`. Do not introduce a test framework as part of this plan.
-- **Out of scope, do not touch or break:** `src/app/torneos/**`, `src/app/auth/register/**`, `src/app/admin/**`, `src/components/loadingButton.js`, `src/components/seeRankingButton.js`, `src/components/table.js`, `src/components/year.js`. These keep their current styling. Do not remove the `tekken-pink` Tailwind color or the `.clip-path-cta` CSS class — `seeRankingButton.js`, `torneos/page.js`, and `auth/register/page.js` still depend on them.
+- **Out of scope, do not touch or break:** `src/app/auth/register/**`, `src/app/admin/**`, `src/components/loadingButton.js`, `src/components/seeRankingButton.js`, `src/components/table.js`. These keep their current styling. Do not remove the `tekken-pink` Tailwind color or the `.clip-path-cta` CSS class — `seeRankingButton.js` and `auth/register/page.js` still depend on them. (`src/app/torneos/**` was added to scope on 2026-07-28 — see Task 11 — and `src/components/year.js` is retired as part of that task.)
 - **Home page's hero JSX must not change** (`src/app/page.js` — the "Bienvenido al Ranking..." section with the Jin/Kazuya images and `SeeRankingButton`). Only the global chrome around it (Navbar, Footer, fonts, page background) changes.
 - Admin Dashboard is explicitly **not** part of this plan (needs its own spec/plan — see spec's Open Items).
 - All new/rewritten UI copy is Spanish, matching the strings already used in the current pages or the `design/*.dc.html` source files verbatim.
@@ -1390,7 +1390,189 @@ git commit -m "feat: rebuild Reglamento page on Tekken 8 design tokens"
 
 ---
 
-### Task 11: Rebuild Login page and wire Discord OAuth
+### Task 11: Rebuild Torneos page
+
+**Files:**
+- Modify: `src/app/torneos/page.js`
+- Delete: `src/components/year.js` (only consumer was `torneos/page.js`; its year-filter dropdown is replaced by inline pill-style `<Link>`s in the rebuilt page, matching the design's filter-pill visual language)
+
+**Interfaces:**
+- Consumes: `getTorneos()` (returns `[{ torneo_id, nombre_torneo, fecha_torneo (ISO "YYYY-MM-DD"), temporada }]`) and `getFiltroAno()` (returns `[years]`, sorted descending) from `../utils/db` — both unchanged; `HeroSection`, `RibbonTag`, `Button` from Task 4.
+- Produces: nothing new consumed elsewhere.
+
+Added 2026-07-28: the design's `Torneos Liga Tekken Paraguay.dc.html` specifies organizer filter pills (Todos/GG Gaming Fest/Mokete Gaming/Ronin Series/TWPY) — our real data has no organizer field (see `CLAUDE.md`'s domain model: only `challonge_source_account: 'A'|'B'`, not named external organizers). The design file's own `showFilters` prop already defaults to `false` for this reason, per `design/README.md`. This task keeps the real, working year filter (currently a `<select>` in `src/components/year.js`, driven by `?year=` in the URL) and reskins it as pills matching the design's filter-pill treatment, instead of inventing fake organizer data.
+
+- [ ] **Step 1: Replace `src/app/torneos/page.js`**
+
+```jsx
+import Link from "next/link";
+
+import HeroSection from "@/components/ui/HeroSection";
+import RibbonTag from "@/components/ui/RibbonTag";
+import Button from "@/components/ui/Button";
+
+import { getTorneos, getFiltroAno } from "../utils/db";
+
+// Revalida cada 60s para reflejar torneos nuevos sin redeploy
+// (y cachea las consultas a la BD).
+export const revalidate = 60;
+
+const MESES = [
+  "ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
+  "JUL", "AGO", "SEP", "OCT", "NOV", "DIC",
+];
+
+function parseFecha(fechaISO) {
+  const [year, month, day] = fechaISO.split("-");
+  return { day, monthLabel: MESES[Number(month) - 1], year };
+}
+
+export default async function TorneosPage({ searchParams }) {
+  const [torneos, anos] = await Promise.all([getTorneos(), getFiltroAno()]);
+  const params = await searchParams;
+  const selectedYear = params?.year || "all";
+
+  const sorted = [...torneos].sort((a, b) => b.fecha_torneo.localeCompare(a.fecha_torneo));
+  const featured = sorted[0];
+
+  const filtered =
+    selectedYear === "all"
+      ? sorted
+      : sorted.filter((torneo) => torneo.temporada === selectedYear);
+
+  return (
+    <>
+      <HeroSection className="px-5 pb-11 pt-11 sm:px-8 sm:pt-16 lg:px-14 lg:pt-[84px]">
+        <div className="mx-auto flex max-w-[1240px] flex-wrap items-end justify-between gap-8">
+          <div className="flex flex-col gap-1.5">
+            <RibbonTag>CIRCUITO NACIONAL &middot; TEKKEN 8</RibbonTag>
+            <h1 className="-ml-1.5 m-0 font-display text-[clamp(64px,9vw,120px)] italic leading-[.88] tracking-[0.01em] [text-shadow:0_0_34px_rgba(230,0,0,.65),0_0_90px_rgba(245,10,100,.38)]">
+              TORNEOS
+            </h1>
+            <p className="m-0 max-w-[600px] font-body text-base leading-[1.6] text-white/70">
+              Historial completo de torneos ranked del circuito Tekken Warriors Paraguay.
+            </p>
+          </div>
+          <div className="flex flex-col items-start gap-0.5 border-l-[3px] border-primary-500 pl-4">
+            <span className="font-display text-[56px] leading-[.9]">{torneos.length}</span>
+            <span className="font-display text-[15px] tracking-[0.22em] text-white/60">
+              TORNEOS DISPUTADOS
+            </span>
+          </div>
+        </div>
+      </HeroSection>
+
+      <section className="bg-black px-5 pb-16 pt-8 sm:px-8 lg:px-14">
+        <div className="mx-auto flex max-w-[1240px] flex-col gap-8">
+          {featured && (
+            <div className="relative overflow-hidden border border-white/10 bg-gradient-to-br from-primary-900/40 via-dark-gray-3-700 to-tekken-blue-900/20 p-7">
+              <span className="font-display text-sm tracking-[0.24em] text-tekken-blue-400">
+                ÚLTIMO TORNEO
+              </span>
+              <h2 className="m-0 mt-1.5 font-display text-3xl italic sm:text-4xl">
+                {featured.nombre_torneo}
+              </h2>
+              <p className="m-0 mt-1 font-body text-sm text-white/60">
+                {parseFecha(featured.fecha_torneo).day} de{" "}
+                {parseFecha(featured.fecha_torneo).monthLabel} de {featured.temporada}
+              </p>
+              <Button
+                href={`/torneo-resultado/${featured.torneo_id}`}
+                className="mt-5 px-6 py-2.5 text-lg"
+              >
+                VER RESULTADOS <span>&rarr;</span>
+              </Button>
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/torneos"
+              className={`border px-4 py-1.5 font-display text-sm tracking-[0.08em] transition-colors duration-300 ${
+                selectedYear === "all"
+                  ? "border-primary-500 bg-primary-500 text-white"
+                  : "border-white/15 bg-white/[.04] text-white/70 hover:border-white/30"
+              }`}
+            >
+              Todos
+            </Link>
+            {anos.map((year) => (
+              <Link
+                key={year}
+                href={`/torneos?year=${year}`}
+                className={`border px-4 py-1.5 font-display text-sm tracking-[0.08em] transition-colors duration-300 ${
+                  selectedYear === year
+                    ? "border-primary-500 bg-primary-500 text-white"
+                    : "border-white/15 bg-white/[.04] text-white/70 hover:border-white/30"
+                }`}
+              >
+                {year}
+              </Link>
+            ))}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            {filtered.map((torneo, index) => {
+              const { day, monthLabel, year } = parseFecha(torneo.fecha_torneo);
+              const isFeatured = featured && torneo.torneo_id === featured.torneo_id;
+
+              return (
+                <Link
+                  key={torneo.torneo_id}
+                  href={`/torneo-resultado/${torneo.torneo_id}`}
+                  className={`grid grid-cols-[64px_1fr_24px] items-center gap-4 border-l-[3px] px-5 py-4 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${
+                    isFeatured ? "border-l-tekken-blue-400" : "border-l-primary-500"
+                  } ${index % 2 === 1 ? "bg-white/[.055]" : "bg-white/[.03]"}`}
+                >
+                  <div className="flex flex-col items-center leading-none">
+                    <span className="font-display text-3xl">{day}</span>
+                    <span className="font-display text-xs tracking-[0.1em] text-white/50">
+                      {monthLabel} {year}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-display text-xl italic">{torneo.nombre_torneo}</span>
+                    <span className="font-body text-xs uppercase tracking-[0.08em] text-white/45">
+                      Torneo ranked
+                    </span>
+                  </div>
+                  <span className="justify-self-end text-white/40">&rarr;</span>
+                </Link>
+              );
+            })}
+            {filtered.length === 0 && (
+              <p className="py-10 text-center font-body text-white/50">
+                No hay torneos para este año.
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+```
+
+- [ ] **Step 2: Delete `src/components/year.js`**
+
+Confirm nothing else imports it (`grep -r "components/year" src/` should show only the just-replaced `src/app/torneos/page.js` usage, now removed), then delete the file.
+
+- [ ] **Step 3: Verify**
+
+Run: `npm run build` — expect success.
+With the dev server running, `curl http://localhost:3000/torneos` and confirm: hero with "TORNEOS" heading and total-count stat, a featured "ÚLTIMO TORNEO" card with a "VER RESULTADOS" link, year-filter pills, and a row per tournament linking to `/torneo-resultado/<id>`. Then `curl "http://localhost:3000/torneos?year=<a real year from the data>"` and confirm the row list narrows to that year only and the matching pill shows the active styling.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add src/app/torneos/page.js
+git rm src/components/year.js
+git commit -m "feat: rebuild Torneos page on Tekken 8 design tokens, drop unused year dropdown"
+```
+
+---
+
+### Task 12: Rebuild Login page and wire Discord OAuth
 
 **Files:**
 - Modify: `src/app/auth/login/page.js`
@@ -1664,7 +1846,7 @@ git commit -m "feat: rebuild Login page on Tekken 8 design tokens, wire Discord 
 
 ---
 
-### Task 12: Full-site verification pass
+### Task 13: Full-site verification pass
 
 **Files:** none (verification only).
 
@@ -1680,11 +1862,11 @@ Expected: no new errors introduced by this plan's changes (pre-existing warnings
 
 - [ ] **Step 2: Playwright walkthrough of every page touched by this plan**
 
-With `npm run dev` running, for each of `/`, `/ranking`, `/competidores`, `/reglamento`, `/auth/login`: navigate, `browser_snapshot`, confirm no console errors via `browser_console_messages`. Check both a desktop viewport (1440×900) and a mobile viewport (390×844) via `browser_resize`.
+With `npm run dev` running, for each of `/`, `/ranking`, `/competidores`, `/reglamento`, `/torneos`, `/auth/login`: navigate, `browser_snapshot`, confirm no console errors via `browser_console_messages`. Check both a desktop viewport (1440×900) and a mobile viewport (390×844) via `browser_resize`.
 
-- [ ] **Step 3: Regression check on out-of-scope pages**
+- [ ] **Step 3: Regression check on remaining out-of-scope pages**
 
-Navigate to `/torneos` and `/auth/register`. Confirm both still render without errors (they keep their old visual style per Global Constraints, but must not be broken by the shared Navbar/Footer/font changes). Check `browser_console_messages` for errors on both.
+Navigate to `/auth/register` (the one remaining page not rebuilt by this plan). Confirm it still renders without errors — it keeps its old visual style per Global Constraints, but must not be broken by the shared Navbar/Footer/font changes. Check `browser_console_messages` for errors.
 
 - [ ] **Step 4: Commit**
 
