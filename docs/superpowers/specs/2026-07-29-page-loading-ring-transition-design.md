@@ -85,6 +85,23 @@ roughly 2.2s. If real navigation takes longer, `p` simply holds at ~92%
 until the component unmounts (Suspense resolved, real page swapped in). The
 interval is cleared on unmount.
 
+**Fade in/out**: since Suspense unmounts the fallback the instant the real
+page is ready, there's no event to hang a true exit animation off — a
+synced fade-out would require a client-side transition wrapper decoupled
+from Suspense, which is out of scope here. Instead the container's opacity
+is driven off state already being tracked: `mounted` (false on first
+render, flipped true in a mount-effect) drives the fade-**in** — CSS
+`transition-opacity duration-300` animates 0 → 1 the instant the loader
+appears. The fade-**out** is approximated from the same simulated `p`: full
+opacity while `p <= 80`, then linearly interpolated down to a `0.4` floor
+as `p` climbs from 80 to the 92% ceiling — so the loader visibly dims
+itself as it's "wrapping up," without ever going fully transparent (a
+long-running real navigation just holds it at the dim floor rather than
+snapping back to full brightness or disappearing). Approximate, not
+synced to when the real page actually becomes visible — an accepted
+simplification, consistent with the rest of this component's approach to
+progress.
+
 ### `src/app/loading.js` (rewritten)
 
 Thin wrapper: a `flex-1 min-h-[70dvh]` container rendering
