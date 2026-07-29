@@ -75,7 +75,7 @@ plus a `.ribbon` utility class implementing the common eyebrow/badge clip-path +
 
 **Login is the one exception**: it keeps the distinct top bar + "← VOLVER AL INICIO" back link already designed into `design/Login Liga Tekken Paraguay.dc.html` — no shared `Navbar`, no shared `Footer`. `layout.js` renders `Navbar`/`Footer` for every route; a small pathname check (same `usePathname()` pattern already used inside `Navbar`) skips rendering both on `/auth/login`.
 
-`Table.js` is retired — Ranking and Competidores get bespoke card/row markup per the design (no generic grid component fits both).
+`Table.js` is retired from the pages this plan rebuilds (Ranking, Competidores get bespoke card/row markup per the design — no generic grid component fits both) but is still used by `src/app/torneo-resultado/[slug]/page.js`, which is out of this plan's scope — a follow-up plan will rebuild that page once its design is ready.
 
 ## Per-page plan
 
