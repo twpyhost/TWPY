@@ -1,0 +1,25 @@
+{
+  "id": 990004,
+  "name": "Torneo Fixture Rollback",
+  "game_name": "Tekken 8",
+  "state": "complete",
+  "started_at": "2093-05-04T00:00:00.000Z",
+  "participants": [
+    {
+      "participant": {
+        "challonge_user_id": 700030,
+        "challonge_username": "sin_rank_a",
+        "display_name": "Sin Rank A",
+        "final_rank": null
+      }
+    },
+    {
+      "participant": {
+        "challonge_user_id": 700031,
+        "challonge_username": "sin_rank_b",
+        "display_name": "Sin Rank B",
+        "final_rank": null
+      }
+    }
+  ]
+}

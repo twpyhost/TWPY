@@ -169,7 +169,7 @@ export default function CompetidoresBoard({ roster, temporada }) {
                   </div>
                   <p className="m-0 [overflow-wrap:anywhere] font-display text-xl italic">{player.username}</p>
                   <p className="m-0 font-body text-xs text-white/50">
-                    {player.puntaje !== null ? `${player.puntaje} pts` : "SIN PUNTOS"}
+                    {player.puntaje !== null ? `${player.puntaje} pts` : "SIN RANKING ESTA TEMPORADA"}
                   </p>
                 </div>
               ))}

@@ -1,0 +1,49 @@
+{
+  "id": 990001,
+  "name": "Torneo Fixture Basico",
+  "game_name": "Tekken 8",
+  "state": "complete",
+  "started_at": "2093-05-01T00:00:00.000Z",
+  "participants": [
+    {
+      "participant": {
+        "challonge_user_id": 700001,
+        "challonge_username": "resuelto",
+        "display_name": "Jugador Resuelto",
+        "final_rank": 1
+      }
+    },
+    {
+      "participant": {
+        "challonge_user_id": 700002,
+        "challonge_username": "sin_rank",
+        "display_name": "Sin Posicion",
+        "final_rank": null
+      }
+    },
+    {
+      "participant": {
+        "challonge_user_id": 700003,
+        "challonge_username": "sin_puntaje",
+        "display_name": "Posicion Sin Puntaje",
+        "final_rank": 99
+      }
+    },
+    {
+      "participant": {
+        "challonge_user_id": 700001,
+        "challonge_username": "resuelto_dup",
+        "display_name": "Duplicado De Resuelto",
+        "final_rank": 4
+      }
+    },
+    {
+      "participant": {
+        "challonge_user_id": 700099,
+        "challonge_username": "desconocido",
+        "display_name": "Sin Cuenta Conocida",
+        "final_rank": 5
+      }
+    }
+  ]
+}

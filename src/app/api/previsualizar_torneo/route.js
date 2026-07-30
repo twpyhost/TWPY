@@ -25,17 +25,19 @@ export async function POST(req) {
       );
     }
 
-    const { url } = await req.json();
+    const { url, cuenta: cuentaBody } = await req.json();
     if (!url) {
       return Response.json({ error: "Se requiere la URL" }, { status: 400 });
     }
+
+    const cuenta = ["A", "B"].includes(cuentaBody) ? cuentaBody : "B";
 
     const tournamentId = extractTournamentId(url);
     if (!tournamentId) {
       return Response.json({ error: "URL no valida" }, { status: 400 });
     }
 
-    const apiResponse = await fetchChallongeApi(tournamentId);
+    const apiResponse = await fetchChallongeApi(tournamentId, cuenta);
     if (!apiResponse) {
       return Response.json(
         { error: "No se pudo conectar con Challonge" },

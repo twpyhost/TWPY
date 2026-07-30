@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
+import { getMovimiento } from "./movimiento";
+
 let client = null;
 
 function getClient() {
@@ -39,15 +41,13 @@ const getTorneoResultados = async (torneoId) => {
     return null;
   }
 
-  // Solo participantes ya resueltos a un jugador: uno pendiente en la cola
-  // de identidades nunca debe aparecer en una pagina publica.
+  // torneo_resultados_publicos ya filtra pendientes de resolucion y jugadores
+  // fusionados -- tournament_participants_raw no debe leerse desde paginas
+  // publicas (no tiene policy de select para anon).
   const { data, error } = await getClient()
-    .from("tournament_participants_raw")
-    .select(
-      "posicion, puntaje, torneo:torneos ( nombre ), jugador:players ( id, display_name )",
-    )
+    .from("torneo_resultados_publicos")
+    .select("torneo_nombre, player_id, jugador_nombre, posicion, puntaje")
     .eq("torneo_id", id)
-    .not("player_id", "is", null)
     .order("posicion", { ascending: true });
 
   if (error) {
@@ -60,11 +60,11 @@ const getTorneoResultados = async (torneoId) => {
 
   return data.map((resultado) => ({
     torneo: {
-      nombre_torneo: resultado.torneo.nombre,
+      nombre_torneo: resultado.torneo_nombre,
     },
     jugador: {
-      id: resultado.jugador.id,
-      nombre: resultado.jugador.display_name,
+      id: resultado.player_id,
+      nombre: resultado.jugador_nombre,
     },
     posicion: resultado.posicion,
     puntaje: resultado.puntaje,
@@ -169,19 +169,3 @@ export {
   getFiltroAno,
   getTorneoResultados,
 };
-
-function getMovimiento(currentPosition, previousPosition) {
-  if (!previousPosition) {
-    return "NUEVO";
-  }
-
-  if (currentPosition < previousPosition) {
-    return "SUBE";
-  }
-
-  if (currentPosition > previousPosition) {
-    return "BAJA";
-  }
-
-  return "IGUAL";
-}

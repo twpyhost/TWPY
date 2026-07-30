@@ -33,6 +33,21 @@ function tierBorderClass(posicion) {
   return posicion <= 3 ? "border-l-tekken-blue-400" : "border-l-primary-500";
 }
 
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const resultados = await getTorneoResultados(slug);
+
+  if (!resultados || resultados.length === 0) {
+    return { title: "Resultados" };
+  }
+
+  const nombreTorneo = resultados[0].torneo.nombre_torneo;
+  return {
+    title: nombreTorneo,
+    description: `Resultados y puntajes de ${nombreTorneo} — Tekken Warriors Paraguay.`,
+  };
+}
+
 export default async function Resultados({ params }) {
   const { slug } = await params;
   const [resultados, torneos] = await withMinDelay(

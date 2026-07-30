@@ -15,6 +15,11 @@ const ACCENT_BORDER = {
   cyan: "border-tekken-blue-400",
 };
 
+export const metadata = {
+  title: "Reglamento",
+  description: "Reglamento oficial del circuito ranked de Tekken Warriors Paraguay.",
+};
+
 const SECTIONS = [
   {
     id: "r-formato",

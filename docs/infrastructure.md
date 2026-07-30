@@ -65,29 +65,33 @@ Supabase pauses free projects after **7 days of database inactivity**. This is s
 
 ## Keeping Supabase Awake — GitHub Actions Health Check
 
+**Status: implemented** (`src/app/api/health/route.js`, `.github/workflows/keep-supabase-alive.yml`, migration `0008_sistema_eventos.sql`).
+
 **Why GitHub Actions instead of the home server:** the health check has a hard 7-day deadline. Tying it to home server uptime introduces risk (ISP outage, power cut, hardware issue) for something that's free and more reliable to run on GitHub's infrastructure instead.
 
-**Requirement:** the check must run a real query against Supabase (not just hit the Vercel URL) — DB inactivity is what triggers the pause, not site traffic.
+**How it works**: `/api/health` runs a real, lightweight Supabase query (`select id from juegos limit 1`) with the anon client — DB inactivity is what triggers the pause, not site traffic, so hitting the Vercel URL alone wouldn't be enough. The route logs a row to `sistema_eventos` (consumed by the admin Sistema panel) only when the request carries the correct `x-health-secret` header, so an anonymous GET can't spam rows. The workflow runs daily at 12:00 UTC + `workflow_dispatch`, using `vars.SITE_URL` and `secrets.HEALTH_PING_SECRET` — nothing hardcoded.
 
-**`/api/health` route (Next.js)** — should perform a lightweight Supabase query (e.g. `select 1` or a trivial read) and return 200 on success.
-
-**`.github/workflows/keep-supabase-alive.yml`:**
-```yaml
-name: Keep Supabase Alive
-on:
-  schedule:
-    - cron: '0 12 * * *'   # daily at 12:00 UTC
-  workflow_dispatch:         # allows manual trigger too
-
-jobs:
-  ping:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Hit health check
-        run: curl -f https://your-tekken-project.vercel.app/api/health
-```
+**Still pending**: `vars.SITE_URL` needs the real production domain once the Vercel deploy (see the go-live plan's Hito 7) is live, and the workflow needs one `workflow_dispatch` run to confirm end-to-end.
 
 Daily frequency gives comfortable margin under the 7-day threshold. Free on GitHub Actions at this usage level.
+
+---
+
+## Backups — GitHub Actions + pg_dump
+
+**Why this is required, not optional:** Supabase's free tier has no restorable backups (that's a Pro/PITR feature). Once the historical backfill runs (see the go-live plan), this database becomes the irreplaceable archive of the Paraguayan Tekken scene — a lost project is not recoverable without this.
+
+**`.github/workflows/backup-supabase.yml`**: weekly (`0 6 * * 0`, Sunday 06:00 UTC) + `workflow_dispatch`. Runs `pg_dump` against `secrets.SUPABASE_DB_URL`, scoped to `--schema=public` only, gzipped and uploaded as a workflow artifact (90-day retention, the max without extra org/repo configuration).
+
+**Why `--schema=public` only**: Supabase's internal schemas (`auth`, `storage`, `extensions`, `realtime`, etc.) are owned by platform-managed roles. Tested locally: a full-database dump restored onto a fresh Supabase instance throws dozens of `must be owner of table ...` and event-trigger errors — those schemas aren't meant to be restored this way, and a fresh Supabase project already provisions them correctly. Everything that matters for the community archive (`players`, `torneos`, `tournament_participants_raw`, `ranking_snapshots`, etc.) lives in `public`, so scoping the dump there is both correct and avoids all of that noise.
+
+**Restore procedure** (tested against the local stack on 2026-07-30 — a backup nobody has restored isn't a backup):
+1. Download the artifact from the workflow run and `gunzip` it.
+2. Target project: either a brand-new Supabase project with migrations already applied (`supabase db push`), or the local stack (`supabase start`).
+3. Restore: `psql "<connection-string>" < backup-YYYY-MM-DD.sql` (the dump uses `--clean --if-exists`, so it drops/recreates objects cleanly even against an already-migrated schema).
+4. Verify row counts on a couple of key tables (`players`, `torneos`) match expectations.
+
+Run the backup workflow manually once, right after the historical backfill completes, so day one already has a real snapshot.
 
 ---
 
@@ -97,7 +101,10 @@ Daily frequency gives comfortable margin under the 7-day threshold. Free on GitH
 
 Challonge already handles double/single elimination, seeding, match progression, and sharing. Rebuilding this would consume significant dev time without adding community value at 50 members.
 
-### ⚠️ Two Challonge organizer accounts to account for
+### Two Challonge organizer accounts to account for
+
+**Status: implemented** (`src/lib/challonge.js` — `apiKeyPara`/`fetchChallongeApi`/`listarTorneos` all take a `cuenta` param; migration `0009_torneos_source_account.sql` adds `torneos.challonge_source_account`). `previsualizar_torneo` and `insertar_torneo` accept `cuenta` in the request body (`'A' | 'B'`, default `'B'`). Still pending: the admin UI to actually pick the account when importing (single-tournament form today always uses the default; the account selector + "Sincronizar" button land with the Torneos admin section).
+
 Tournaments predate this project and were originally created under **Challonge account A**. Going forward, the project uses **Challonge account B** as the default. The import process must support pulling from **both** accounts, not just one:
 
 - **One-time backfill**: import historical tournaments from account A (API key/credentials for A needed once, not necessarily kept long-term unless more historical data surfaces later).

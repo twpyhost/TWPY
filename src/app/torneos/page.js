@@ -12,6 +12,11 @@ import { fadeDelay } from "@/lib/fadeDelay";
 // (y cachea las consultas a la BD).
 export const revalidate = 60;
 
+export const metadata = {
+  title: "Torneos",
+  description: "Historial completo de torneos ranked del circuito Tekken Warriors Paraguay.",
+};
+
 const MESES = [
   "ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
   "JUL", "AGO", "SEP", "OCT", "NOV", "DIC",

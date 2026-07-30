@@ -44,7 +44,7 @@ Users → Cloudflare (DNS/CDN) → Vercel (Next.js frontend) → Supabase (DB/Au
 
 ### Player identity (important — read before touching player/tournament tables)
 
-**Status: this is the TARGET model, not yet implemented.** The current schema (`supabase/migrations/0001_init.sql` onward) has a simpler, flat design: `usuarios` (conflates player + Challonge account in one row, one `challonge_id` per row, `es_temporal` bool flags manual/no-account users) and `nombres_alternativos` (alias per `usuario_id`, not per `challonge_id`). There is no `players`/`player_challonge_accounts`/`player_aliases`/`tournament_participants_raw` split in the DB or in `src/lib/data/supabaseDb.js` or `mockDb.js` today — see the 5 scenarios below for exactly what does and doesn't work under the current schema. The target model described in this section is what a future migration should move toward; do not assume it already exists when reading code.
+**Status: implemented.** Migration `0005_identidad_jugadores.sql` replaced the old flat schema (`usuarios`/`nombres_alternativos`) with the `players`/`player_challonge_accounts`/`player_aliases`/`tournament_participants_raw` split described below — applied to the remote project on 2026-07-30. `src/lib/data/supabaseDb.js` and `src/lib/importarTorneo.js` both target this schema; there is no leftover code path for the old tables.
 
 A `players` record is the **canonical person**. It is deliberately decoupled from Challonge accounts because:
 
@@ -75,19 +75,21 @@ tournament_participants_raw
 
 **Do not merge `players` and `player_challonge_accounts` into one table.** The whole point of the split is to support account merges without losing history — an admin-only action that reassigns a `challonge_id` to a different `player_id`.
 
-#### The 5 identity scenarios this model must support
+#### The 5 identity scenarios this model supports
 
-Design/implementation target — checked against actual code on 2026-07-29 (see "Status" note above):
+Checked against actual code on 2026-07-30:
 
-1. **Player with only one Challonge account (ideal case).** ✅ Works today too — `usuarios.challonge_id` unique, matched on import (`supabaseDb.js:296-352`).
-2. **Player with multiple Challonge accounts over time.** ❌ Not supported today — one `challonge_id` column per `usuarios` row means a second account creates a fragmented duplicate player. This is exactly what `player_challonge_accounts` (plural, FK to one `player_id`) is for.
-3. **Player forgot their old account, admin registers manually — later needs reconciling with the old account.** ⚠️ Partially possible today (`es_temporal = true` record can exist) but there's no persisted "unlinked queue" — only an in-memory warning string during import, nothing queryable for later admin review. Target model's `tournament_participants_raw` + admin linking flow covers this.
-4. **Player has no Challonge account at all, admin-registered.** ⚠️ Schema allows it (`es_temporal`, `challonge_id = null`) but there's no standalone "register player manually" admin route/form — only reachable indirectly via tournament-import auto-creation today.
-5. **Player wants to link a manually-registered record into a new/recovered Challonge account.** ❌ Zero support today — no merge table, no reassignment path for `resultados`/`ranking_snapshots`, no route/UI. This is the admin-only "reassign `challonge_id` to a different `player_id`" merge action described above.
+1. **Player with only one Challonge account (ideal case).** ✅ `player_challonge_accounts.challonge_id` unique, matched on import solely by `challonge_id` (`src/lib/importarTorneo.js`).
+2. **Player with multiple Challonge accounts over time.** ✅ `player_challonge_accounts` is one-to-many per `player_id`, with a partial unique index enforcing only one `active` account at a time.
+3. **Player forgot their old account, admin registers manually — later needs reconciling with the old account.** ✅ Unresolved participants land in `tournament_participants_raw` (`player_id is null`) as a real queryable queue — `/admin/identidades` + `/api/admin/identidades/vincular` and `crear_jugador` resolve them.
+4. **Player has no Challonge account at all, admin-registered.** ✅ `/api/admin/identidades/registrar_manual` creates a standalone `players` row directly, no Challonge account required.
+5. **Player wants to link a manually-registered record into a new/recovered Challonge account.** ✅ `/api/admin/identidades/fusionar` reassigns a duplicate player's history onto a base player (handles the case where both already have a row in the same tournament by reporting it as a conflict for manual review), with `/api/admin/identidades/deshacer` to reverse it. All actions are logged in `identidad_eventos`.
 
-Known extra risk in current import code (not one of the 5, but related): unknown participants are auto-matched by **lowercase display name** (`supabaseDb.js:212-214`) with no review step — two different real people sharing a name could be silently merged into one `usuarios` row. Any redesign should replace this with the `tournament_participants_raw` staging + review flow rather than eager auto-matching.
+Auto-resolution on import is **strictly by `challonge_id`, never by name** (`src/lib/importarTorneo.js`) — two different real people sharing a display name are never silently merged; this is covered by a regression test (`tests/integration/importarTorneo.test.js`).
 
 ### Two Challonge organizer accounts
+
+**Status: implemented** (migration `0009_torneos_source_account.sql`, `src/lib/challonge.js`). Still pending: the admin UI account selector (lands with the Torneos admin section) — today the code supports either account via the `cuenta` param, but the single-tournament import form always uses the default.
 
 - **Account A**: historical, used before this project existed. One-time backfill source, not actively synced.
 - **Account B**: current default, used for all tournaments going forward.

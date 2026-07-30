@@ -48,9 +48,17 @@ La capa de datos vive en `src/lib/data/` (`mockDb.js`, `supabaseDb.js` y el faca
 
 ## Base de datos
 
-El esquema completo (tablas, RLS y seed de puntajes) esta en
-`supabase/migrations/0001_init.sql`. Para crearlo: abrir el SQL Editor del
-proyecto de Supabase, pegar el contenido del archivo y ejecutarlo.
+El esquema completo vive en `supabase/migrations/` (0001 a la ultima,
+incluye tablas, RLS, vistas publicas y seed de puntajes). Para aplicarlo a
+un proyecto de Supabase: `supabase link --project-ref <ref>` y despues
+`supabase db push` — no hace falta pegar SQL a mano en el dashboard.
+
+## Tests
+
+`npm test` corre unit + integracion + e2e con Playwright. Prerrequisito:
+Docker Desktop corriendo y `supabase start` levantado (stack local de
+Supabase) — los tests con DB nunca tocan el proyecto remoto. Scripts:
+`npm run test:unit`, `npm run test:e2e`, `npm run test:ui`.
 
 ## Deploy (Vercel)
 

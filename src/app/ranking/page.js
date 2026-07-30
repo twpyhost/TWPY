@@ -9,6 +9,11 @@ import { fadeDelay } from "@/lib/fadeDelay";
 // (y cachea las consultas a la BD).
 export const revalidate = 60;
 
+export const metadata = {
+  title: "Ranking",
+  description: "Tabla de posiciones de la temporada actual del circuito ranked de Tekken Warriors Paraguay.",
+};
+
 const TREND = {
   SUBE: { icon: "▲", className: "text-success" },
   BAJA: { icon: "▼", className: "text-error" },
@@ -34,7 +39,7 @@ export default async function RankingPage() {
               RANKING
             </h1>
             <p className="m-0 max-w-[600px] font-body text-base leading-[1.6] text-white/70">
-              Tabla de posiciones acumuladas del circuito ranked de Tekken Warriors Paraguay.
+              Tabla de posiciones acumuladas de la temporada actual del circuito ranked de Tekken Warriors Paraguay.
             </p>
           </div>
           <div className="flex flex-col items-start gap-0.5 border-l-[3px] border-primary-500 pl-4">

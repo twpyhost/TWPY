@@ -20,9 +20,9 @@ const sourceSans3 = Source_Sans_3({
   variable: "--font-body",
 });
 
-// Kept for src/app/torneos and src/app/auth/register, which still use
-// font-warsaw explicitly via inherited body styling in a few spots — see
-// Global Constraints in the implementation plan.
+// Kept for src/app/torneos, which still uses font-warsaw explicitly via
+// inherited body styling in a few spots — see Global Constraints in the
+// implementation plan.
 const warsaw = localFont({
   src: [
     {
@@ -33,10 +33,24 @@ const warsaw = localFont({
   variable: "--font-warsaw",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const DESCRIPCION =
+  "Ranked de participantes de los torneos de Tekken Warriors Paraguay";
+
 export const metadata = {
-  title: "Tekken Warriors PY",
-  description:
-    "Ranked de participantes de los torneos de Tekken Warriors Paraguay",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Tekken Warriors PY",
+    template: "%s · Tekken Warriors PY",
+  },
+  description: DESCRIPCION,
+  openGraph: {
+    title: "Tekken Warriors PY",
+    description: DESCRIPCION,
+    type: "website",
+    locale: "es_PY",
+    images: ["/images/LOGO TWPY/PNG/TWPY LOGO VARIANTES-04.png"],
+  },
 };
 
 export default function RootLayout({ children }) {

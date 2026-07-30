@@ -78,6 +78,21 @@ create table if not exists ranking_snapshots (
 create index if not exists ranking_snapshots_temporada_idx
   on ranking_snapshots (temporada, torneo_id);
 
+-- Roles de admin. Nota: en el proyecto remoto estas dos tablas ya existian
+-- (creadas manualmente antes de que este repo tuviera migraciones); se
+-- agregan aca con "if not exists" para que un ambiente nuevo (local o
+-- staging) pueda reconstruir el esquema completo solo con las migraciones.
+create table if not exists roles (
+  id   serial primary key,
+  name text unique
+);
+
+create table if not exists user_roles (
+  user_id uuid not null references auth.users (id) on delete cascade,
+  role_id integer not null references roles (id),
+  primary key (user_id, role_id)
+);
+
 -- =========================================================================
 -- RLS: lectura publica, escritura solo via service_role (rutas de admin)
 -- =========================================================================

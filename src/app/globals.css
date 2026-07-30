@@ -57,7 +57,7 @@ body {
   background: var(--background);
 }
 
-/* Legacy utility — still used by src/app/torneos, src/app/auth/register,
+/* Legacy utility — still used by src/app/torneos,
    src/components/seeRankingButton.js. Do not remove. */
 .clip-path-cta {
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);

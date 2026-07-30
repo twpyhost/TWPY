@@ -69,6 +69,8 @@ Diseñar el panel de administración de una plataforma comunitaria de **Tekken 8
 
 ## 5. Contenido
 
+> **Postergada** — fuera del plan de go-live actual (`docs/superpowers/plans/2026-07-29-supabase-go-live-y-admin.md`). El brief de abajo queda como referencia para cuando se retome.
+
 - CRUD simple de noticias/eventos: lista, crear, editar, subir imagen (Supabase Storage), publicar/despublicar.
 
 ---

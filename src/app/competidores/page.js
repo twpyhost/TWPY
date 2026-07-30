@@ -6,6 +6,11 @@ import { withMinDelay } from "@/lib/withMinDelay";
 // (y cachea las consultas a la BD).
 export const revalidate = 60;
 
+export const metadata = {
+  title: "Competidores",
+  description: "Roster de competidores del circuito ranked de Tekken Warriors Paraguay.",
+};
+
 export default async function CompetidoresPage() {
   const [competidores, rankings, anos] = await withMinDelay(
     Promise.all([getCompetidores(), getRankings(), getFiltroAno()]),

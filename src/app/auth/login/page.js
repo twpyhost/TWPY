@@ -201,13 +201,6 @@ export default function LoginPage() {
                 </svg>
                 CONTINUAR CON DISCORD
               </button>
-
-              <p className="m-0 text-center text-sm text-white/60">
-                ¿No tenés cuenta?{" "}
-                <Link href="/auth/register" className="font-bold italic text-primary-500">
-                  Registrate
-                </Link>
-              </p>
             </form>
           </div>
         </div>

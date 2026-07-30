@@ -1,6 +1,8 @@
 import torneos from "@/torneos.json";
 import resultado from "@/resultado.json";
 
+import { getMovimiento } from "./movimiento";
+
 const getTorneos = async () => {
   return torneos.map((torneo) => {
     const fecha_torneo = torneo.fecha;
@@ -118,20 +120,4 @@ function buildRanking(totals) {
       nombre: competidor.nombre,
       puntaje: competidor.puntaje,
     }));
-}
-
-function getMovimiento(currentPosition, previousPosition) {
-  if (!previousPosition) {
-    return "NUEVO";
-  }
-
-  if (currentPosition < previousPosition) {
-    return "SUBE";
-  }
-
-  if (currentPosition > previousPosition) {
-    return "BAJA";
-  }
-
-  return "IGUAL";
 }

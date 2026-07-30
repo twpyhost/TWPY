@@ -1,0 +1,25 @@
+{
+  "id": 990002,
+  "name": "Torneo Fixture Dos Cuentas Mismo Jugador",
+  "game_name": "Tekken 8",
+  "state": "complete",
+  "started_at": "2093-05-02T00:00:00.000Z",
+  "participants": [
+    {
+      "participant": {
+        "challonge_user_id": 700010,
+        "challonge_username": "cuenta_vieja",
+        "display_name": "Jugador Doble A",
+        "final_rank": 1
+      }
+    },
+    {
+      "participant": {
+        "challonge_user_id": 700011,
+        "challonge_username": "cuenta_nueva",
+        "display_name": "Jugador Doble B",
+        "final_rank": 2
+      }
+    }
+  ]
+}
