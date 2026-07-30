@@ -101,7 +101,7 @@ export default function Footer() {
 
         <div className="flex items-center gap-[18px] border border-white/10 bg-white/[.04] px-[18px] py-3.5">
           <Image
-            src="/images/misc/whatsapp-qr.svg"
+            src="/images/misc/QR Whatsapp.png"
             alt="Código QR del grupo de WhatsApp"
             width={104}
             height={104}
