@@ -1,12 +1,7 @@
 import { redirect } from "next/navigation";
-import { getAdminUser } from "@/lib/adminAuth";
-import CargarTorneo from "./cargarTorneo";
 
-export default async function PrivatePage() {
-  const { user, isAdmin, error } = await getAdminUser();
-  if (error) redirect("/error");
-  if (!user) redirect("/auth/login?redirectTo=/admin/cargar_torneo");
-  if (!isAdmin) redirect("/no-autorizado");
-
-  return <CargarTorneo></CargarTorneo>;
+// El flujo de carga de torneos se absorbio en el modal "Importar torneo
+// historico" de /admin/torneos (Hito 11 del plan de go-live).
+export default function CargarTorneoPage() {
+  redirect("/admin/torneos");
 }
