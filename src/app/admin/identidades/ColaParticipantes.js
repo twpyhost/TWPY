@@ -3,6 +3,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import BuscadorJugador from "./BuscadorJugador";
+import StatusChip from "@/components/ui/StatusChip";
 
 export default function ColaParticipantes({ cola, onResuelto }) {
   if (cola.length === 0) {
@@ -73,9 +74,7 @@ function FilaParticipante({ item, onResuelto }) {
             {item.nombre_participante}
           </span>
           {item.ocurrencias_pendientes > 1 && (
-            <span className="border border-primary-500/50 bg-primary-500/10 px-2 py-0.5 font-display text-[11px] tracking-[0.08em] text-primary-500">
-              x{item.ocurrencias_pendientes} PENDIENTES
-            </span>
+            <StatusChip tone="primary">x{item.ocurrencias_pendientes} PENDIENTES</StatusChip>
           )}
         </div>
         <span className="font-body text-xs text-white/50">

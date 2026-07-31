@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
+import StatusChip from "@/components/ui/StatusChip";
 
 export default function JugadorDetalle({ playerId }) {
   const [jugador, setJugador] = useState(null);
@@ -186,9 +187,7 @@ export default function JugadorDetalle({ playerId }) {
                       <span className="text-white/40">({cuenta.challonge_id})</span>
                     </span>
                     {cuenta.active ? (
-                      <span className="border border-success/40 bg-success/10 px-2.5 py-1 font-display text-[11px] tracking-[0.08em] text-success [clip-path:var(--clip-banner-right)]">
-                        ACTIVA
-                      </span>
+                      <StatusChip tone="success">ACTIVA</StatusChip>
                     ) : (
                       <button
                         type="button"

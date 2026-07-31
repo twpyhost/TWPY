@@ -9,6 +9,9 @@ const ETIQUETAS = {
   registrar_manual: "Registro manual",
   fusionar: "Fusión",
   deshacer: "Deshecho",
+  editar_jugador: "Perfil editado",
+  cambiar_cuenta_activa: "Cuenta activa cambiada",
+  eliminar_cuenta_challonge: "Cuenta desvinculada",
 };
 
 export default function LogActividad({ log, onCambio }) {
