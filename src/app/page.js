@@ -15,24 +15,30 @@ export default function Home() {
       </div>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-b from-transparent to-black/85" />
 
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] hidden animate-hero-in-left items-end lg:flex">
-        <div className="absolute bottom-[6%] left-[8%] h-[clamp(120px,26vw,400px)] w-[clamp(120px,26vw,400px)] animate-glow-pulse rounded-full bg-[radial-gradient(circle,rgba(245,10,100,.2)_0%,transparent_70%)] blur-[26px]" />
-        <Image
-          src={jin}
-          alt="Jin Kazama"
-          priority
-          className="relative block h-[92%] w-auto animate-hero-float [animation-delay:1.2s] [filter:contrast(1.06)_saturate(.92)_drop-shadow(0_0_44px_rgba(0,0,0,.7))] [mask-image:linear-gradient(180deg,#000_68%,rgba(0,0,0,.25)_92%,transparent_100%)]"
-        />
-      </div>
+      {/* Escenario de personajes: el fondo de la seccion es full-bleed, pero
+          Jin y Kazuya se anclan a una caja centrada de 1920px como en el
+          diseno. Sin esto, en monitores ultrawide se pegan a los bordes del
+          viewport y se alejan del bloque de texto (capado en 760px). */}
+      <div className="pointer-events-none absolute inset-0 z-[1] mx-auto hidden max-w-[1920px] lg:block">
+        <div className="absolute inset-y-0 left-[clamp(-48px,0.5vw,40px)] flex animate-hero-in-left items-end">
+          <div className="absolute bottom-[6%] left-[8%] h-[clamp(120px,26vw,400px)] w-[clamp(120px,26vw,400px)] animate-glow-pulse rounded-full bg-[radial-gradient(circle,rgba(245,10,100,.2)_0%,transparent_70%)] blur-[26px]" />
+          <Image
+            src={jin}
+            alt="Jin Kazama"
+            priority
+            className="relative block h-[92%] w-auto animate-hero-float [animation-delay:1.2s] [filter:contrast(1.06)_saturate(.92)_drop-shadow(0_0_44px_rgba(0,0,0,.7))] [mask-image:linear-gradient(180deg,#000_68%,rgba(0,0,0,.25)_92%,transparent_100%)]"
+          />
+        </div>
 
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden animate-hero-in-right items-end lg:flex [animation-delay:.12s]">
-        <div className="absolute bottom-[6%] right-[8%] h-[clamp(120px,26vw,400px)] w-[clamp(120px,26vw,400px)] animate-glow-pulse rounded-full bg-[radial-gradient(circle,rgba(63,209,231,.18)_0%,transparent_70%)] blur-[26px] [animation-delay:2s]" />
-        <Image
-          src={kazuya}
-          alt="Kazuya Mishima"
-          priority
-          className="relative block h-[92%] w-auto animate-hero-float [animation-delay:1.6s] [filter:contrast(1.06)_saturate(.92)_drop-shadow(0_0_44px_rgba(0,0,0,.7))] [mask-image:linear-gradient(180deg,#000_68%,rgba(0,0,0,.25)_92%,transparent_100%)]"
-        />
+        <div className="absolute inset-y-0 right-[clamp(-48px,0.5vw,40px)] flex animate-hero-in-right items-end [animation-delay:.12s]">
+          <div className="absolute bottom-[6%] right-[8%] h-[clamp(120px,26vw,400px)] w-[clamp(120px,26vw,400px)] animate-glow-pulse rounded-full bg-[radial-gradient(circle,rgba(63,209,231,.18)_0%,transparent_70%)] blur-[26px] [animation-delay:2s]" />
+          <Image
+            src={kazuya}
+            alt="Kazuya Mishima"
+            priority
+            className="relative block h-[92%] w-auto animate-hero-float [animation-delay:1.6s] [filter:contrast(1.06)_saturate(.92)_drop-shadow(0_0_44px_rgba(0,0,0,.7))] [mask-image:linear-gradient(180deg,#000_68%,rgba(0,0,0,.25)_92%,transparent_100%)]"
+          />
+        </div>
       </div>
 
       <div className="relative z-[3] flex max-w-[760px] flex-col items-center gap-3 py-1.5 text-center">
@@ -52,8 +58,8 @@ export default function Home() {
         <div className="h-0.5 w-[min(320px,60%)] animate-line-grow bg-[linear-gradient(90deg,transparent,rgb(var(--color-primary-500)),rgba(63,209,231,.9),transparent)] [animation-delay:.38s]" />
 
         <p className="m-0 max-w-[620px] animate-fade-up text-pretty font-body text-[clamp(15px,3.8vw,19px)] leading-[1.6] text-white/[.82] [animation-delay:.46s]">
-          Este espacio está diseñado para registrar y mostrar los resultados de torneos de
-          Tekken Warriors Paraguay
+          Este espacio está diseñado para registrar y mostrar los resultados de
+          torneos de Tekken Warriors Paraguay
         </p>
 
         <div className="mt-1.5 flex animate-fade-up flex-wrap justify-center gap-3 [animation-delay:.58s]">
@@ -77,8 +83,12 @@ export default function Home() {
         href="#sobre-nosotros"
         className="absolute bottom-5 left-1/2 z-[3] flex -translate-x-1/2 flex-col items-center gap-1.5 text-white/55 transition-colors duration-300 hover:text-tekken-blue-400 sm:bottom-[34px]"
       >
-        <span className="font-display text-xs tracking-[.24em]">SOBRE NOSOTROS</span>
-        <span className="block animate-cue-bounce text-[15px] leading-none">▾</span>
+        <span className="font-display text-xs tracking-[.24em]">
+          SOBRE NOSOTROS
+        </span>
+        <span className="block animate-cue-bounce text-[15px] leading-none">
+          ▾
+        </span>
       </a>
     </section>
   );

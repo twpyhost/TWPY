@@ -1,0 +1,4 @@
+La actividad reciente debe mostrar qué se hizo y con cuales cuentas
+Confirmar fusión debe mostrar un modal advirtiendo que la fusión es irreversible (si asi lo es, claude avisame)
+el sidebar de admin dashboard no debe hacer blink cuando cambia de pagina dentro de la misma dashboard, solamente el contenido a la derecha
+crear diseño para la configuración de puntajes y posiciones (crear nueva posicion con su puntaje)

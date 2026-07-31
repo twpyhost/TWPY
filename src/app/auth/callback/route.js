@@ -15,6 +15,16 @@ export async function GET(request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
+      // El sitio no tiene area de usuario: la unica sesion valida es la de un
+      // admin. Sin este chequeo, cualquier cuenta de Discord podria abrir
+      // sesion y la navbar le mostraria el boton ADMIN.
+      const { data: isAdmin } = await supabase.rpc("is_admin");
+
+      if (!isAdmin) {
+        await supabase.auth.signOut();
+        return NextResponse.redirect(new URL("/no-autorizado", origin));
+      }
+
       return NextResponse.redirect(new URL(next, origin));
     }
   }

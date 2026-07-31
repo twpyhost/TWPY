@@ -89,7 +89,7 @@ function FilaParticipante({ item, onResuelto }) {
             type="button"
             onClick={() => vincularA(item.sugerencia.playerId)}
             disabled={loadingVincular}
-            className="flex items-center gap-2 whitespace-nowrap border border-tekken-blue-400/40 bg-tekken-blue-400/10 px-4 py-1.5 font-body text-xs font-bold text-tekken-blue-400 transition-colors duration-200 hover:bg-tekken-blue-400/20 disabled:opacity-40 [clip-path:var(--clip-banner-right)]"
+            className="flex items-center gap-2 whitespace-nowrap border border-tekken-blue-400/40 bg-tekken-blue-400/10 px-4 py-1.5 font-body text-xs font-bold text-tekken-blue-400 transition-colors duration-200 hover:bg-tekken-blue-400/20 disabled:opacity-40"
           >
             {item.sugerencia.score}% {item.sugerencia.name}{" "}
             <span className="opacity-70">· ACEPTAR</span>
