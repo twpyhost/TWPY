@@ -1,0 +1,36 @@
+{
+  "data": [
+    {
+      "id": "18177414",
+      "type": "tournament",
+      "attributes": {
+        "url": "aaj751rp",
+        "name": "1er torneo ranked de Tekken 8 - GG Gaming Fest Vol. 6 - 2026",
+        "state": "complete",
+        "game_name": "TEKKEN 8",
+        "full_challonge_url": "https://challonge.com/es/aaj751rp",
+        "timestamps": {
+          "started_at": "2026-07-12T18:32:46.077Z",
+          "created_at": "2026-07-04T18:36:15.250Z",
+          "completed_at": "2026-07-12T21:59:42.410Z"
+        }
+      }
+    },
+    {
+      "id": "18000001",
+      "type": "tournament",
+      "attributes": {
+        "url": "otro-torneo",
+        "name": "Otro torneo TWPY",
+        "state": "pending",
+        "game_name": "TEKKEN 8",
+        "full_challonge_url": "https://challonge.com/es/otro-torneo",
+        "timestamps": {
+          "started_at": null,
+          "created_at": "2026-06-01T10:00:00.000Z",
+          "completed_at": null
+        }
+      }
+    }
+  ]
+}

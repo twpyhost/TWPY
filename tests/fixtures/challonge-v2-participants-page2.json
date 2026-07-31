@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "id": "298962398",
+      "type": "participant",
+      "attributes": {
+        "seed": 2,
+        "misc": null,
+        "username": "Aagony",
+        "final_rank": 9,
+        "tournament_id": 18177414,
+        "name": "Aagony",
+        "states": { "active": true }
+      },
+      "relationships": {
+        "invitation": { "data": null },
+        "user": { "data": { "id": "8333837", "type": "user" } }
+      }
+    }
+  ],
+  "meta": { "count": 3 },
+  "links": {
+    "self": "https://api.challonge.com/v2.1/tournaments/18177414/participants.json?page=2&per_page=2",
+    "next": "https://api.challonge.com/v2.1/tournaments/18177414/participants.json?page=3&per_page=2",
+    "prev": "https://api.challonge.com/v2.1/tournaments/18177414/participants.json?page=1&per_page=2"
+  }
+}
