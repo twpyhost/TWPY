@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="208" height="208" viewBox="0 0 208 208">
+  <rect width="208" height="208" fill="#0b0f17" />
+  <rect x="4" y="4" width="200" height="200" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-dasharray="6 6" />
+  <text x="104" y="98" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="700" fill="rgba(255,255,255,0.6)">QR</text>
+  <text x="104" y="122" text-anchor="middle" font-family="sans-serif" font-size="12" fill="rgba(255,255,255,0.45)">pendiente</text>
+</svg>

@@ -1,22 +1,28 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bebas_Neue, Source_Sans_3 } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import toast, { Toaster } from "react-hot-toast";
+import PageTransition from "@/components/ui/PageTransition";
+import { Toaster } from "react-hot-toast";
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const bebasNeue = Bebas_Neue({
+  weight: "400",
   subsets: ["latin"],
+  variable: "--font-display",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const sourceSans3 = Source_Sans_3({
+  weight: ["400", "600", "700"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
+  variable: "--font-body",
 });
 
+// Kept for src/app/torneos, which still uses font-warsaw explicitly via
+// inherited body styling in a few spots — see Global Constraints in the
+// implementation plan.
 const warsaw = localFont({
   src: [
     {
@@ -27,23 +33,35 @@ const warsaw = localFont({
   variable: "--font-warsaw",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const DESCRIPCION =
+  "Ranked de participantes de los torneos de Tekken Warriors Paraguay";
+
 export const metadata = {
-  title: "Tekken Warriors PY",
-  description:
-    "Ranked de participantes de los torneos de Tekken Warriors Paraguay",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Tekken Warriors PY",
+    template: "%s · Tekken Warriors PY",
+  },
+  description: DESCRIPCION,
+  openGraph: {
+    title: "Tekken Warriors PY",
+    description: DESCRIPCION,
+    type: "website",
+    locale: "es_PY",
+    images: ["/images/LOGO TWPY/PNG/TWPY LOGO VARIANTES-04.png"],
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${warsaw.variable} flex min-h-screen flex-col bg-black font-warsaw antialiased`}
+        className={`${bebasNeue.variable} ${sourceSans3.variable} ${warsaw.variable} flex min-h-screen flex-col bg-black font-body antialiased`}
       >
+        <Toaster />
         <Navbar />
-        <div className="bg-gradient-to-br from-[#630D33] to-[#277687]">
-          {children}
-        </div>
-
+        <PageTransition>{children}</PageTransition>
         <Footer />
       </body>
     </html>

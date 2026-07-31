@@ -1,0 +1,27 @@
+{
+  "data": {
+    "id": "18177414",
+    "type": "tournament",
+    "attributes": {
+      "tournament_type": "double elimination",
+      "url": "aaj751rp",
+      "name": "1er torneo ranked de Tekken 8 - GG Gaming Fest Vol. 6 - 2026",
+      "state": "complete",
+      "private": false,
+      "game_name": "TEKKEN 8",
+      "full_challonge_url": "https://challonge.com/es/aaj751rp",
+      "participants_count": 3,
+      "starts_at": "2026-07-12T15:00:00.000-03:00",
+      "timestamps": {
+        "starts_at": "2026-07-12T18:00:00.000Z",
+        "started_at": "2026-07-12T18:32:46.077Z",
+        "created_at": "2026-07-04T18:36:15.250Z",
+        "updated_at": "2026-07-12T21:59:42.956Z",
+        "completed_at": "2026-07-12T21:59:42.410Z"
+      }
+    },
+    "relationships": {
+      "organizer": { "data": { "id": "7131530", "type": "user" } }
+    }
+  }
+}

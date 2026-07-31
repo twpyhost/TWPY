@@ -1,0 +1,43 @@
+{
+  "data": [
+    {
+      "id": "298826686",
+      "type": "participant",
+      "attributes": {
+        "seed": 1,
+        "misc": null,
+        "username": "COLORADOGAMARRA",
+        "final_rank": 1,
+        "tournament_id": 18177414,
+        "name": "COLORADOGAMARRA",
+        "states": { "active": true }
+      },
+      "relationships": {
+        "invitation": { "data": null },
+        "user": { "data": { "id": "7097109", "type": "user" } }
+      }
+    },
+    {
+      "id": "299037422",
+      "type": "participant",
+      "attributes": {
+        "seed": 11,
+        "misc": null,
+        "username": null,
+        "final_rank": 7,
+        "tournament_id": 18177414,
+        "name": "Ippo",
+        "states": { "active": true }
+      },
+      "relationships": {
+        "invitation": { "data": null }
+      }
+    }
+  ],
+  "meta": { "count": 3 },
+  "links": {
+    "self": "https://api.challonge.com/v2.1/tournaments/18177414/participants.json?page=1&per_page=2",
+    "next": "https://api.challonge.com/v2.1/tournaments/18177414/participants.json?page=2&per_page=2",
+    "prev": "https://api.challonge.com/v2.1/tournaments/18177414/participants.json?page=0&per_page=2"
+  }
+}

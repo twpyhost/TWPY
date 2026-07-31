@@ -1,0 +1,17 @@
+{
+  "id": 990006,
+  "name": "Torneo Fixture Cuenta",
+  "game_name": "Tekken 8",
+  "state": "complete",
+  "started_at": "2093-05-06T00:00:00.000Z",
+  "participants": [
+    {
+      "participant": {
+        "challonge_user_id": 700040,
+        "challonge_username": "cuenta_test",
+        "display_name": "Jugador Cuenta",
+        "final_rank": 1
+      }
+    }
+  ]
+}

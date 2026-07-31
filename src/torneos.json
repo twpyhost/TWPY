@@ -1,9 +1,50 @@
 [
-  { "nombre": "Torneo 1", "fecha": "2023-01-01" },
-  { "nombre": "Torneo 2", "fecha": "2023-02-02" },
-  { "nombre": "Torneo 3", "fecha": "2023-03-03" },
-  { "nombre": "Torneo 4", "fecha": "2023-04-04" },
-  { "nombre": "Torneo 5", "fecha": "2023-05-05" },
-  { "nombre": "Torneo 6", "fecha": "2023-06-06" },
-  { "nombre": "Torneo 7", "fecha": "2023-07-07" }
+  {
+    "id": "1",
+    "nombre": "TWPY Opening Clash",
+    "fecha": "2026-01-18",
+    "juego": "Tekken 8",
+    "url_challonge": "https://challonge.com/es/twpy_opening_clash"
+  },
+  {
+    "id": "2",
+    "nombre": "Asuncion Dojo Series #1",
+    "fecha": "2026-02-15",
+    "juego": "Tekken 8",
+    "url_challonge": "https://challonge.com/es/asu_dojo_series_1"
+  },
+  {
+    "id": "3",
+    "nombre": "Iron Fist Friday",
+    "fecha": "2026-03-22",
+    "juego": "Tekken 8",
+    "url_challonge": "https://challonge.com/es/iron_fist_friday"
+  },
+  {
+    "id": "4",
+    "nombre": "Mokete Gaming Cup",
+    "fecha": "2026-04-26",
+    "juego": "Tekken 8",
+    "url_challonge": "https://challonge.com/es/mokete_gaming_cup"
+  },
+  {
+    "id": "5",
+    "nombre": "TWPY Winter Knockout",
+    "fecha": "2026-06-07",
+    "juego": "Tekken 8",
+    "url_challonge": "https://challonge.com/es/twpy_winter_knockout"
+  },
+  {
+    "id": "6",
+    "nombre": "Legacy Battle Night",
+    "fecha": "2025-11-16",
+    "juego": "Tekken 8",
+    "url_challonge": "https://challonge.com/es/legacy_battle_night"
+  },
+  {
+    "id": "7",
+    "nombre": "South Side Throwdown",
+    "fecha": "2025-12-14",
+    "juego": "Tekken 8"
+  }
 ]

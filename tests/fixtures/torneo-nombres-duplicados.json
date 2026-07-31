@@ -1,0 +1,25 @@
+{
+  "id": 990003,
+  "name": "Torneo Fixture Nombres Duplicados",
+  "game_name": "Tekken 8",
+  "state": "complete",
+  "started_at": "2093-05-03T00:00:00.000Z",
+  "participants": [
+    {
+      "participant": {
+        "challonge_user_id": 700020,
+        "challonge_username": "rival_a",
+        "display_name": "Rival Duplicado",
+        "final_rank": 1
+      }
+    },
+    {
+      "participant": {
+        "challonge_user_id": 700021,
+        "challonge_username": "rival_b",
+        "display_name": "Rival Duplicado",
+        "final_rank": 2
+      }
+    }
+  ]
+}

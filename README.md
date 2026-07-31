@@ -33,8 +33,41 @@ Estudiar la posibilidad de comprar dominios usando cnc.py (o hostinger si no se 
 
 - Descargar este repositorio
 - Ejecutar `npm install` en linea de comando dentro de la carpeta descargada
+- Copiar `.env.example` a `.env.local` y completar las credenciales (ver comentarios en el archivo)
 - Ejecutar `npm run dev`
 - Abrir en el navegador http://localhost:3000/
+
+## Fuente de datos (mock vs Supabase)
+
+La variable `DATA_SOURCE` controla de donde salen los datos (solo servidor):
+
+- `DATA_SOURCE=mock` (default): usa los JSON locales `src/torneos.json` y `src/resultado.json`. No requiere Supabase.
+- `DATA_SOURCE=supabase`: lee de Supabase. Requiere `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` y, para insertar torneos desde el admin, `SUPABASE_SERVICE_ROLE_KEY`.
+
+La capa de datos vive en `src/lib/data/` (`mockDb.js`, `supabaseDb.js` y el facade `index.js`).
+
+## Base de datos
+
+El esquema completo vive en `supabase/migrations/` (0001 a la ultima,
+incluye tablas, RLS, vistas publicas y seed de puntajes). Para aplicarlo a
+un proyecto de Supabase: `supabase link --project-ref <ref>` y despues
+`supabase db push` — no hace falta pegar SQL a mano en el dashboard.
+
+## Tests
+
+`npm test` corre unit + integracion + e2e con Playwright. Prerrequisito:
+Docker Desktop corriendo y `supabase start` levantado (stack local de
+Supabase) — los tests con DB nunca tocan el proyecto remoto. Scripts:
+`npm run test:unit`, `npm run test:e2e`, `npm run test:ui`.
+
+## Deploy (Vercel)
+
+1. Importar el repo en Vercel.
+2. Configurar las variables de entorno de `.env.example` en el proyecto
+   (empezar con `DATA_SOURCE=mock` para salir online; cambiar a `supabase`
+   cuando la BD tenga datos reales cargados y verificados).
+3. `CHALLONGE_API_KEY` y `SUPABASE_SERVICE_ROLE_KEY` son secretos de servidor:
+   nunca usar el prefijo `NEXT_PUBLIC_` con ellos.
 
 ### DER disponible aqui: https://miro.com/app/board/uXjVLtzFaL8=/
 

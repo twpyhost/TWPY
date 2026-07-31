@@ -1,6 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 **/LOGO TWPY/
+**/LOGO TWPY.zip
 
 # dependencies
 /node_modules
@@ -14,6 +15,11 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/.playwright-mcp/
 
 # next.js
 /.next/
@@ -34,6 +40,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# manifiesto de ids que genera scripts/seed-datos-prueba.js
+/scripts/.datos-prueba-ids.json
 
 # vercel
 .vercel
@@ -42,3 +52,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .qodo
+
+# claude code / agent skills (installed packages, reproducible from skills-lock.json)
+.claude/settings.local.json
+.claude/skills/
+.agents/skills/
+
+# subagent-driven-development scratch workspace (ledgers, review packages)
+.superpowers/
+
+# git worktrees for isolated feature work
+.worktrees/
