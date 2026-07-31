@@ -89,7 +89,7 @@ Auto-resolution on import is **strictly by `challonge_id`, never by name** (`src
 
 ### Two Challonge organizer accounts
 
-**Status: implemented** (migration `0009_torneos_source_account.sql`, `src/lib/challonge.js`). Still pending: the admin UI account selector (lands with the Torneos admin section) — today the code supports either account via the `cuenta` param, but the single-tournament import form always uses the default.
+**Status: implemented** (migration `0009_torneos_source_account.sql`, `src/lib/challonge.js`, `src/app/admin/torneos/ImportarTorneoModal.js`). The code supports either account via the `cuenta` param, and the admin UI's single-tournament import form has an account selector (default `B`).
 
 - **Account A**: historical, used before this project existed. One-time backfill source, not actively synced.
 - **Account B**: current default, used for all tournaments going forward.
