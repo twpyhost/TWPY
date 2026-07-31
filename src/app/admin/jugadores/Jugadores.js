@@ -61,26 +61,100 @@ export default function Jugadores() {
               No hay jugadores para mostrar.
             </p>
           ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {filtrados.map((jugador) => (
-                <Link
-                  key={jugador.id}
-                  href={`/admin/jugadores/${jugador.id}`}
-                  className="flex flex-col gap-2 border border-white/10 bg-white/[.03] p-4 transition-colors duration-200 hover:border-primary-500/60"
-                >
-                  <span className="font-display text-xl italic text-white">
-                    {jugador.display_name}
-                  </span>
-                  <span className="font-body text-xs text-white/50">
-                    {jugador.torneos_jugados} torneo(s) jugado(s)
-                    {jugador.posicion_actual ? ` · #${jugador.posicion_actual} en ranking` : ""}
-                  </span>
-                </Link>
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:hidden">
+                {filtrados.map((jugador) => (
+                  <TarjetaJugador key={jugador.id} jugador={jugador} />
+                ))}
+              </div>
+
+              <div className="hidden overflow-x-auto border border-white/10 bg-dark-gray-3-700 lg:block">
+                <table className="w-full min-w-[640px] border-collapse">
+                  <thead>
+                    <tr className="bg-black">
+                      <Th align="left">Jugador</Th>
+                      <Th align="left">Aliases</Th>
+                      <Th align="right">Torneos</Th>
+                      <Th align="right">Ranking</Th>
+                      <Th align="right" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filtrados.map((jugador) => (
+                      <tr
+                        key={jugador.id}
+                        className="border-b border-white/[.06] transition-colors duration-200 hover:bg-white/[.03]"
+                      >
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2.5">
+                            <span className="flex h-[34px] w-[34px] flex-none items-center justify-center rounded-full bg-white/[.09] font-display text-[15px]">
+                              {inicialesDe(jugador.display_name)}
+                            </span>
+                            <span className="font-body text-sm font-bold text-white">
+                              {jugador.display_name}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 font-mono text-xs text-white/55">
+                          {jugador.aliases.length > 0 ? jugador.aliases.join(", ") : "—"}
+                        </td>
+                        <td className="px-4 py-3 text-right font-body text-sm text-white">
+                          {jugador.torneos_jugados}
+                        </td>
+                        <td className="px-4 py-3 text-right font-display text-lg text-primary-400">
+                          {jugador.posicion_actual ? `#${jugador.posicion_actual}` : "—"}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <Link
+                            href={`/admin/jugadores/${jugador.id}`}
+                            className="inline-block whitespace-nowrap border border-white/20 px-3.5 py-1.5 font-display text-xs tracking-[0.05em] text-white transition-colors duration-200 hover:border-primary-500 hover:text-primary-400"
+                          >
+                            VER PERFIL
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
       </section>
     </>
+  );
+}
+
+function Th({ children, align }) {
+  return (
+    <th
+      className={`px-4 py-3 font-display text-[15px] font-normal tracking-[0.09em] text-white/50 ${
+        align === "right" ? "text-right" : "text-left"
+      }`}
+    >
+      {children}
+    </th>
+  );
+}
+
+function inicialesDe(nombre) {
+  return (nombre || "?").trim().slice(0, 2).toUpperCase();
+}
+
+function TarjetaJugador({ jugador }) {
+  return (
+    <Link
+      href={`/admin/jugadores/${jugador.id}`}
+      className="flex flex-col gap-2 border border-white/10 bg-white/[.03] p-4 transition-colors duration-200 hover:border-primary-500/60"
+    >
+      <span className="font-display text-xl italic text-white">{jugador.display_name}</span>
+      <span className="font-body text-xs text-white/50">
+        {jugador.torneos_jugados} torneo(s) jugado(s)
+        {jugador.posicion_actual ? ` · #${jugador.posicion_actual} en ranking` : ""}
+      </span>
+      {jugador.aliases.length > 0 && (
+        <span className="font-mono text-[11px] text-white/40">{jugador.aliases.join(", ")}</span>
+      )}
+    </Link>
   );
 }

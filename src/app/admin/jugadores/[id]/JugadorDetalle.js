@@ -13,6 +13,7 @@ export default function JugadorDetalle({ playerId }) {
   const [loading, setLoading] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [cambiandoCuenta, setCambiandoCuenta] = useState(null);
+  const [eliminandoCuenta, setEliminandoCuenta] = useState(null);
   const [form, setForm] = useState({ display_name: "", avatar_url: "", discord_id: "" });
 
   const cargar = useCallback(async () => {
@@ -74,6 +75,26 @@ export default function JugadorDetalle({ playerId }) {
       toast.error(error.message);
     } finally {
       setCambiandoCuenta(null);
+    }
+  };
+
+  const eliminarCuenta = async (challongeId) => {
+    if (!window.confirm("¿Desvincular esta cuenta de Challonge del jugador?")) return;
+    setEliminandoCuenta(challongeId);
+    try {
+      const response = await fetch(`/api/admin/jugadores/${playerId}/cuenta`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ challongeId }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "No se pudo desvincular la cuenta");
+      toast.success("Cuenta desvinculada");
+      cargar();
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setEliminandoCuenta(null);
     }
   };
 
@@ -158,14 +179,14 @@ export default function JugadorDetalle({ playerId }) {
                 {jugador.cuentas.map((cuenta) => (
                   <div
                     key={cuenta.challonge_id}
-                    className="flex flex-wrap items-center justify-between gap-3 border border-white/10 bg-black/40 p-3"
+                    className="flex flex-wrap items-center gap-2 border border-white/10 bg-black/40 p-3"
                   >
-                    <span className="font-body text-sm text-white/80">
+                    <span className="flex-1 min-w-0 truncate font-mono text-sm text-white/80">
                       {cuenta.challonge_username}{" "}
                       <span className="text-white/40">({cuenta.challonge_id})</span>
                     </span>
                     {cuenta.active ? (
-                      <span className="border border-success/40 bg-success/10 px-2.5 py-1 font-display text-[11px] tracking-[0.08em] text-success">
+                      <span className="border border-success/40 bg-success/10 px-2.5 py-1 font-display text-[11px] tracking-[0.08em] text-success [clip-path:var(--clip-banner-right)]">
                         ACTIVA
                       </span>
                     ) : (
@@ -178,6 +199,15 @@ export default function JugadorDetalle({ playerId }) {
                         {cambiandoCuenta === cuenta.challonge_id ? "..." : "MARCAR ACTIVA"}
                       </button>
                     )}
+                    <button
+                      type="button"
+                      aria-label={`Desvincular ${cuenta.challonge_username}`}
+                      onClick={() => eliminarCuenta(cuenta.challonge_id)}
+                      disabled={eliminandoCuenta === cuenta.challonge_id}
+                      className="flex h-7 w-7 flex-none items-center justify-center font-display text-lg text-white/40 hover:text-primary-500 disabled:opacity-40"
+                    >
+                      ×
+                    </button>
                   </div>
                 ))}
               </div>
@@ -191,20 +221,40 @@ export default function JugadorDetalle({ playerId }) {
             {jugador.historial.length === 0 ? (
               <p className="font-body text-sm text-white/50">Sin torneos jugados todavia.</p>
             ) : (
-              <div className="flex flex-col gap-2">
-                {jugador.historial.map((h, index) => (
-                  <div
-                    key={`${h.torneo_id}-${index}`}
-                    className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-2 text-sm"
-                  >
-                    <span className="text-white/80">
-                      {h.torneo_nombre} <span className="text-white/40">· {h.fecha}</span>
-                    </span>
-                    <span className="text-white/60">
-                      #{h.posicion} · {h.puntaje} pts
-                    </span>
-                  </div>
-                ))}
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[480px] border-collapse">
+                  <thead>
+                    <tr className="bg-black">
+                      <th className="px-3 py-2.5 text-left font-display text-sm font-normal tracking-[0.08em] text-white/50">
+                        Torneo
+                      </th>
+                      <th className="px-3 py-2.5 text-left font-display text-sm font-normal tracking-[0.08em] text-white/50">
+                        Fecha
+                      </th>
+                      <th className="px-3 py-2.5 text-right font-display text-sm font-normal tracking-[0.08em] text-white/50">
+                        Posición
+                      </th>
+                      <th className="px-3 py-2.5 text-right font-display text-sm font-normal tracking-[0.08em] text-white/50">
+                        Puntos
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {jugador.historial.map((h, index) => (
+                      <tr
+                        key={`${h.torneo_id}-${index}`}
+                        className="border-b border-white/[.07] text-sm"
+                      >
+                        <td className="px-3 py-2.5 text-white/85">{h.torneo_nombre}</td>
+                        <td className="px-3 py-2.5 text-white/50">{h.fecha}</td>
+                        <td className="px-3 py-2.5 text-right text-white/70">#{h.posicion}</td>
+                        <td className="px-3 py-2.5 text-right font-bold text-white">
+                          {h.puntaje} pts
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>

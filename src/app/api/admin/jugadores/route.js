@@ -10,7 +10,9 @@ export async function GET() {
 
     const { data: jugadores, error: jugadoresError } = await supabase
       .from("players")
-      .select("id, display_name, avatar_url")
+      .select(
+        "id, display_name, avatar_url, player_challonge_accounts ( challonge_username, active )",
+      )
       .is("merged_into_player_id", null)
       .order("display_name", { ascending: true });
 
@@ -56,6 +58,7 @@ export async function GET() {
       id: jugador.id,
       display_name: jugador.display_name,
       avatar_url: jugador.avatar_url,
+      aliases: (jugador.player_challonge_accounts ?? []).map((c) => c.challonge_username),
       torneos_jugados: torneosPorJugador.get(jugador.id) ?? 0,
       posicion_actual: posicionPorJugador.get(jugador.id) ?? null,
     }));

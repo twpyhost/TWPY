@@ -91,10 +91,22 @@ export default function FusionarJugadores({ onFusionado }) {
       </div>
 
       {(detalleBase || detalleDuplicado) && (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <TarjetaJugador titulo="BASE" detalle={detalleBase} />
-          <TarjetaJugador titulo="DUPLICADO" detalle={detalleDuplicado} />
-        </div>
+        <>
+          <div className="flex flex-col gap-2 border border-white/[.12] bg-black p-3.5 sm:hidden">
+            <span className="font-body text-xs tracking-[0.08em] text-white/50">
+              RESUMEN DE LA FUSIÓN
+            </span>
+            <ResumenMovil titulo="BASE" detalle={detalleBase} tono="cyan" />
+            <ResumenMovil titulo="DUPLICADO" detalle={detalleDuplicado} tono="primary" />
+            <span className="font-body text-xs text-white/45">
+              La comparación completa de stats y aliases se ve en desktop.
+            </span>
+          </div>
+          <div className="hidden grid-cols-1 gap-3 sm:grid sm:grid-cols-2">
+            <TarjetaJugador titulo="BASE" detalle={detalleBase} />
+            <TarjetaJugador titulo="DUPLICADO" detalle={detalleDuplicado} />
+          </div>
+        </>
       )}
 
       <button
@@ -124,6 +136,30 @@ export default function FusionarJugadores({ onFusionado }) {
         onConfirm={confirmarFusion}
         onClose={() => setModalAbierto(false)}
       />
+    </div>
+  );
+}
+
+const TONO_RESUMEN = {
+  cyan: "border-l-tekken-blue-500 bg-tekken-blue-400/[.08]",
+  primary: "border-l-primary-500 bg-primary-500/[.08]",
+};
+
+function ResumenMovil({ titulo, detalle, tono }) {
+  if (!detalle) {
+    return (
+      <div className={`border-l-[3px] px-3 py-2.5 font-body text-xs text-white/40 ${TONO_RESUMEN[tono]}`}>
+        {titulo}: seleccioná un jugador
+      </div>
+    );
+  }
+
+  return (
+    <div className={`flex items-center gap-2.5 border-l-[3px] px-3 py-2.5 ${TONO_RESUMEN[tono]}`}>
+      <span className="flex-1 font-display text-xl leading-none">{detalle.display_name}</span>
+      <span className="font-body text-xs text-white/60">
+        {detalle.torneos_jugados} trn · {detalle.puntaje_total} pts
+      </span>
     </div>
   );
 }

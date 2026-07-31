@@ -60,11 +60,35 @@ export async function GET(req) {
       previos.forEach((s) => posicionesAnteriores.set(s.player_id, s.posicion_global));
     }
 
+    // Torneos jugados EN ESTA TEMPORADA (no career-total): cuenta filas de
+    // tournament_participants_raw ya resueltas, dentro de los torneos de
+    // esta temporada -- distinto de ranking_snapshots, que tiene una fila
+    // por jugador y torneo desde su primera aparicion (running total, no
+    // participacion real).
+    const { data: torneosDeLaTemporada, error: torneosDeLaTemporadaError } = await supabase
+      .from("torneos")
+      .select("id")
+      .eq("temporada", temporada);
+    if (torneosDeLaTemporadaError) throw torneosDeLaTemporadaError;
+
+    const { data: participaciones, error: participacionesError } = await supabase
+      .from("tournament_participants_raw")
+      .select("player_id")
+      .in("torneo_id", torneosDeLaTemporada.map((t) => t.id))
+      .not("player_id", "is", null);
+    if (participacionesError) throw participacionesError;
+
+    const torneosPorJugador = new Map();
+    for (const p of participaciones) {
+      torneosPorJugador.set(p.player_id, (torneosPorJugador.get(p.player_id) ?? 0) + 1);
+    }
+
     const rankings = snapshots.map((s) => ({
       id: s.jugador.id,
       nombre: s.jugador.display_name,
       posicion: s.posicion_global,
       puntaje: s.puntaje_acumulado,
+      torneos: torneosPorJugador.get(s.player_id) ?? 0,
       movimiento: getMovimiento(s.posicion_global, posicionesAnteriores.get(s.player_id)),
     }));
 

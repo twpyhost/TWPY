@@ -7,12 +7,10 @@ import toast from "react-hot-toast";
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
+import StatusChip from "@/components/ui/StatusChip";
 import ImportarTorneoModal from "./ImportarTorneoModal";
 
-const CUENTA_BADGE = {
-  A: "border-tekken-blue-400/50 bg-tekken-blue-400/10 text-tekken-blue-400",
-  B: "border-primary-500/50 bg-primary-500/10 text-primary-500",
-};
+const CUENTA_TONE = { A: "cyan", B: "primary" };
 
 const FILTROS_CUENTA = [
   { value: "todas", label: "Todas" },
@@ -24,6 +22,7 @@ export default function Torneos() {
   const [torneos, setTorneos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtroCuenta, setFiltroCuenta] = useState("todas");
+  const [query, setQuery] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
   const [sincronizando, setSincronizando] = useState(false);
   const [reimportandoId, setReimportandoId] = useState(null);
@@ -43,13 +42,12 @@ export default function Torneos() {
     cargarTorneos();
   }, [cargarTorneos]);
 
-  const filtrados = useMemo(
-    () =>
-      filtroCuenta === "todas"
-        ? torneos
-        : torneos.filter((torneo) => torneo.cuenta === filtroCuenta),
-    [torneos, filtroCuenta],
-  );
+  const filtrados = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return torneos
+      .filter((torneo) => filtroCuenta === "todas" || torneo.cuenta === filtroCuenta)
+      .filter((torneo) => !q || torneo.nombre.toLowerCase().includes(q));
+  }, [torneos, filtroCuenta, query]);
 
   const sincronizar = async () => {
     setSincronizando(true);
@@ -119,21 +117,30 @@ export default function Torneos() {
 
       <section className="bg-black px-5 pb-24 pt-8 sm:px-8 lg:px-14">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-6">
-          <div className="flex flex-wrap gap-2">
-            {FILTROS_CUENTA.map((f) => (
-              <button
-                key={f.value}
-                type="button"
-                onClick={() => setFiltroCuenta(f.value)}
-                className={`border px-4 py-1.5 font-display text-sm tracking-[0.08em] transition-colors duration-300 ${
-                  filtroCuenta === f.value
-                    ? "border-primary-500 bg-primary-500 text-white"
-                    : "border-white/15 bg-white/[.04] text-white/70 hover:border-white/30"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-2">
+              {FILTROS_CUENTA.map((f) => (
+                <button
+                  key={f.value}
+                  type="button"
+                  onClick={() => setFiltroCuenta(f.value)}
+                  className={`border px-4 py-1.5 font-display text-sm tracking-[0.08em] transition-colors duration-300 ${
+                    filtroCuenta === f.value
+                      ? "border-primary-500 bg-primary-500 text-white"
+                      : "border-white/15 bg-white/[.04] text-white/70 hover:border-white/30"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar torneo..."
+              className="h-11 w-full max-w-xs border border-white/15 bg-white/[.04] px-3 font-body text-sm text-white outline-none placeholder:text-white/40 focus:border-primary-500"
+            />
           </div>
 
           {loading ? (
@@ -149,7 +156,7 @@ export default function Torneos() {
                   key={torneo.id}
                   className="flex flex-wrap items-center gap-4 border border-white/10 bg-white/[.03] p-4"
                 >
-                  <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                     <div className="flex flex-wrap items-center gap-2">
                       <Link
                         href={`/admin/torneos/${torneo.id}`}
@@ -157,17 +164,17 @@ export default function Torneos() {
                       >
                         {torneo.nombre}
                       </Link>
-                      <span
-                        className={`border px-2 py-0.5 font-display text-[11px] tracking-[0.08em] ${CUENTA_BADGE[torneo.cuenta] ?? CUENTA_BADGE.B}`}
-                      >
+                      <StatusChip tone={CUENTA_TONE[torneo.cuenta] ?? "primary"}>
                         CUENTA {torneo.cuenta}
-                      </span>
+                      </StatusChip>
+                      <StatusChip tone={torneo.pendientes > 0 ? "warning" : "success"}>
+                        {torneo.pendientes > 0
+                          ? `${torneo.pendientes} SIN VINCULAR`
+                          : "RESUELTO"}
+                      </StatusChip>
                     </div>
                     <span className="font-body text-xs text-white/50">
                       {torneo.fecha_inicio} · temporada {torneo.temporada}
-                      {torneo.pendientes > 0
-                        ? ` · ${torneo.pendientes} pendiente(s) de vincular`
-                        : " · resuelto"}
                     </span>
                   </div>
                   <button

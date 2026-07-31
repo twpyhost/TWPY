@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
+function inicialesDe(nombre) {
+  return (nombre || "?").trim().slice(0, 2).toUpperCase();
+}
+
 // Autocompletado de jugadores, reusado tanto en la cola (vincular) como en
 // el selector de fusion (base/duplicado).
 export default function BuscadorJugador({
@@ -98,11 +102,17 @@ export default function BuscadorJugador({
                 setQuery("");
                 setAbierto(false);
               }}
-              className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left hover:bg-primary-500/10"
+              className="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-primary-500/10"
             >
-              <span className="font-body text-sm text-white">{jugador.display_name}</span>
-              <span className="font-display text-[11px] tracking-[0.08em] text-white/40">
-                {jugador.cuentas_challonge} cta · {jugador.torneos_jugados} torneos
+              <span className="flex h-[26px] w-[26px] flex-none items-center justify-center rounded-full bg-white/10 font-display text-[11px] font-bold">
+                {inicialesDe(jugador.display_name)}
+              </span>
+              <span className="flex-1 truncate font-body text-sm font-bold text-white">
+                {jugador.display_name}
+              </span>
+              <span className="whitespace-nowrap font-display text-[11px] tracking-[0.08em] text-white/45">
+                {jugador.posicion_actual ? `#${jugador.posicion_actual} · ` : ""}
+                {jugador.torneos_jugados} trn
               </span>
             </button>
           ))}

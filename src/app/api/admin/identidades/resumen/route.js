@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { puedeDeshacer } from "@/lib/identidadDeshacer";
+import { sugerirJugador } from "@/lib/nameSimilarity";
 
 export async function GET() {
   try {
@@ -19,7 +20,20 @@ export async function GET() {
 
     if (filasError) throw filasError;
 
-    const cola = agruparCola(filas);
+    const { data: candidatos, error: candidatosError } = await supabase
+      .from("players")
+      .select("id, display_name")
+      .is("merged_into_player_id", null);
+
+    if (candidatosError) throw candidatosError;
+
+    const cola = agruparCola(filas).map((item) => ({
+      ...item,
+      sugerencia: sugerirJugador(
+        item.challonge_username || item.nombre_participante,
+        candidatos,
+      ),
+    }));
 
     const { data: eventos, error: eventosError } = await supabase
       .from("identidad_eventos")

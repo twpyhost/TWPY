@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+import StatusDot from "@/components/ui/StatusDot";
+
 const NAV_ITEMS = [
   {
     href: "/admin/identidades",
@@ -71,28 +73,13 @@ function initialesDe(email) {
 // no de un placeholder estatico -- ver Hito 14 del plan de go-live.
 function SupabaseStatusPill({ ok }) {
   if (ok === null || ok === undefined) {
-    return (
-      <span className="flex items-center gap-1.5 whitespace-nowrap border border-white/20 bg-white/[.04] px-3 py-1.5 text-[11px] font-bold tracking-[0.06em] text-white/50">
-        <span className="h-1.5 w-1.5 rounded-full bg-white/40" />
-        SIN DATOS DE SALUD
-      </span>
-    );
+    return <StatusDot tone="neutral">SIN DATOS DE SALUD</StatusDot>;
   }
 
-  if (ok) {
-    return (
-      <span className="flex items-center gap-1.5 whitespace-nowrap border border-success/35 bg-success/[.12] px-3 py-1.5 text-[11px] font-bold tracking-[0.06em] text-success">
-        <span className="h-1.5 w-1.5 rounded-full bg-success" />
-        SUPABASE OK
-      </span>
-    );
-  }
-
-  return (
-    <span className="flex items-center gap-1.5 whitespace-nowrap border border-warning/35 bg-warning/[.12] px-3 py-1.5 text-[11px] font-bold tracking-[0.06em] text-warning">
-      <span className="h-1.5 w-1.5 rounded-full bg-warning" />
-      SUPABASE ATENCIÓN
-    </span>
+  return ok ? (
+    <StatusDot tone="success">SUPABASE OK</StatusDot>
+  ) : (
+    <StatusDot tone="warning">SUPABASE ATENCIÓN</StatusDot>
   );
 }
 

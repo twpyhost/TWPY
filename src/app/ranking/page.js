@@ -4,6 +4,7 @@ import RibbonTag from "@/components/ui/RibbonTag";
 import { getFiltroAno, getRankings } from "../utils/db";
 import { withMinDelay } from "@/lib/withMinDelay";
 import { fadeDelay } from "@/lib/fadeDelay";
+import { TREND } from "@/lib/data/movimiento";
 
 // Revalida cada 60s para reflejar torneos nuevos sin redeploy
 // (y cachea las consultas a la BD).
@@ -12,13 +13,6 @@ export const revalidate = 60;
 export const metadata = {
   title: "Ranking",
   description: "Tabla de posiciones de la temporada actual del circuito ranked de Tekken Warriors Paraguay.",
-};
-
-const TREND = {
-  SUBE: { icon: "▲", className: "text-success" },
-  BAJA: { icon: "▼", className: "text-error" },
-  IGUAL: { icon: "=", className: "text-white/40" },
-  NUEVO: { icon: "★", className: "text-tekken-blue-400" },
 };
 
 function tierBorderClass(posicion) {

@@ -1,26 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import { TREND } from "@/lib/data/movimiento";
 import PuntajesConfig from "./PuntajesConfig";
 
-const TREND = {
-  SUBE: { icon: "▲", className: "text-success" },
-  BAJA: { icon: "▼", className: "text-error" },
-  IGUAL: { icon: "=", className: "text-white/40" },
-  NUEVO: { icon: "★", className: "text-tekken-blue-400" },
-};
+function inicialesDe(nombre) {
+  return (nombre || "?").trim().slice(0, 2).toUpperCase();
+}
 
 export default function Rankings() {
   const [rankings, setRankings] = useState([]);
   const [temporadas, setTemporadas] = useState([]);
   const [temporada, setTemporada] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
   const [recalculando, setRecalculando] = useState(false);
 
@@ -65,6 +64,12 @@ export default function Rankings() {
     }
   };
 
+  const filtrados = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return rankings;
+    return rankings.filter((r) => r.nombre.toLowerCase().includes(q));
+  }, [rankings, query]);
+
   return (
     <>
       <HeroSection className="px-5 pb-6 pt-11 sm:px-8 sm:pt-16 lg:px-14 lg:pt-[84px]">
@@ -75,9 +80,18 @@ export default function Rankings() {
               RANKINGS
             </h1>
           </div>
-          <Button onClick={() => setModalAbierto(true)} className="px-5 py-2.5 text-base">
-            RECALCULAR RANKINGS
-          </Button>
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar jugador..."
+              className="h-11 w-full max-w-xs border border-white/15 bg-white/[.04] px-3 font-body text-sm text-white outline-none placeholder:text-white/40 focus:border-primary-500"
+            />
+            <Button onClick={() => setModalAbierto(true)} className="px-5 py-2.5 text-base">
+              RECALCULAR RANKINGS
+            </Button>
+          </div>
         </div>
       </HeroSection>
 
@@ -103,29 +117,68 @@ export default function Rankings() {
 
             {loading ? (
               <p className="font-body text-sm text-white/50">Cargando...</p>
-            ) : rankings.length === 0 ? (
+            ) : filtrados.length === 0 ? (
               <p className="border border-white/10 bg-white/[.03] p-4 font-body text-sm text-white/50">
                 No hay rankings para esta temporada.
               </p>
             ) : (
-              <div className="flex flex-col gap-1.5">
-                {rankings.map((r) => {
-                  const trend = TREND[r.movimiento] ?? TREND.IGUAL;
-                  return (
-                    <div
-                      key={r.id}
-                      className="grid grid-cols-[48px_minmax(0,1fr)_auto_40px] items-center gap-4 border border-white/10 bg-white/[.03] px-4 py-3"
-                    >
-                      <span className="font-display text-xl text-white/60">{r.posicion}</span>
-                      <span className="font-display text-lg italic text-white">{r.nombre}</span>
-                      <span className="font-display text-lg text-white">{r.puntaje} pts</span>
-                      <span className={`text-center font-display text-lg ${trend.className}`}>
-                        {trend.icon}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+              <>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:hidden">
+                  {filtrados.map((r) => (
+                    <TarjetaRanking key={r.id} r={r} />
+                  ))}
+                </div>
+
+                <div className="hidden overflow-x-auto border border-white/10 bg-dark-gray-3-700 lg:block">
+                  <table className="w-full min-w-[620px] border-collapse">
+                    <thead>
+                      <tr className="bg-black">
+                        <Th>Pos</Th>
+                        <Th>Jugador</Th>
+                        <Th align="right">Torneos</Th>
+                        <Th align="right">Puntos</Th>
+                        <Th align="right">Tendencia</Th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filtrados.map((r) => {
+                        const trend = TREND[r.movimiento] ?? TREND.IGUAL;
+                        return (
+                          <tr
+                            key={r.id}
+                            className="border-b border-white/[.06] transition-colors duration-200 hover:bg-white/[.03]"
+                          >
+                            <td className="px-4 py-3 font-display text-2xl text-white/70">
+                              {r.posicion}
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-2.5">
+                                <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-white/[.09] font-display text-sm">
+                                  {inicialesDe(r.nombre)}
+                                </span>
+                                <span className="font-body text-sm font-bold text-white">
+                                  {r.nombre}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-right font-body text-sm text-white/70">
+                              {r.torneos}
+                            </td>
+                            <td className="px-4 py-3 text-right font-display text-lg text-white">
+                              {r.puntaje} pts
+                            </td>
+                            <td
+                              className={`px-4 py-3 text-right font-display text-lg ${trend.className}`}
+                            >
+                              {trend.icon}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </div>
 
@@ -151,5 +204,33 @@ export default function Rankings() {
         onClose={() => setModalAbierto(false)}
       />
     </>
+  );
+}
+
+function Th({ children, align }) {
+  return (
+    <th
+      className={`px-4 py-3 font-display text-[15px] font-normal tracking-[0.09em] text-white/50 ${
+        align === "right" ? "text-right" : "text-left"
+      }`}
+    >
+      {children}
+    </th>
+  );
+}
+
+function TarjetaRanking({ r }) {
+  const trend = TREND[r.movimiento] ?? TREND.IGUAL;
+  return (
+    <div className="flex flex-col gap-2 border border-white/10 bg-white/[.03] p-4">
+      <div className="flex items-center gap-3">
+        <span className="font-display text-2xl text-white/60">#{r.posicion}</span>
+        <span className="flex-1 truncate font-display text-xl italic text-white">{r.nombre}</span>
+        <span className={`font-display text-xl ${trend.className}`}>{trend.icon}</span>
+      </div>
+      <span className="font-body text-xs text-white/50">
+        {r.torneos} torneo(s) · {r.puntaje} pts
+      </span>
+    </div>
   );
 }

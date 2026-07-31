@@ -28,11 +28,32 @@ export async function GET(req) {
 
     if (error) throw error;
 
+    const ids = data.map((jugador) => jugador.id);
+    const { data: snapshots, error: snapshotsError } = await supabase
+      .from("ranking_snapshots")
+      .select("player_id, posicion_global, torneo:torneos ( fecha_inicio )")
+      .in("player_id", ids.length > 0 ? ids : [-1]);
+
+    if (snapshotsError) throw snapshotsError;
+
+    const posicionPorJugador = new Map();
+    for (const snapshot of snapshots) {
+      const actual = posicionPorJugador.get(snapshot.player_id);
+      const fecha = snapshot.torneo?.fecha_inicio ?? "";
+      if (!actual || fecha > actual.fecha) {
+        posicionPorJugador.set(snapshot.player_id, {
+          fecha,
+          posicion: snapshot.posicion_global,
+        });
+      }
+    }
+
     const jugadores = data.map((jugador) => ({
       id: jugador.id,
       display_name: jugador.display_name,
       cuentas_challonge: jugador.player_challonge_accounts?.length ?? 0,
       torneos_jugados: jugador.tournament_participants_raw?.length ?? 0,
+      posicion_actual: posicionPorJugador.get(jugador.id)?.posicion ?? null,
     }));
 
     return Response.json({ jugadores }, { status: 200 });
