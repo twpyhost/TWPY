@@ -1,5 +1,7 @@
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { eliminarTorneo } from "@/lib/torneos";
 
 export async function GET(req, { params }) {
   try {
@@ -56,6 +58,54 @@ export async function GET(req, { params }) {
     console.error(error);
     return Response.json(
       { error: "Ocurrio un error al obtener el torneo" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(req, { params }) {
+  try {
+    const auth = await requireAdmin();
+    if (auth.error) return auth.error;
+    const { user } = auth;
+
+    const { id } = await params;
+    const torneoId = Number(id);
+    if (!Number.isFinite(torneoId)) {
+      return Response.json({ error: "Id de torneo invalido" }, { status: 400 });
+    }
+
+    const supabase = getSupabaseAdmin();
+
+    const resultado = await eliminarTorneo(supabase, torneoId);
+    if (!resultado) {
+      return Response.json({ error: "El torneo no existe" }, { status: 404 });
+    }
+
+    await supabase.from("sistema_eventos").insert({
+      tipo: "torneo_eliminado",
+      ok: true,
+      detalle: {
+        torneo_id: torneoId,
+        nombre: resultado.nombre,
+        temporada: resultado.temporada,
+        actor_email: user.email,
+      },
+    });
+
+    revalidatePath("/ranking");
+    revalidatePath("/competidores");
+    revalidatePath("/torneos");
+    revalidatePath(`/torneo-resultado/${torneoId}`);
+
+    return Response.json(
+      { message: "Torneo eliminado", temporada: resultado.temporada },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error(error);
+    return Response.json(
+      { error: "Ocurrio un error al eliminar el torneo" },
       { status: 500 },
     );
   }

@@ -134,6 +134,14 @@ export default {
           from: { transform: "scaleX(0)" },
           to: { transform: "scaleX(1)" },
         },
+        pulseDot: {
+          "0%, 100%": { opacity: 1 },
+          "50%": { opacity: 0.25 },
+        },
+        cardIn: {
+          from: { opacity: 0, transform: "translateY(8px)" },
+          to: { opacity: 1, transform: "none" },
+        },
       },
       animation: {
         "glow-pulse": "glowPulse 7s ease-in-out infinite",
@@ -150,6 +158,8 @@ export default {
         "hero-in-right": "heroInRight 1.2s cubic-bezier(.16,.84,.24,1) both",
         "cue-bounce": "cueBounce 2.2s ease-in-out infinite",
         "line-grow": "lineGrow .9s cubic-bezier(.16,.84,.24,1) both",
+        "pulse-dot": "pulseDot 2s ease-in-out infinite",
+        "card-in": "cardIn .35s cubic-bezier(.4,0,.2,1) both",
       },
     },
   },

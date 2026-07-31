@@ -129,7 +129,7 @@ export default function FusionarJugadores({ onFusionado }) {
             puede deshacer.
           </>
         }
-        warningText="Se reasignan cuentas de Challonge y resultados historicos. Los torneos donde ambos jugadores ya tengan resultado propio quedan como conflicto para revisar a mano."
+        warningText="Se reasignan cuentas de Challonge y resultados historicos. El jugador duplicado no se borra: queda oculto y marcado como fusionado, pero no hay forma de revertir la fusion desde el panel. Los torneos donde ambos jugadores ya tengan resultado propio quedan como conflicto para revisar a mano."
         requireUnderstandCheckbox
         confirmLabel="FUSIONAR"
         loading={loading}

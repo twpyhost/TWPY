@@ -4,6 +4,7 @@ import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 const TIPO_LABEL = {
   health: "HEALTH",
   backup: "BACKUP",
+  torneo_eliminado: "TORNEO",
 };
 
 // Historial real de sistema_eventos (a diferencia de /api/admin/sistema,
@@ -35,7 +36,9 @@ export async function GET(req) {
       tone: evento.ok ? "success" : "error",
       msg: `${TIPO_LABEL[evento.tipo] ?? evento.tipo.toUpperCase()} ${
         evento.ok ? "correcto" : "fallido"
-      }${evento.detalle?.error ? `: ${evento.detalle.error}` : ""}`,
+      }${evento.detalle?.nombre ? `: ${evento.detalle.nombre}` : ""}${
+        evento.detalle?.error ? `: ${evento.detalle.error}` : ""
+      }`,
     }));
 
     return Response.json({ eventos: resultado }, { status: 200 });

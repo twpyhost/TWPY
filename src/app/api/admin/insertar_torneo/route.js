@@ -33,14 +33,24 @@ export async function POST(req) {
       return Response.json({ error: "Se requiere la URL" }, { status: 400 });
     }
 
-    const cuenta = ["A", "B"].includes(cuentaBody) ? cuentaBody : "B";
+    const cuentaExplicita = ["A", "B"].includes(cuentaBody) ? cuentaBody : null;
 
     const tournamentId = extractTournamentId(url);
     if (!tournamentId) {
       return Response.json({ error: "URL no valida" }, { status: 400 });
     }
 
-    const apiResponse = await fetchChallongeApi(tournamentId, cuenta);
+    // Sin cuenta explicita (agregado rapido): prueba primero la cuenta B
+    // (actual) y, si Challonge no encuentra el torneo ahi, reintenta con la
+    // A (historica) -- asi el input rapido cubre tambien el backfill viejo
+    // sin pedirle al admin que elija la cuenta a mano.
+    let cuenta = cuentaExplicita ?? "B";
+    let apiResponse = await fetchChallongeApi(tournamentId, cuenta);
+    if (!cuentaExplicita && apiResponse && !apiResponse.ok) {
+      cuenta = "A";
+      apiResponse = await fetchChallongeApi(tournamentId, cuenta);
+    }
+
     if (!apiResponse) {
       return Response.json(
         { error: "No se pudo conectar con Challonge" },

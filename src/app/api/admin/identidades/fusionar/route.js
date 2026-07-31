@@ -105,12 +105,21 @@ export async function POST(req) {
         "La fusion se aplico pero el recalculo de rankings fallo: usa 'Recalcular rankings' en la seccion Rankings.";
     }
 
+    const { data: jugadoresFusionados } = await supabase
+      .from("players")
+      .select("id, display_name")
+      .in("id", [baseId, duplicateId]);
+    const nombrePor = (id) =>
+      jugadoresFusionados?.find((j) => j.id === id)?.display_name ?? null;
+
     await registrarEvento(supabase, {
       tipo: "fusionar",
       actorUserId: user.id,
       detalle: {
         base_player_id: baseId,
+        base_display_name: nombrePor(baseId),
         duplicate_player_id: duplicateId,
+        duplicate_display_name: nombrePor(duplicateId),
         cuentas_reasignadas: cuentasReasignadas.length,
         participantes_reasignados: filasAReasignar.length,
         conflictos,

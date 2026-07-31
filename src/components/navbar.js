@@ -15,11 +15,11 @@ const NAV_ITEMS = [
   { name: "REGLAMENTO", href: "/reglamento" },
 ];
 
-// El diseno usa un unico boton que alterna LOGIN/ADMIN segun haya sesion
+// El diseno usa un unico boton que alterna BLACKHAND/ADMIN segun haya sesion
 // (`authLabel`/`authHref` en Home Liga Tekken Paraguay.dc.html). Toda sesion
 // es admin -- lo garantizan /auth/callback y /api/auth/login --, asi que
 // alcanza con mirar `user`. El logoff vive solo dentro del panel admin.
-const AUTH_INVITADO = { name: "LOGIN", href: "/auth/login" };
+const AUTH_INVITADO = { name: "BLACKHAND", href: "/auth/login" };
 const AUTH_ADMIN = { name: "ADMIN", href: "/admin/identidades" };
 
 export default function Navbar() {

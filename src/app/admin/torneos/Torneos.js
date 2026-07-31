@@ -8,7 +8,7 @@ import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
 import StatusChip from "@/components/ui/StatusChip";
-import ImportarTorneoModal from "./ImportarTorneoModal";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 const CUENTA_TONE = { A: "cyan", B: "primary" };
 
@@ -23,9 +23,12 @@ export default function Torneos() {
   const [loading, setLoading] = useState(true);
   const [filtroCuenta, setFiltroCuenta] = useState("todas");
   const [query, setQuery] = useState("");
-  const [modalAbierto, setModalAbierto] = useState(false);
   const [sincronizando, setSincronizando] = useState(false);
   const [reimportandoId, setReimportandoId] = useState(null);
+  const [urlRapida, setUrlRapida] = useState("");
+  const [agregando, setAgregando] = useState(false);
+  const [torneoAEliminar, setTorneoAEliminar] = useState(null);
+  const [eliminando, setEliminando] = useState(false);
 
   const cargarTorneos = useCallback(async () => {
     setLoading(true);
@@ -90,6 +93,54 @@ export default function Torneos() {
     }
   };
 
+  const agregarTorneo = async () => {
+    const url = urlRapida.trim();
+    if (!url) {
+      toast.error("Pegá la URL o el ID del torneo");
+      return;
+    }
+
+    setAgregando(true);
+    try {
+      const response = await fetch("/api/admin/insertar_torneo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "No se pudo agregar el torneo");
+
+      toast.success("Torneo agregado");
+      setUrlRapida("");
+      cargarTorneos();
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setAgregando(false);
+    }
+  };
+
+  const eliminarTorneo = async () => {
+    if (!torneoAEliminar) return;
+
+    setEliminando(true);
+    try {
+      const response = await fetch(`/api/admin/torneos/${torneoAEliminar.id}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "No se pudo eliminar el torneo");
+
+      toast.success("Torneo eliminado");
+      setTorneoAEliminar(null);
+      cargarTorneos();
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setEliminando(false);
+    }
+  };
+
   return (
     <>
       <HeroSection className="px-5 pb-6 pt-11 sm:px-8 sm:pt-16 lg:px-14 lg:pt-[84px]">
@@ -100,17 +151,34 @@ export default function Torneos() {
               TORNEOS
             </h1>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-2.5">
             <Button onClick={sincronizar} disabled={sincronizando} className="px-5 py-2.5 text-base">
-              {sincronizando ? "SINCRONIZANDO..." : "SINCRONIZAR NUEVOS TORNEOS"}
+              {sincronizando ? "SINCRONIZANDO..." : "SINCRONIZAR TORNEOS TWPY"}
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => setModalAbierto(true)}
-              className="px-5 py-2.5 text-base"
-            >
-              IMPORTAR TORNEO HISTÓRICO
-            </Button>
+            <div className="flex max-w-[520px] flex-wrap gap-2">
+              <input
+                type="text"
+                value={urlRapida}
+                onChange={(e) => setUrlRapida(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") agregarTorneo();
+                }}
+                placeholder="URL o ID de Challonge · agregar rápido"
+                className="h-10 min-w-0 flex-1 border border-white/[.18] bg-black px-3 font-body text-[13px] text-white outline-none placeholder:text-white/40 focus:border-tekken-blue-500"
+              />
+              <Button
+                variant="outline"
+                onClick={agregarTorneo}
+                disabled={agregando}
+                className="px-5 py-2.5 text-sm"
+              >
+                {agregando ? "AGREGANDO..." : "AGREGAR TORNEO"}
+              </Button>
+            </div>
+            <p className="max-w-[520px] border-l-[3px] border-tekken-blue-500 bg-tekken-blue-500/[.08] px-3 py-2 text-[12px] leading-[1.5] text-white/70">
+              Solo se pueden añadir torneos creados con la cuenta <strong>TWPY_Host</strong> de
+              Challonge. Torneos de otras cuentas no van a encontrarse.
+            </p>
           </div>
         </div>
       </HeroSection>
@@ -177,14 +245,28 @@ export default function Torneos() {
                       {torneo.fecha_inicio} · temporada {torneo.temporada}
                     </span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => reimportar(torneo.id)}
-                    disabled={reimportandoId === torneo.id}
-                    className="whitespace-nowrap border border-white/15 bg-white/[.04] px-4 py-2 font-display text-sm tracking-[0.08em] text-white hover:bg-white/10 disabled:opacity-40"
-                  >
-                    {reimportandoId === torneo.id ? "REIMPORTANDO..." : "REIMPORTAR"}
-                  </button>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => reimportar(torneo.id)}
+                      disabled={reimportandoId === torneo.id}
+                      className="whitespace-nowrap border border-white/15 bg-white/[.04] px-4 py-2 font-display text-sm tracking-[0.08em] text-white hover:bg-white/10 disabled:opacity-40"
+                    >
+                      {reimportandoId === torneo.id ? "REIMPORTANDO..." : "REIMPORTAR"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTorneoAEliminar(torneo)}
+                      aria-label="Eliminar torneo"
+                      className="flex h-[34px] w-[34px] flex-none items-center justify-center border border-error/40 text-[rgb(255,120,120)] transition-colors duration-200 hover:bg-error hover:text-white"
+                    >
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M3 6h18" />
+                        <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" />
+                        <path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -192,10 +274,22 @@ export default function Torneos() {
         </div>
       </section>
 
-      <ImportarTorneoModal
-        open={modalAbierto}
-        onClose={() => setModalAbierto(false)}
-        onImportado={cargarTorneos}
+      <ConfirmModal
+        open={Boolean(torneoAEliminar)}
+        title="Eliminar torneo"
+        body={
+          <>
+            Se elimina <strong className="text-white">“{torneoAEliminar?.nombre}”</strong> de la
+            lista y sus resultados dejan de contar para el ranking.
+          </>
+        }
+        warningText="Se borran también sus participantes y snapshots. El ranking de la temporada se recalcula automáticamente."
+        requireUnderstandCheckbox
+        understandLabel="Entiendo que este torneo y sus resultados se borran y no se puede deshacer."
+        confirmLabel="ELIMINAR"
+        loading={eliminando}
+        onConfirm={eliminarTorneo}
+        onClose={() => setTorneoAEliminar(null)}
       />
     </>
   );

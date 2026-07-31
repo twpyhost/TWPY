@@ -23,7 +23,7 @@ export async function PATCH(req, { params }) {
 
     const { data: cuenta, error: cuentaError } = await supabase
       .from("player_challonge_accounts")
-      .select("id")
+      .select("id, challonge_username")
       .eq("player_id", playerId)
       .eq("challonge_id", challongeId)
       .maybeSingle();
@@ -52,10 +52,22 @@ export async function PATCH(req, { params }) {
       .eq("id", cuenta.id);
     if (activarError) throw activarError;
 
+    const { data: jugador } = await supabase
+      .from("players")
+      .select("display_name")
+      .eq("id", playerId)
+      .maybeSingle();
+
     await registrarEvento(supabase, {
       tipo: "cambiar_cuenta_activa",
       actorUserId: user.id,
-      detalle: { player_id: playerId, challonge_id: challongeId, actor_email: user.email },
+      detalle: {
+        player_id: playerId,
+        display_name: jugador?.display_name ?? null,
+        challonge_id: challongeId,
+        challonge_username: cuenta.challonge_username,
+        actor_email: user.email,
+      },
     });
 
     return Response.json({ message: "Cuenta activa actualizada" }, { status: 200 });

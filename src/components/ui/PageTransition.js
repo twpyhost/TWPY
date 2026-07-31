@@ -11,6 +11,15 @@ const IN_MS = 460;
 const EASE_IN = "cubic-bezier(.5,0,.9,.4)";
 const EASE_OUT = "cubic-bezier(.16,.84,.24,1)";
 
+// Navegar entre dos rutas /admin/* no debe disparar el fade: el sidebar
+// (AdminShell) vive por encima de `children` en el layout admin, asi que
+// animar el wrapper entero lo hace parpadear con cada click del nav lateral.
+// Solo el contenido de la derecha debe animar (admin/loading.js + el
+// animate-fade-up que ya trae HeroSection en cada pantalla admin).
+function esNavegacionInternaAdmin(desde, hacia) {
+  return desde.startsWith("/admin") && hacia.startsWith("/admin");
+}
+
 // phase: "idle" | "out" | "in"
 function phaseStyle(phase) {
   if (phase === "out") {
@@ -34,6 +43,7 @@ export default function PageTransition({ children }) {
   const [phase, setPhase] = useState("idle");
   const firstRender = useRef(true);
   const timers = useRef([]);
+  const prevPathname = useRef(pathname);
 
   useEffect(() => {
     const clear = () => {
@@ -74,6 +84,10 @@ export default function PageTransition({ children }) {
       // Home is entered with no animation.
       if (url.pathname === "/") return;
 
+      // Admin-to-admin navigation: let Next's <Link> handle it normally,
+      // AdminShell's own boundary (admin/loading.js) covers the loading state.
+      if (esNavegacionInternaAdmin(window.location.pathname, url.pathname)) return;
+
       e.preventDefault();
       clear();
       setPhase("out");
@@ -93,10 +107,19 @@ export default function PageTransition({ children }) {
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
+      prevPathname.current = pathname;
       return;
     }
 
+    const from = prevPathname.current;
+    prevPathname.current = pathname;
+
     if (pathname === "/") {
+      setPhase("idle");
+      return;
+    }
+
+    if (esNavegacionInternaAdmin(from, pathname)) {
       setPhase("idle");
       return;
     }

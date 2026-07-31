@@ -1,5 +1,7 @@
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { validarPuntajes, reemplazarPuntajes } from "@/lib/puntajes";
 
 // Un solo juego en el MVP (Tekken 8) -- sin tabla de seleccion de juego en
 // la UI, la config de puntajes es siempre la de ese juego.
@@ -49,17 +51,10 @@ export async function PUT(req) {
     if (auth.error) return auth.error;
 
     const { puntajes } = await req.json();
-    if (!Array.isArray(puntajes)) {
-      return Response.json({ error: "Se requiere un arreglo de puntajes" }, { status: 400 });
-    }
 
-    for (const fila of puntajes) {
-      if (!Number.isFinite(fila.posicion) || !Number.isFinite(fila.puntos)) {
-        return Response.json(
-          { error: "Cada fila necesita posicion y puntos numericos" },
-          { status: 400 },
-        );
-      }
+    const validacion = validarPuntajes(puntajes);
+    if (!validacion.ok) {
+      return Response.json({ error: validacion.error }, { status: 400 });
     }
 
     const supabase = getSupabaseAdmin();
@@ -68,18 +63,9 @@ export async function PUT(req) {
       return Response.json({ error: "No se encontro el juego Tekken 8" }, { status: 404 });
     }
 
-    const { error } = await supabase
-      .from("puntajes_config")
-      .upsert(
-        puntajes.map((fila) => ({
-          juego_id: juego.id,
-          posicion: fila.posicion,
-          puntos: fila.puntos,
-        })),
-        { onConflict: "juego_id,posicion" },
-      );
+    await reemplazarPuntajes(supabase, juego.id, puntajes);
 
-    if (error) throw error;
+    revalidatePath("/ranking");
 
     return Response.json({ message: "Puntajes actualizados" }, { status: 200 });
   } catch (error) {

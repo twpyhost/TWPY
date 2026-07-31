@@ -15,6 +15,7 @@ export default function ConfirmModal({
   body,
   warningText,
   requireUnderstandCheckbox = false,
+  understandLabel = "Entiendo que esto reasigna el historial completo y no se puede deshacer.",
   confirmLabel = "CONFIRMAR",
   loading = false,
   onConfirm,
@@ -78,7 +79,7 @@ export default function ConfirmModal({
               onChange={(e) => setEntendido(e.target.checked)}
               className="mt-0.5 h-4 w-4"
             />
-            Entiendo que esto reasigna el historial completo y no se puede deshacer.
+            {understandLabel}
           </label>
         )}
         <div className="mt-1 flex flex-wrap gap-2.5">

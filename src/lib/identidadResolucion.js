@@ -101,13 +101,25 @@ export async function resolverParticipante(
     filasResueltas.map((fila) => fila.torneo_id),
   );
 
+  // Se denormaliza el nombre en el evento (en vez de resolverlo al mostrar
+  // el log) porque crear_jugador puede terminar borrado por /deshacer --
+  // ahi ya no queda a quien consultarle el display_name.
+  const { data: jugador } = await supabase
+    .from("players")
+    .select("display_name")
+    .eq("id", playerId)
+    .maybeSingle();
+
   await registrarEvento(supabase, {
     tipo: tipoEvento,
     actorUserId,
     detalle: {
       participante_ids: idsARresolver,
       challonge_id: participante.challonge_id,
+      challonge_username: participante.challonge_username,
+      nombre_participante: participante.nombre_participante,
       player_id: playerId,
+      display_name: jugador?.display_name ?? null,
       cuenta_creada: cuentaCreada,
       actor_email: actorEmail,
     },
