@@ -39,7 +39,7 @@ function statusFor(p) {
 export default function PageLoadingRing() {
   const [p, setP] = useState(8);
   const [assetIndex, setAssetIndex] = useState(0);
-  const tip = useMemo(() => TIPS[Math.floor(Math.random() * TIPS.length)], []);
+  const [tip] = useState(() => TIPS[Math.floor(Math.random() * TIPS.length)]);
 
   useEffect(() => {
     const progressTimer = setInterval(() => {
