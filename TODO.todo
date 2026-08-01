@@ -14,11 +14,7 @@
   -> El footer ya tiene los 4 íconos (Discord/Instagram/X/Facebook) con href="#". Falta que me pases las
      URLs reales para cablearlas (y si querés sumar TikTok/YouTube/Twitch hay que dibujar el SVG, no existe en el repo).
 - [HECHO] Cambiar la palabra login por blackhand en navbar
-
-Limpieza pendiente:
-- src/app/api/previsualizar_torneo/route.js quedó sin consumidor (se sacó el modal "Importar torneo
-  histórico" de /admin/torneos). Se dejó el archivo intacto por las dudas de que se siga usando en otro
-  lado, pero conviene borrarlo si se confirma que no hace falta.
+- [HECHO] src/app/api/previsualizar_torneo/route.js -- confirmado sin consumidor, borrado.
 
 v1.1
 añadir soporte a la focus league, la primera fase de grupos con vista de grupos y sus miembros, puntajes en grupos, fechas de peleas de los participantes dentro de los grupos, y luego la segunda fase como un torneo challonge normal

@@ -4,8 +4,9 @@ import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { listarTorneos, fetchChallongeApi } from "@/lib/challonge";
 import { insertarTorneo } from "@/lib/importarTorneo";
 
-// Un click, siempre cuenta B (la actual/default). El backfill historico de
-// la cuenta A sigue siendo manual via el modal "Importar torneo historico".
+// Un click, siempre cuenta A (TWPY_Host, la actual/activa). La cuenta B
+// (Wario, historica) no recibe torneos nuevos -- el backfill unico que ya se
+// hizo desde ahi fue manual.
 export async function POST() {
   try {
     const auth = await requireAdmin();
@@ -13,7 +14,7 @@ export async function POST() {
 
     const supabase = getSupabaseAdmin();
 
-    const listResponse = await listarTorneos("B");
+    const listResponse = await listarTorneos("A");
     if (!listResponse) {
       return Response.json(
         { error: "No se pudo conectar con Challonge" },
@@ -43,14 +44,14 @@ export async function POST() {
 
     for (const resumenTorneo of nuevos) {
       try {
-        const detalleResponse = await fetchChallongeApi(resumenTorneo.id, "B");
+        const detalleResponse = await fetchChallongeApi(resumenTorneo.id, "A");
         if (!detalleResponse || !detalleResponse.ok) {
           errores.push({ id: resumenTorneo.id, nombre: resumenTorneo.name, error: "No se pudo obtener el detalle" });
           continue;
         }
 
         const { tournament } = await detalleResponse.json();
-        const resumen = await insertarTorneo(supabase, tournament, "B");
+        const resumen = await insertarTorneo(supabase, tournament, "A");
         importados.push({ id: tournament.id, nombre: tournament.name, resumen });
       } catch (error) {
         console.error(error);
