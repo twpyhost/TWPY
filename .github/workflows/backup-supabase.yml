@@ -16,6 +16,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
       - name: Dump database
+        id: dump
         # --schema=public: los schemas internos de Supabase (auth, storage,
         # extensions, etc.) son propiedad de roles que este dump no puede
         # restaurar de todas formas (probado localmente: un dump completo
@@ -26,9 +27,21 @@ jobs:
             | gzip > "backup-$(date -u +%Y-%m-%d).sql.gz"
 
       - name: Upload artifact
+        if: steps.dump.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: supabase-backup-${{ github.run_id }}
           path: backup-*.sql.gz
           # Maximo permitido sin configuracion adicional a nivel org/repo.
           retention-days: 90
+
+      - name: Registrar el evento en sistema_eventos
+        # if: always() -- corre tanto si el backup salio bien como si fallo,
+        # para que /admin/sistema muestre el estado real (y no "sin datos"
+        # eternamente si un run llega a fallar).
+        if: always()
+        run: |
+          curl -f -X POST -H "x-health-secret: ${{ secrets.HEALTH_PING_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"ok\": ${{ steps.dump.outcome == 'success' }}}" \
+            "${{ vars.SITE_URL }}/api/admin/sistema/backup"

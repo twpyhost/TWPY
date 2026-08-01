@@ -103,14 +103,14 @@ Challonge already handles double/single elimination, seeding, match progression,
 
 ### Two Challonge organizer accounts to account for
 
-**Status: implemented** (`src/lib/challonge.js` — `apiKeyPara`/`fetchChallongeApi`/`listarTorneos` all take a `cuenta` param; migration `0009_torneos_source_account.sql` adds `torneos.challonge_source_account`). `previsualizar_torneo` and `insertar_torneo` accept `cuenta` in the request body (`'A' | 'B'`, default `'B'`). Still pending: the admin UI to actually pick the account when importing (single-tournament form today always uses the default; the account selector + "Sincronizar" button land with the Torneos admin section).
+**Status: implemented** (`src/lib/challonge.js` — `apiKeyPara`/`fetchChallongeApi`/`listarTorneos` all take a `cuenta` param; migration `0009_torneos_source_account.sql` adds `torneos.challonge_source_account`). `insertar_torneo` accepts `cuenta` in the request body (`'A' | 'B'`); when omitted it tries A first and falls back to B. The admin UI lives in the Torneos section (`src/app/admin/torneos/`): "Sincronizar nuevos torneos" (one click, always account A) and "Agregar torneo" (single URL/ID, auto-detects A/B), with per-tournament source-account badges and a filter.
 
-Tournaments predate this project and were originally created under **Challonge account A**. Going forward, the project uses **Challonge account B** as the default. The import process must support pulling from **both** accounts, not just one:
+Tournaments going forward are created under **Challonge account A (TWPY_Host)**. Tournaments that predate this project live under **Challonge account B (Wario)**. The import process must support pulling from **both** accounts, not just one:
 
-- **One-time backfill**: import historical tournaments from account A (API key/credentials for A needed once, not necessarily kept long-term unless more historical data surfaces later).
-- **Ongoing sync**: import new tournaments from account B going forward (this is the "default" account referenced elsewhere in this doc).
-- Each tournament record should store which source account it came from (`challonge_source_account: 'A' | 'B'`), mainly for traceability/debugging — not user-facing, but useful if an import needs to be re-run or audited.
-- If there's any chance more tournaments get created under A by mistake going forward (e.g. an organizer forgets to switch accounts), the import script should check both accounts on each sync rather than assuming all new activity is on B.
+- **One-time backfill**: import historical tournaments from account B (API key/credentials for B needed once, not necessarily kept long-term unless more historical data surfaces later). Already done — see the go-live plan's Hito 8.
+- **Ongoing sync**: import new tournaments from account A going forward (this is the "default" account referenced elsewhere in this doc).
+- Each tournament record stores which source account it came from (`challonge_source_account: 'A' | 'B'`), mainly for traceability/debugging — not user-facing, but useful if an import needs to be re-run or audited.
+- If there's any chance more tournaments get created under B by mistake going forward (e.g. an organizer forgets to switch accounts), a manual re-check of account B would be needed — sync only checks A.
 
 ### Integration pattern
 ```

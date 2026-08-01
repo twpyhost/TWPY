@@ -89,10 +89,10 @@ Auto-resolution on import is **strictly by `challonge_id`, never by name** (`src
 
 ### Two Challonge organizer accounts
 
-**Status: implemented** (migration `0009_torneos_source_account.sql`, `src/lib/challonge.js`, `src/app/admin/torneos/ImportarTorneoModal.js`). The code supports either account via the `cuenta` param, and the admin UI's single-tournament import form has an account selector (default `B`).
+**Status: implemented** (migration `0009_torneos_source_account.sql`, `src/lib/challonge.js`, `src/app/admin/torneos/Torneos.js`). The code supports either account via the `cuenta` param; the single-tournament "Agregar torneo" input tries A first and falls back to B if not found there, and "Sincronizar nuevos torneos" only ever pulls from A.
 
-- **Account A**: historical, used before this project existed. One-time backfill source, not actively synced.
-- **Account B**: current default, used for all tournaments going forward.
+- **Account A** (TWPY_Host): current/active, used for all tournaments going forward. Default account for sync and quick-add.
+- **Account B** (Wario): historical, used before this project existed. One-time backfill source, not actively synced.
 - Every imported tournament stores `challonge_source_account: 'A' | 'B'` for traceability.
 - Import logic must be able to pull from either account — don't hardcode a single organizer account/API key.
 

@@ -20,7 +20,9 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");
   const nextPath =
-    redirectTo?.startsWith("/") && !redirectTo.startsWith("//") ? redirectTo : "/";
+    redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
+      ? redirectTo
+      : "/admin/identidades";
 
   useEffect(() => {
     const update = () => setMobile(window.innerWidth < 780);

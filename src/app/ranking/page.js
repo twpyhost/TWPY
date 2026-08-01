@@ -45,8 +45,8 @@ export default async function RankingPage() {
         </div>
       </HeroSection>
 
-      <section className="bg-black px-5 pb-16 pt-8 sm:px-8 lg:px-14">
-        <div className="mx-auto flex max-w-[1240px] flex-col gap-2">
+      <section className="bg-black px-4 pb-16 pt-8 sm:px-8 lg:px-14">
+        <div className="mx-auto max-w-[1240px] lg:columns-2 lg:gap-x-8">
           {rankings.map((ranking, index) => {
             const trend = TREND[ranking.movimiento] ?? TREND.IGUAL;
 
@@ -54,16 +54,20 @@ export default async function RankingPage() {
               <div
                 key={ranking.posicion}
                 style={fadeDelay(index)}
-                className={`grid animate-fade-up grid-cols-[56px_minmax(0,1fr)_auto_56px] items-center gap-4 border-l-[3px] px-5 py-3.5 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${tierBorderClass(
+                className={`mb-2 grid w-full animate-fade-up grid-cols-[28px_minmax(0,1fr)_auto_22px] items-center gap-2 break-inside-avoid border-l-[3px] px-3 py-2.5 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 sm:grid-cols-[56px_minmax(0,1fr)_auto_56px] sm:gap-4 sm:px-5 sm:py-3.5 ${tierBorderClass(
                   ranking.posicion,
                 )} ${index % 2 === 1 ? "bg-white/[.055]" : "bg-white/[.03]"}`}
               >
-                <span className="font-display text-2xl text-white/50">{ranking.posicion}</span>
-                <span className="[overflow-wrap:anywhere] font-body text-lg font-semibold">
+                <span className="font-display text-base text-white/50 sm:text-2xl">
+                  {ranking.posicion}
+                </span>
+                <span className="[overflow-wrap:anywhere] font-body text-sm font-semibold sm:text-lg">
                   {ranking.nombre}
                 </span>
-                <span className="font-display text-2xl">{ranking.puntaje} pts</span>
-                <span className={`text-center font-display text-xl ${trend.className}`}>
+                <span className="whitespace-nowrap font-display text-base sm:text-2xl">
+                  {ranking.puntaje} pts
+                </span>
+                <span className={`text-center font-display text-base sm:text-xl ${trend.className}`}>
                   {trend.icon}
                 </span>
               </div>

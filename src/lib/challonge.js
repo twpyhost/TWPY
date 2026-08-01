@@ -19,15 +19,17 @@
 const BASE_URL = "https://api.challonge.com/v2.1";
 const RESERVED_SUBDOMAINS = ["www", "api", "images", "es"];
 
-// Dos cuentas organizadoras: A es la historica (torneos previos a este
-// proyecto, backfill unico), B es la actual/default para todo lo nuevo.
-function apiKeyPara(cuenta = "B") {
+// Dos cuentas organizadoras: A es TWPY_Host, la actual/activa (default para
+// todo lo nuevo). B es Wario, la historica (torneos previos a este
+// proyecto, backfill unico).
+function apiKeyPara(cuenta = "A") {
   if (cuenta === "A") {
     return process.env.CHALLONGE_API_KEY_A;
   }
 
   // Fallback a la variable vieja para no romper entornos ya configurados
-  // que todavia no migraron a las claves separadas por cuenta.
+  // que todavia no migraron a las claves separadas por cuenta (el valor
+  // historico de CHALLONGE_API_KEY corresponde a la cuenta B).
   return process.env.CHALLONGE_API_KEY_B || process.env.CHALLONGE_API_KEY;
 }
 
@@ -118,7 +120,7 @@ async function obtenerTodasLasPaginas(urlBase, headers) {
   return items;
 }
 
-export async function fetchChallongeApi(tournamentId, cuenta = "B") {
+export async function fetchChallongeApi(tournamentId, cuenta = "A") {
   const headers = headersPara(cuenta);
 
   try {
@@ -153,7 +155,7 @@ export async function fetchChallongeApi(tournamentId, cuenta = "B") {
 // Lista los torneos de una cuenta (paginado, tipicamente un solo request),
 // usada por el boton "Sincronizar" (ver Hito 11 del plan de go-live) para
 // detectar torneos nuevos sin pedir uno por uno.
-export async function listarTorneos(cuenta = "B") {
+export async function listarTorneos(cuenta = "A") {
   const headers = headersPara(cuenta);
 
   try {

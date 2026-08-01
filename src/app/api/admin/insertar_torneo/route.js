@@ -40,14 +40,14 @@ export async function POST(req) {
       return Response.json({ error: "URL no valida" }, { status: 400 });
     }
 
-    // Sin cuenta explicita (agregado rapido): prueba primero la cuenta B
-    // (actual) y, si Challonge no encuentra el torneo ahi, reintenta con la
-    // A (historica) -- asi el input rapido cubre tambien el backfill viejo
-    // sin pedirle al admin que elija la cuenta a mano.
-    let cuenta = cuentaExplicita ?? "B";
+    // Sin cuenta explicita (agregado rapido): prueba primero la cuenta A
+    // (TWPY_Host, la actual) y, si Challonge no encuentra el torneo ahi,
+    // reintenta con la B (Wario, historica) -- asi el input rapido cubre
+    // tambien el backfill viejo sin pedirle al admin que elija a mano.
+    let cuenta = cuentaExplicita ?? "A";
     let apiResponse = await fetchChallongeApi(tournamentId, cuenta);
     if (!cuentaExplicita && apiResponse && !apiResponse.ok) {
-      cuenta = "A";
+      cuenta = "B";
       apiResponse = await fetchChallongeApi(tournamentId, cuenta);
     }
 

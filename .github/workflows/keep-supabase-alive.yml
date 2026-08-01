@@ -12,6 +12,16 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
+      - name: Check required config
+        run: |
+          if [ -z "${{ vars.SITE_URL }}" ]; then
+            echo "::error::Repo variable SITE_URL is not set (Settings > Secrets and variables > Actions > Variables)."
+            exit 1
+          fi
+          if [ -z "${{ secrets.HEALTH_PING_SECRET }}" ]; then
+            echo "::error::Repo secret HEALTH_PING_SECRET is not set (Settings > Secrets and variables > Actions > Secrets)."
+            exit 1
+          fi
       - name: Hit health check
         run: |
           curl -f -H "x-health-secret: ${{ secrets.HEALTH_PING_SECRET }}" \
