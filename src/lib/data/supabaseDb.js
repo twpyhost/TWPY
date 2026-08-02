@@ -85,17 +85,23 @@ const getCompetidores = async () => {
     .sort((a, b) => a.nombre.localeCompare(b.nombre));
 };
 
-const getRankings = async () => {
+const getRankings = async (temporada) => {
   const supabase = getClient();
 
-  // Ultimos dos torneos de la temporada mas reciente: el ultimo define el
-  // ranking actual y el anterior sirve para calcular el movimiento.
-  const { data: ultimosTorneos, error: torneosError } = await supabase
+  // Ultimos dos torneos de la temporada pedida (o de la mas reciente si no
+  // se especifica una): el ultimo define el ranking y el anterior sirve
+  // para calcular el movimiento.
+  let torneosQuery = supabase
     .from("torneos")
     .select("id, temporada")
     .order("temporada", { ascending: false })
-    .order("fecha_inicio", { ascending: false })
-    .limit(2);
+    .order("fecha_inicio", { ascending: false });
+
+  if (temporada) {
+    torneosQuery = torneosQuery.eq("temporada", temporada);
+  }
+
+  const { data: ultimosTorneos, error: torneosError } = await torneosQuery.limit(2);
 
   if (torneosError) {
     throw new Error(`Error al obtener torneos: ${torneosError.message}`);

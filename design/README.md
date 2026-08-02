@@ -17,6 +17,7 @@ The task is to **recreate these HTML designs in the target codebase's existing e
 - **Hero characters breakpoint.** The prototype shows/hides Jin and Kazuya at the same 880px threshold it uses for the nav hamburger. The live `src/app/page.js` keeps them at `lg` (1024px) so the 760px centered text block isn't crowded between 880 and 1024. The nav itself does use 880px, matching the design.
 - **Hero ultrawide stage.** The prototype caps the whole screen at `max-width:1920px; margin:0 auto`. The live site applies that cap only to the character layer (so the gradient background stays full-bleed) and gives the navbar/footer the site-wide `max-w-[1240px]` inner wrapper instead. Character wrappers use the design's `left/right: clamp(-48px, 0.5vw, 40px)` offsets.
 - **No `Contenido` admin section yet.** The prototype's sixth sidebar section (news/posts CRUD) is not implemented; the live sidebar has five sections plus `Logoff`.
+- **Ranking season selector is `Link`-based, not client-state cross-fade.** The prototype switches seasons via client component state with an animated row cross-fade and no page reload. The live `/ranking` page follows the same `?year=`-query-param + `next/link` pattern already established by Torneos' year filter (server-rendered per request) instead — same sliding-indicator/pill-tab visual, simpler interaction model.
 
 Two things are explicitly **mocked/static** and need real backend wiring:
 - All data (players, tournaments, rankings, match history, system health, activity logs) is hardcoded sample data in the prototype's JS, standing in for a real Supabase + Challonge API integration described in the Admin Dashboard copy itself.
@@ -89,6 +90,12 @@ Recurring "cut corner" tag shape via `clip-path: polygon(6-8% 0, 100% 0, 92-94% 
 **Behavior**: Form submit is currently a no-op (`e.preventDefault()`) — needs real auth wiring (email/password + Discord OAuth, per copy).
 **Responsive**: under 780px the grid becomes single-column with the form shown first (order swapped).
 
+### 5b. Error 404 (`Error 404 Liga Tekken Paraguay.dc.html`)
+**Purpose**: Not-found page shown for any dead/removed link.
+**Layout**: Same shared nav as the rest of the public site (not a standalone chrome like Login) over a `linear-gradient(180deg,#0C232C 0%,#071A23 42%,#030F14 100%)` background, filling the viewport below the 76px nav. Centered content column: a magenta clipped-banner ribbon "RONDA PERDIDA" → giant italic "404" (`clamp(96px,22vw,260px)`) that periodically glitches (brief color-split translate every ~5s cycle, `text-shadow` splitting into cyan/magenta) with a scale/rotate "stamp" entrance → a short gradient divider line (magenta→cyan) → italic heading "ESTA PÁGINA FUE ELIMINADA DEL BRACKET" (magenta, glow) → supporting paragraph ("El enlace que buscás no existe o fue movido...") → two CTAs: "VOLVER AL INICIO →" (primary, filled magenta) and "VER RANKING" (outline, hover turns cyan). Jin/Kazuya faded character art anchored bottom-left/bottom-right with pulsing colored glow blobs behind them (magenta left, cyan right), same treatment as the Home hero but dimmer/desaturated, plus a soft diagonal light-sweep animation across the whole section.
+**Responsive**: same hamburger/nav-collapse behavior as the shared nav (<880px).
+**Live site**: implemented at `src/app/not-found.js`, reusing the shared root-layout nav/footer (no need to duplicate the nav markup like the prototype does) plus `RibbonTag`/`Button` and the Home page's hero character/animation patterns.
+
 ### 6. Admin Dashboard (`Admin Dashboard Liga Tekken Paraguay.dc.html`)
 **Purpose**: Internal back-office for league organizers — resolving Challonge participant identities, managing players, importing/monitoring tournaments, recalculating rankings, publishing site content, and checking system health. This is the most complex screen (1264 lines) and functions as its own small SPA with client-side routing via hash-link nav + local state (no real backend — everything is mock data).
 **Layout — app shell**: Fixed 250px dark sidebar (logo "TEKKEN PY / PANEL ADMIN", nav list with icon + label + badge counts for Identidades/Jugadores/Torneos/Rankings/Contenido/Sistema, then a **`Logoff` button as the last item inside the same `<nav>`** — same metrics as the nav items but `color:rgba(255,255,255,.5)` and a destructive hover, `background:rgba(230,0,0,.12); color/border-left:rgb(var(--color-error-500))`, with an exit-door icon — and a user chip "Denis Barrios · Admin · TWPY" pinned to the bottom below the nav) + main column with a sticky header (hamburger on mobile, current section title, green "SUPABASE OK" status pill) and a `max-width:1440px` content area that swaps between 6 sections based on active nav item.
@@ -135,6 +142,19 @@ Recurring "cut corner" tag shape via `clip-path: polygon(6-8% 0, 100% 0, 92-94% 
 **Layout**: Same dark radial-glow background chrome as Fixture/Grupos (eyebrow ribbon, big italic title "RANKING", footer row with season/org labels). Body content is a ranked list of players with position/points, styled consistently with the Competidores page's card/row treatment (numbered rows, magenta/cyan tier accents, Bebas Neue points figures).
 *(Note: as with Grupos, read the source file for exact row markup/data — the surrounding chrome and typographic system are fully specified above.)*
 
+**Season selector (updated).** The Landscape file now models a full **temporada/season switcher**, not just a single static snapshot: three seasons of mock data (`2024`/`2025`/`2026`, each `FINALIZADA` except the current `2026` which is `EN CURSO`), a pill-shaped tab track (one tab per year, label + small status caption) with a magenta clipped-banner **sliding indicator** positioned via `transform:translateX(${idx * 100}%)` over a `grid-template-columns:repeat(n,1fr)` track, and a cross-fade (`animation:fadeSeasonA/fadeSeasonB`) of the ranking rows when a different season tab is clicked. This is the reference for the **season selector on the public `/ranking` page**, which today (`src/app/ranking/page.js`) fetches the list of available years (`getFiltroAno()`) but silently discards everything except the most recent one — no way to view a past season. The live implementation follows the same visual language (pill track + sliding indicator + EN CURSO/FINAL status) but, like Torneos' year filter, swaps the prototype's client-side state/cross-fade for a `?year=` query param + `next/link` navigation (server-rendered per request) — see "Known, accepted deviations" below.
+
+### 10b. Resultados Torneo (`Resultados Torneo Liga Tekken Paraguay.dc.html`)
+**Purpose**: Per-tournament results detail page (drill-down from a Torneos row).
+**Layout**: Hero with a "← VOLVER A TORNEOS" back-link, tournament name/date/season, ribbon "TORNEO RANKED", a competitor-count stat block → top-3 podium cards (CAMPEÓN/SUBCAMPEÓN/3ER PUESTO ribbons, gradient backgrounds, name + points) → full results table (posición/jugador/puntaje, magenta/cyan tier accents) → footer stats row (player count, total points distributed) → CTAs: Challonge bracket link, "VER RANKING GENERAL", "OTROS TORNEOS".
+**Live site**: implemented at `src/app/torneo-resultado/[slug]/page.js`.
+
+### 11. Loading (`Loading Liga Tekken Paraguay.dc.html`)
+A separate file from "Transición de Carga" (item 7 above) — this one models a **route-level loading skeleton** (shown while a Next.js route segment is fetching data on first load), not the client-side click→navigate transition ring. **Live site**: `src/app/loading.js` and `src/app/admin/loading.js`. Distinct from `src/components/ui/PageLoadingRing.js`, which still owns the click-triggered ring/wipe/bar transition described in item 7.
+
+### 12. Fliers — Comunidad & Premiación (`Flier Comunidad Tekken Paraguay.dc.html`, `Flier Comunidad Resumido Liga Tekken Paraguay.dc.html`, `Flier Premiacion Liga Tekken Paraguay.dc.html`)
+Three new promotional/social graphics added alongside the existing "Flier Principal". Same fixed-size, `cqw`-unit, full-bleed dark-glow background system as the other social graphics (see Flier Principal and Fixture/Grupos/Ranking above) — "Comunidad" variants promote the community/Discord broadly (the "Resumido" one is a shorter/condensed layout of the same content), "Premiación" announces season-end awards. Read the source files directly for exact copy/layout if pixel-exact recreation is needed; no code implementation exists yet for these (static export graphics only, like Flier Principal/Fixture/Grupos).
+
 ## Shared Nav (all public-site pages except Login and Admin)
 Sticky, 76px, black background, bottom hairline border. Left: TEKKEN 8 logo (32px tall) linking home. Center-right: 4 italic Bebas Neue links (RANKING, TORNEOS, COMPETIDORES, REGLAMENTO) — active page's link shows a magenta 2px bottom border + text-shadow glow; others show it only on hover — followed by **one auth link that swaps by session state**: `BLACKHAND` when logged out (→ login screen), `ADMIN` when logged in (→ admin dashboard). It is styled identically to the other four links (same italic Bebas Neue, size, border-bottom-underline treatment) rather than a distinct button, just in the cyan color variant instead of magenta: default `rgba(255,255,255,.75)`, active/hover `tekken-blue-400` text + bottom border + text-shadow glow. Under 880px width, links collapse into a hamburger-triggered dropdown panel (3-line icon morphs to X, panel slides down from under the nav with opacity+translateY transition, dark background, box-shadow).
 
@@ -168,8 +188,14 @@ All images referenced via relative `uploads/...` paths in this project — pull 
 - `Competidores Liga Tekken Paraguay.dc.html`
 - `Reglamento Liga Tekken Paraguay.dc.html`
 - `Login Liga Tekken Paraguay.dc.html`
+- `Error 404 Liga Tekken Paraguay.dc.html`
 - `Admin Dashboard Liga Tekken Paraguay.dc.html`
+- `Resultados Torneo Liga Tekken Paraguay.dc.html`
+- `Loading Liga Tekken Paraguay.dc.html`
 - `Flier Principal Liga Tekken Paraguay.dc.html`
+- `Flier Comunidad Tekken Paraguay.dc.html`
+- `Flier Comunidad Resumido Liga Tekken Paraguay.dc.html`
+- `Flier Premiacion Liga Tekken Paraguay.dc.html`
 - `Fixture Liga Tekken Paraguay - Landscape.dc.html`
 - `Fixture Liga Tekken Paraguay - Portada.dc.html`
 - `Grupos Liga Tekken Paraguay - Landscape.dc.html`

@@ -1,5 +1,6 @@
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
+import SeasonTabs from "./SeasonTabs";
 
 import { getFiltroAno, getRankings } from "../utils/db";
 import { withMinDelay } from "@/lib/withMinDelay";
@@ -19,29 +20,53 @@ function tierBorderClass(posicion) {
   return posicion <= 3 ? "border-l-tekken-blue-400" : "border-l-primary-500";
 }
 
-export default async function RankingPage() {
-  const [rankings, anos] = await withMinDelay(Promise.all([getRankings(), getFiltroAno()]));
-  const temporada = anos[0] ?? String(new Date().getFullYear());
+export default async function RankingPage({ searchParams }) {
+  const params = await searchParams;
+
+  const { rankings, anos, temporada } = await withMinDelay(
+    (async () => {
+      const anos = await getFiltroAno();
+      const requestedYear = params?.year;
+      const temporada =
+        requestedYear && anos.includes(requestedYear)
+          ? requestedYear
+          : (anos[0] ?? String(new Date().getFullYear()));
+      const rankings = await getRankings(temporada);
+
+      return { rankings, anos, temporada };
+    })(),
+  );
+
+  const seasons = anos.map((year) => ({
+    year,
+    status: year === anos[0] ? "EN CURSO" : "FINALIZADA",
+    isDefault: year === anos[0],
+  }));
 
   return (
     <>
       <HeroSection className="px-5 pb-11 pt-11 sm:px-8 sm:pt-16 lg:px-14 lg:pt-[84px]">
-        <div className="mx-auto flex max-w-[1240px] flex-wrap items-end justify-between gap-8">
-          <div className="flex flex-col gap-1.5">
-            <RibbonTag>{`RANKING OFICIAL · TEMPORADA ${temporada}`}</RibbonTag>
-            <h1 className="-ml-1.5 m-0 font-display text-[clamp(58px,8.4vw,116px)] italic leading-[.88] tracking-[0.01em] [text-shadow:0_0_34px_rgba(230,0,0,.65),0_0_90px_rgba(245,10,100,.38)]">
-              RANKING
-            </h1>
-            <p className="m-0 max-w-[600px] font-body text-base leading-[1.6] text-white/70">
-              Tabla de posiciones acumuladas de la temporada actual del circuito ranked de Tekken Warriors Paraguay.
-            </p>
+        <div className="mx-auto flex max-w-[1240px] flex-col gap-6">
+          <div className="flex flex-wrap items-end justify-between gap-8">
+            <div className="flex flex-col gap-1.5">
+              <RibbonTag>{`RANKING OFICIAL · TEMPORADA ${temporada}`}</RibbonTag>
+              <h1 className="-ml-1.5 m-0 font-display text-[clamp(58px,8.4vw,116px)] italic leading-[.88] tracking-[0.01em] [text-shadow:0_0_34px_rgba(230,0,0,.65),0_0_90px_rgba(245,10,100,.38)]">
+                RANKING
+              </h1>
+              <p className="m-0 max-w-[600px] font-body text-base leading-[1.6] text-white/70">
+                Tabla de posiciones acumuladas de la temporada actual del circuito ranked de Tekken Warriors Paraguay.
+              </p>
+            </div>
+            <div className="flex flex-col items-start gap-0.5 border-l-[3px] border-primary-500 pl-4">
+              <span className="font-display text-[56px] leading-[.9]">{rankings.length}</span>
+              <span className="font-display text-[15px] tracking-[0.22em] text-white/60">
+                COMPETIDORES RANKEADOS
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col items-start gap-0.5 border-l-[3px] border-primary-500 pl-4">
-            <span className="font-display text-[56px] leading-[.9]">{rankings.length}</span>
-            <span className="font-display text-[15px] tracking-[0.22em] text-white/60">
-              COMPETIDORES RANKEADOS
-            </span>
-          </div>
+          {seasons.length > 1 && (
+            <SeasonTabs seasons={seasons} activeYear={temporada} />
+          )}
         </div>
       </HeroSection>
 

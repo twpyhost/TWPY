@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 // Refresca el token de Supabase Auth en cada request para que los Server
 // Components (que no pueden escribir cookies) siempre vean una sesion
 // valida. Patron estandar de @supabase/ssr.
-export async function middleware(request) {
+export async function proxy(request) {
   let response = NextResponse.next({ request });
 
   if (
