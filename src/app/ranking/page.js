@@ -1,11 +1,13 @@
+import { Suspense } from "react";
+
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
+import AnimatedCount from "@/components/ui/AnimatedCount";
 import SeasonTabs from "./SeasonTabs";
+import RankingTable from "./RankingTable";
+import RankingTableLoading from "./RankingTableLoading";
 
-import { getFiltroAno, getRankings } from "../utils/db";
-import { withMinDelay } from "@/lib/withMinDelay";
-import { fadeDelay } from "@/lib/fadeDelay";
-import { TREND } from "@/lib/data/movimiento";
+import { getFiltroAno, getRankingsCount } from "../utils/db";
 
 // Revalida cada 60s para reflejar torneos nuevos sin redeploy
 // (y cachea las consultas a la BD).
@@ -16,26 +18,16 @@ export const metadata = {
   description: "Tabla de posiciones de la temporada actual del circuito ranked de Tekken Warriors Paraguay.",
 };
 
-function tierBorderClass(posicion) {
-  return posicion <= 3 ? "border-l-tekken-blue-400" : "border-l-primary-500";
-}
-
 export default async function RankingPage({ searchParams }) {
   const params = await searchParams;
 
-  const { rankings, anos, temporada } = await withMinDelay(
-    (async () => {
-      const anos = await getFiltroAno();
-      const requestedYear = params?.year;
-      const temporada =
-        requestedYear && anos.includes(requestedYear)
-          ? requestedYear
-          : (anos[0] ?? String(new Date().getFullYear()));
-      const rankings = await getRankings(temporada);
-
-      return { rankings, anos, temporada };
-    })(),
-  );
+  const anos = await getFiltroAno();
+  const requestedYear = params?.year;
+  const temporada =
+    requestedYear && anos.includes(requestedYear)
+      ? requestedYear
+      : (anos[0] ?? String(new Date().getFullYear()));
+  const count = await getRankingsCount(temporada);
 
   const seasons = anos.map((year) => ({
     year,
@@ -58,7 +50,9 @@ export default async function RankingPage({ searchParams }) {
               </p>
             </div>
             <div className="flex flex-col items-start gap-0.5 border-l-[3px] border-primary-500 pl-4">
-              <span className="font-display text-[56px] leading-[.9]">{rankings.length}</span>
+              <span className="font-display text-[56px] leading-[.9]">
+                <AnimatedCount value={count} />
+              </span>
               <span className="font-display text-[15px] tracking-[0.22em] text-white/60">
                 COMPETIDORES RANKEADOS
               </span>
@@ -70,41 +64,9 @@ export default async function RankingPage({ searchParams }) {
         </div>
       </HeroSection>
 
-      <section className="bg-black px-4 pb-16 pt-8 sm:px-8 lg:px-14">
-        <div className="mx-auto max-w-[1240px] lg:columns-2 lg:gap-x-8">
-          {rankings.map((ranking, index) => {
-            const trend = TREND[ranking.movimiento] ?? TREND.IGUAL;
-
-            return (
-              <div
-                key={ranking.posicion}
-                style={fadeDelay(index)}
-                className={`mb-2 grid w-full animate-fade-up grid-cols-[28px_minmax(0,1fr)_auto_22px] items-center gap-2 break-inside-avoid border-l-[3px] px-3 py-2.5 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 sm:grid-cols-[56px_minmax(0,1fr)_auto_56px] sm:gap-4 sm:px-5 sm:py-3.5 ${tierBorderClass(
-                  ranking.posicion,
-                )} ${index % 2 === 1 ? "bg-white/[.055]" : "bg-white/[.03]"}`}
-              >
-                <span className="font-display text-base text-white/50 sm:text-2xl">
-                  {ranking.posicion}
-                </span>
-                <span className="[overflow-wrap:anywhere] font-body text-sm font-semibold sm:text-lg">
-                  {ranking.nombre}
-                </span>
-                <span className="whitespace-nowrap font-display text-base sm:text-2xl">
-                  {ranking.puntaje} pts
-                </span>
-                <span className={`text-center font-display text-base sm:text-xl ${trend.className}`}>
-                  {trend.icon}
-                </span>
-              </div>
-            );
-          })}
-          {rankings.length === 0 && (
-            <p className="py-10 text-center font-body text-white/50">
-              No hay rankings todavía para esta temporada.
-            </p>
-          )}
-        </div>
-      </section>
+      <Suspense fallback={<RankingTableLoading temporada={temporada} />}>
+        <RankingTable temporada={temporada} />
+      </Suspense>
     </>
   );
 }

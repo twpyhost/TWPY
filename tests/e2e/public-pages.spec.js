@@ -72,6 +72,18 @@ test.describe("Paginas publicas contra DATA_SOURCE=supabase", () => {
   test("/ranking carga y muestra el jugador sembrado", async ({ page }) => {
     await page.goto("/ranking");
     await expect(page.getByText("Jugador E2E")).toBeVisible();
+
+    // Posicion 1 (top-3) debe tener el fondo magenta del diseno, no el
+    // zebra-stripe generico.
+    const row = page.getByText("Jugador E2E").locator("xpath=..");
+    await expect(row).toHaveCSS("background-color", "rgba(245, 10, 100, 0.16)");
+
+    // El contador del hero refleja el conteo rapido (getRankingsCount),
+    // no el largo de la tabla con join.
+    const counter = page
+      .getByText("COMPETIDORES RANKEADOS")
+      .locator("xpath=preceding-sibling::span[1]");
+    await expect(counter).toHaveText("1");
   });
 
   test("/competidores carga y muestra el jugador sembrado", async ({ page }) => {
