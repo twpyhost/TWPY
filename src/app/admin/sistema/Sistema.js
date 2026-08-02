@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
+import Paginacion from "@/components/admin/Paginacion";
+import { usePaginacionUrl } from "@/components/admin/usePaginacionUrl";
+import { POR_PAGINA_LOG } from "@/lib/paginacion";
 
 function formatoFecha(iso) {
   if (!iso) return "—";
@@ -96,19 +99,30 @@ function LogEventos({ eventos }) {
 export default function Sistema() {
   const [datos, setDatos] = useState(null);
   const [eventos, setEventos] = useState([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    Promise.all([
+  const { pagina, query, irAPagina } = usePaginacionUrl();
+
+  const cargar = useCallback(() => {
+    setLoading(true);
+    return Promise.all([
       fetch("/api/admin/sistema").then((r) => r.json()),
-      fetch("/api/admin/sistema/eventos").then((r) => r.json()),
+      fetch(`/api/admin/sistema/eventos?${query}`).then((r) => r.json()),
     ])
       .then(([sistema, log]) => {
         setDatos(sistema);
         setEventos(log.eventos ?? []);
+        setTotal(log.total ?? 0);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [query]);
+
+  useEffect(() => {
+    cargar();
+  }, [cargar]);
+
+  const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA_LOG));
 
   return (
     <>
@@ -163,6 +177,17 @@ export default function Sistema() {
                   <h2 className="m-0 font-display text-xl tracking-[0.04em]">Log de eventos</h2>
                 </div>
                 <LogEventos eventos={eventos} />
+                {totalPaginas > 1 && (
+                  <div className="border-t border-white/[.07] px-[18px] py-3">
+                    <Paginacion
+                      pagina={pagina}
+                      totalPaginas={totalPaginas}
+                      total={total}
+                      etiqueta="eventos"
+                      onCambio={irAPagina}
+                    />
+                  </div>
+                )}
               </div>
             </>
           )}

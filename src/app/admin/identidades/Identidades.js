@@ -4,6 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
+import Paginacion from "@/components/admin/Paginacion";
+import { usePaginacionUrl } from "@/components/admin/usePaginacionUrl";
+import { POR_PAGINA_LOG } from "@/lib/paginacion";
 import ColaParticipantes from "./ColaParticipantes";
 import RegistrarJugadorManual from "./RegistrarJugadorManual";
 import FusionarJugadores from "./FusionarJugadores";
@@ -13,22 +16,26 @@ export default function Identidades() {
   const [resumen, setResumen] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const { pagina, query, irAPagina } = usePaginacionUrl();
+
   const cargarResumen = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/admin/identidades/resumen");
+      const response = await fetch(`/api/admin/identidades/resumen?${query}`);
       const data = await response.json();
       setResumen(data);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [query]);
 
   useEffect(() => {
     cargarResumen();
   }, [cargarResumen]);
 
   const stats = resumen?.stats ?? { pendientes: 0, hoy: 0, fusiones: 0 };
+  const colaTotal = resumen?.colaTotal ?? 0;
+  const totalPaginasCola = Math.max(1, Math.ceil(colaTotal / POR_PAGINA_LOG));
 
   return (
     <>
@@ -54,7 +61,16 @@ export default function Identidades() {
             {loading ? (
               <p className="font-body text-sm text-white/50">Cargando...</p>
             ) : (
-              <ColaParticipantes cola={resumen?.cola ?? []} onResuelto={cargarResumen} />
+              <div className="flex flex-col gap-3">
+                <ColaParticipantes cola={resumen?.cola ?? []} onResuelto={cargarResumen} />
+                <Paginacion
+                  pagina={pagina}
+                  totalPaginas={totalPaginasCola}
+                  total={colaTotal}
+                  etiqueta="pendientes"
+                  onCambio={irAPagina}
+                />
+              </div>
             )}
           </Bloque>
 

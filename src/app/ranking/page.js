@@ -1,11 +1,8 @@
-import { Suspense } from "react";
-
 import HeroSection from "@/components/ui/HeroSection";
-import RibbonTag from "@/components/ui/RibbonTag";
 import AnimatedCount from "@/components/ui/AnimatedCount";
 import SeasonTabs from "./SeasonTabs";
+import SeasonRibbon from "./SeasonRibbon";
 import RankingTable from "./RankingTable";
-import RankingTableLoading from "./RankingTableLoading";
 import SeasonTransitionProvider from "./SeasonTransitionProvider";
 import RankingTableBoundary from "./RankingTableBoundary";
 
@@ -38,12 +35,12 @@ export default async function RankingPage({ searchParams }) {
   }));
 
   return (
-    <SeasonTransitionProvider>
+    <SeasonTransitionProvider temporada={temporada}>
       <HeroSection className="px-5 pb-11 pt-11 sm:px-8 sm:pt-16 lg:px-14 lg:pt-[84px]">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-6">
           <div className="flex flex-wrap items-end justify-between gap-8">
             <div className="flex flex-col gap-1.5">
-              <RibbonTag>{`RANKING OFICIAL · TEMPORADA ${temporada}`}</RibbonTag>
+              <SeasonRibbon />
               <h1 className="-ml-1.5 m-0 font-display text-[clamp(58px,8.4vw,116px)] italic leading-[.88] tracking-[0.01em] [text-shadow:0_0_34px_rgba(230,0,0,.65),0_0_90px_rgba(245,10,100,.38)]">
                 RANKING
               </h1>
@@ -61,15 +58,13 @@ export default async function RankingPage({ searchParams }) {
             </div>
           </div>
           {seasons.length > 1 && (
-            <SeasonTabs seasons={seasons} activeYear={temporada} />
+            <SeasonTabs seasons={seasons} />
           )}
         </div>
       </HeroSection>
 
-      <RankingTableBoundary loading={<RankingTableLoading temporada={temporada} />}>
-        <Suspense fallback={<RankingTableLoading temporada={temporada} />}>
-          <RankingTable temporada={temporada} />
-        </Suspense>
+      <RankingTableBoundary>
+        <RankingTable temporada={temporada} />
       </RankingTableBoundary>
     </SeasonTransitionProvider>
   );

@@ -3,13 +3,17 @@ import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { puedeDeshacer } from "@/lib/identidadDeshacer";
 import { sugerirJugador } from "@/lib/nameSimilarity";
 import { describirEvento } from "@/lib/identidadDescripcion";
+import { leerPaginacion, paginarArray, POR_PAGINA_LOG } from "@/lib/paginacion";
 
-export async function GET() {
+export async function GET(req) {
   try {
     const auth = await requireAdmin();
     if (auth.error) return auth.error;
 
     const supabase = getSupabaseAdmin();
+
+    const { searchParams } = new URL(req.url);
+    const { pagina, porPagina } = leerPaginacion(searchParams, POR_PAGINA_LOG);
 
     const { data: filas, error: filasError } = await supabase
       .from("tournament_participants_raw")
@@ -28,7 +32,12 @@ export async function GET() {
 
     if (candidatosError) throw candidatosError;
 
-    const cola = agruparCola(filas).map((item) => ({
+    // La cola se pagina DESPUES de agrupar: agruparCola dedupe por cuenta de
+    // Challonge, asi que cortar las filas crudas con .range() partiria grupos
+    // y dejaria mal el contador de ocurrencias. Las filas pendientes estan
+    // acotadas por lo que haya sin resolver, no por el historico completo.
+    const colaCompleta = agruparCola(filas);
+    const cola = paginarArray(colaCompleta, { pagina, porPagina }).map((item) => ({
       ...item,
       sugerencia: sugerirJugador(
         item.challonge_username || item.nombre_participante,
@@ -81,14 +90,18 @@ export async function GET() {
 
     if (fusionesError) throw fusionesError;
 
+    // Los stats del hero cuentan la cola COMPLETA, no la pagina visible.
     const hoy = new Date().toISOString().slice(0, 10);
     const stats = {
-      pendientes: cola.length,
-      hoy: cola.filter((item) => item.created_at.slice(0, 10) === hoy).length,
+      pendientes: colaCompleta.length,
+      hoy: colaCompleta.filter((item) => item.created_at.slice(0, 10) === hoy).length,
       fusiones: fusiones ?? 0,
     };
 
-    return Response.json({ cola, log, stats }, { status: 200 });
+    return Response.json(
+      { cola, colaTotal: colaCompleta.length, log, stats, pagina, porPagina },
+      { status: 200 },
+    );
   } catch (error) {
     console.error(error);
     return Response.json(

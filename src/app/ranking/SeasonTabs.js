@@ -10,12 +10,14 @@ import { useSeasonTransition } from "./SeasonTransitionProvider";
 // RankingTableBoundary can show the scoped spinner immediately instead of
 // waiting on the router's buffered same-route searchParams navigation
 // (see SeasonTransitionProvider.js).
-export default function SeasonTabs({ seasons, activeYear }) {
-  const { navigate } = useSeasonTransition();
+export default function SeasonTabs({ seasons }) {
+  // La temporada mostrada es optimista: el indicador y el resaltado se mueven
+  // en el frame del click, sin esperar los ~50-100ms del shell del servidor.
+  const { navigate, temporadaMostrada } = useSeasonTransition();
 
   const n = seasons.length;
   const activeIndex = Math.max(
-    seasons.findIndex((season) => season.year === activeYear),
+    seasons.findIndex((season) => season.year === temporadaMostrada),
     0,
   );
 
@@ -30,7 +32,7 @@ export default function SeasonTabs({ seasons, activeYear }) {
         }}
       />
       {seasons.map((season) => {
-        const isActive = season.year === activeYear;
+        const isActive = season.year === temporadaMostrada;
         const href = season.isDefault ? "/ranking" : `/ranking?year=${season.year}`;
 
         return (
@@ -52,7 +54,7 @@ export default function SeasonTabs({ seasons, activeYear }) {
                 return;
               }
               event.preventDefault();
-              navigate(href);
+              navigate(href, season.year);
             }}
             className="relative z-[2] flex flex-1 flex-col items-center justify-center gap-0.5 px-1.5 py-2"
           >

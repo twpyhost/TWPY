@@ -20,6 +20,8 @@
 /blob-report/
 /playwright/.cache/
 /.playwright-mcp/
+# sesion del admin de pruebas (la genera tests/e2e/fixtures/admin.setup.js)
+/tests/e2e/.auth/
 
 # next.js
 /.next/

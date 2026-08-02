@@ -1,36 +1,39 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
+import Paginacion from "@/components/admin/Paginacion";
+import { usePaginacionUrl, useBusquedaDebounced } from "@/components/admin/usePaginacionUrl";
+import { POR_PAGINA_TABLA } from "@/lib/paginacion";
 
 export default function Jugadores() {
   const [jugadores, setJugadores] = useState([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
+
+  const { pagina, q, query, irAPagina, cambiarFiltro } = usePaginacionUrl();
+  const [texto, setTexto] = useBusquedaDebounced(q, (valor) => cambiarFiltro({ q: valor }));
 
   const cargar = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/admin/jugadores");
+      const response = await fetch(`/api/admin/jugadores?${query}`);
       const data = await response.json();
       setJugadores(data.jugadores ?? []);
+      setTotal(data.total ?? 0);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [query]);
 
   useEffect(() => {
     cargar();
   }, [cargar]);
 
-  const filtrados = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return jugadores;
-    return jugadores.filter((j) => j.display_name.toLowerCase().includes(q));
-  }, [jugadores, query]);
+  const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA_TABLA));
 
   return (
     <>
@@ -44,8 +47,8 @@ export default function Jugadores() {
           </div>
           <input
             type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            value={texto}
+            onChange={(e) => setTexto(e.target.value)}
             placeholder="Buscar nick..."
             className="h-11 w-full max-w-xs border border-white/15 bg-white/[.04] px-3 font-body text-sm text-white outline-none placeholder:text-white/40 focus:border-primary-500"
           />
@@ -56,14 +59,14 @@ export default function Jugadores() {
         <div className="mx-auto max-w-[1240px]">
           {loading ? (
             <p className="font-body text-sm text-white/50">Cargando...</p>
-          ) : filtrados.length === 0 ? (
+          ) : jugadores.length === 0 ? (
             <p className="border border-white/10 bg-white/[.03] p-4 font-body text-sm text-white/50">
               No hay jugadores para mostrar.
             </p>
           ) : (
-            <>
+            <div className="flex flex-col gap-4">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:hidden">
-                {filtrados.map((jugador) => (
+                {jugadores.map((jugador) => (
                   <TarjetaJugador key={jugador.id} jugador={jugador} />
                 ))}
               </div>
@@ -80,7 +83,7 @@ export default function Jugadores() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filtrados.map((jugador) => (
+                    {jugadores.map((jugador) => (
                       <tr
                         key={jugador.id}
                         className="border-b border-white/[.06] transition-colors duration-200 hover:bg-white/[.03]"
@@ -117,7 +120,15 @@ export default function Jugadores() {
                   </tbody>
                 </table>
               </div>
-            </>
+
+              <Paginacion
+                pagina={pagina}
+                totalPaginas={totalPaginas}
+                total={total}
+                etiqueta="jugadores"
+                onCambio={irAPagina}
+              />
+            </div>
           )}
         </div>
       </section>

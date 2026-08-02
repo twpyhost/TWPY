@@ -1,23 +1,47 @@
 import { requireAdmin } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { consultarPagina, escaparLike, leerPaginacion } from "@/lib/paginacion";
 
-export async function GET() {
+export async function GET(req) {
   try {
     const auth = await requireAdmin();
     if (auth.error) return auth.error;
 
     const supabase = getSupabaseAdmin();
 
-    const { data: torneos, error: torneosError } = await supabase
-      .from("torneos")
-      .select("id, nombre, fecha_inicio, temporada, challonge_source_account, url_challonge")
-      .order("fecha_inicio", { ascending: false });
+    const { searchParams } = new URL(req.url);
+    const { pagina, porPagina, q, desde, hasta } = leerPaginacion(searchParams);
+    const cuenta = searchParams.get("cuenta");
 
-    if (torneosError) throw torneosError;
+    // Nombre y cuenta de origen filtran en la query: con paginacion
+    // server-side, filtrar en el cliente solo miraria la pagina visible.
+    const construir = ({ head }) => {
+      let consulta = supabase
+        .from("torneos")
+        .select("id, nombre, fecha_inicio, temporada, challonge_source_account, url_challonge", {
+          count: "exact",
+          head,
+        });
+
+      if (q) {
+        consulta = consulta.ilike("nombre", `%${escaparLike(q)}%`);
+      }
+      if (cuenta === "A" || cuenta === "B") {
+        consulta = consulta.eq("challonge_source_account", cuenta);
+      }
+
+      return consulta.order("fecha_inicio", { ascending: false });
+    };
+
+    const { filas: torneos, total } = await consultarPagina(construir, { desde, hasta });
+
+    // El contador de pendientes se acota a los torneos de la pagina.
+    const idsPagina = torneos.map((torneo) => torneo.id);
 
     const { data: participantes, error: participantesError } = await supabase
       .from("tournament_participants_raw")
-      .select("torneo_id, player_id");
+      .select("torneo_id, player_id")
+      .in("torneo_id", idsPagina.length > 0 ? idsPagina : [-1]);
 
     if (participantesError) throw participantesError;
 
@@ -41,7 +65,10 @@ export async function GET() {
       pendientes: pendientesPorTorneo.get(torneo.id) ?? 0,
     }));
 
-    return Response.json({ torneos: resultado }, { status: 200 });
+    return Response.json(
+      { torneos: resultado, total, pagina, porPagina },
+      { status: 200 },
+    );
   } catch (error) {
     console.error(error);
     return Response.json(

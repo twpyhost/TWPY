@@ -1,12 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import Paginacion from "@/components/admin/Paginacion";
+import { usePaginacionUrl, useBusquedaDebounced } from "@/components/admin/usePaginacionUrl";
+import { POR_PAGINA_TABLA } from "@/lib/paginacion";
 import { TREND } from "@/lib/data/movimiento";
 import PuntajesConfig from "./PuntajesConfig";
 
@@ -18,30 +21,35 @@ export default function Rankings() {
   const [rankings, setRankings] = useState([]);
   const [temporadas, setTemporadas] = useState([]);
   const [temporada, setTemporada] = useState(null);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
   const [recalculando, setRecalculando] = useState(false);
 
-  const cargar = useCallback(async (temporadaElegida) => {
+  const { pagina, q, query, irAPagina, cambiarFiltro } = usePaginacionUrl({
+    extras: ["temporada"],
+  });
+  const [texto, setTexto] = useBusquedaDebounced(q, (valor) => cambiarFiltro({ q: valor }));
+
+  const cargar = useCallback(async () => {
     setLoading(true);
     try {
-      const url = temporadaElegida
-        ? `/api/admin/rankings?temporada=${temporadaElegida}`
-        : "/api/admin/rankings";
-      const response = await fetch(url);
+      const response = await fetch(`/api/admin/rankings?${query}`);
       const data = await response.json();
       setRankings(data.rankings ?? []);
       setTemporadas(data.temporadas ?? []);
       setTemporada(data.temporada ?? null);
+      setTotal(data.total ?? 0);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [query]);
 
   useEffect(() => {
     cargar();
   }, [cargar]);
+
+  const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA_TABLA));
 
   const recalcular = async () => {
     setRecalculando(true);
@@ -56,19 +64,13 @@ export default function Rankings() {
 
       toast.success("Rankings recalculados");
       setModalAbierto(false);
-      cargar(temporada);
+      cargar();
     } catch (error) {
       toast.error(error.message);
     } finally {
       setRecalculando(false);
     }
   };
-
-  const filtrados = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return rankings;
-    return rankings.filter((r) => r.nombre.toLowerCase().includes(q));
-  }, [rankings, query]);
 
   return (
     <>
@@ -83,8 +85,8 @@ export default function Rankings() {
           <div className="flex flex-wrap items-center gap-3">
             <input
               type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
               placeholder="Buscar jugador..."
               className="h-11 w-full max-w-xs border border-white/15 bg-white/[.04] px-3 font-body text-sm text-white outline-none placeholder:text-white/40 focus:border-primary-500"
             />
@@ -103,7 +105,7 @@ export default function Rankings() {
                 <button
                   key={t}
                   type="button"
-                  onClick={() => cargar(t)}
+                  onClick={() => cambiarFiltro({ temporada: t })}
                   className={`border px-4 py-1.5 font-display text-sm tracking-[0.08em] transition-colors duration-300 ${
                     temporada === t
                       ? "border-primary-500 bg-primary-500 text-white"
@@ -117,14 +119,14 @@ export default function Rankings() {
 
             {loading ? (
               <p className="font-body text-sm text-white/50">Cargando...</p>
-            ) : filtrados.length === 0 ? (
+            ) : rankings.length === 0 ? (
               <p className="border border-white/10 bg-white/[.03] p-4 font-body text-sm text-white/50">
                 No hay rankings para esta temporada.
               </p>
             ) : (
-              <>
+              <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:hidden">
-                  {filtrados.map((r) => (
+                  {rankings.map((r) => (
                     <TarjetaRanking key={r.id} r={r} />
                   ))}
                 </div>
@@ -141,7 +143,7 @@ export default function Rankings() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filtrados.map((r) => {
+                      {rankings.map((r) => {
                         const trend = TREND[r.movimiento] ?? TREND.IGUAL;
                         return (
                           <tr
@@ -178,7 +180,15 @@ export default function Rankings() {
                     </tbody>
                   </table>
                 </div>
-              </>
+
+                <Paginacion
+                  pagina={pagina}
+                  totalPaginas={totalPaginas}
+                  total={total}
+                  etiqueta="jugadores"
+                  onCambio={irAPagina}
+                />
+              </div>
             )}
           </div>
 

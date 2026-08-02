@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
@@ -9,6 +9,10 @@ import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
 import StatusChip from "@/components/ui/StatusChip";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import ChallongeLinkButton from "@/components/ui/ChallongeLinkButton";
+import Paginacion from "@/components/admin/Paginacion";
+import { usePaginacionUrl, useBusquedaDebounced } from "@/components/admin/usePaginacionUrl";
+import { POR_PAGINA_TABLA } from "@/lib/paginacion";
 
 const CUENTA_TONE = { A: "cyan", B: "primary" };
 
@@ -20,9 +24,8 @@ const FILTROS_CUENTA = [
 
 export default function Torneos() {
   const [torneos, setTorneos] = useState([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [filtroCuenta, setFiltroCuenta] = useState("todas");
-  const [query, setQuery] = useState("");
   const [sincronizando, setSincronizando] = useState(false);
   const [reimportandoId, setReimportandoId] = useState(null);
   const [urlRapida, setUrlRapida] = useState("");
@@ -30,27 +33,29 @@ export default function Torneos() {
   const [torneoAEliminar, setTorneoAEliminar] = useState(null);
   const [eliminando, setEliminando] = useState(false);
 
+  const { pagina, q, extras, query, irAPagina, cambiarFiltro } = usePaginacionUrl({
+    extras: ["cuenta"],
+  });
+  const filtroCuenta = extras.cuenta ?? "todas";
+  const [texto, setTexto] = useBusquedaDebounced(q, (valor) => cambiarFiltro({ q: valor }));
+
   const cargarTorneos = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/admin/torneos");
+      const response = await fetch(`/api/admin/torneos?${query}`);
       const data = await response.json();
       setTorneos(data.torneos ?? []);
+      setTotal(data.total ?? 0);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [query]);
 
   useEffect(() => {
     cargarTorneos();
   }, [cargarTorneos]);
 
-  const filtrados = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return torneos
-      .filter((torneo) => filtroCuenta === "todas" || torneo.cuenta === filtroCuenta)
-      .filter((torneo) => !q || torneo.nombre.toLowerCase().includes(q));
-  }, [torneos, filtroCuenta, query]);
+  const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA_TABLA));
 
   const sincronizar = async () => {
     setSincronizando(true);
@@ -191,7 +196,7 @@ export default function Torneos() {
                 <button
                   key={f.value}
                   type="button"
-                  onClick={() => setFiltroCuenta(f.value)}
+                  onClick={() => cambiarFiltro({ cuenta: f.value === "todas" ? null : f.value })}
                   className={`border px-4 py-1.5 font-display text-sm tracking-[0.08em] transition-colors duration-300 ${
                     filtroCuenta === f.value
                       ? "border-primary-500 bg-primary-500 text-white"
@@ -204,8 +209,8 @@ export default function Torneos() {
             </div>
             <input
               type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
               placeholder="Buscar torneo..."
               className="h-11 w-full max-w-xs border border-white/15 bg-white/[.04] px-3 font-body text-sm text-white outline-none placeholder:text-white/40 focus:border-primary-500"
             />
@@ -213,13 +218,13 @@ export default function Torneos() {
 
           {loading ? (
             <p className="font-body text-sm text-white/50">Cargando...</p>
-          ) : filtrados.length === 0 ? (
+          ) : torneos.length === 0 ? (
             <p className="border border-white/10 bg-white/[.03] p-4 font-body text-sm text-white/50">
               No hay torneos para mostrar.
             </p>
           ) : (
             <div className="flex flex-col gap-2">
-              {filtrados.map((torneo) => (
+              {torneos.map((torneo) => (
                 <div
                   key={torneo.id}
                   className="flex flex-wrap items-center gap-4 border border-white/10 bg-white/[.03] p-4"
@@ -246,6 +251,11 @@ export default function Torneos() {
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
+                    <ChallongeLinkButton
+                      url={torneo.url_challonge}
+                      className="px-4 py-2"
+                      textoClassName="text-sm"
+                    />
                     <button
                       type="button"
                       onClick={() => reimportar(torneo.id)}
@@ -269,6 +279,14 @@ export default function Torneos() {
                   </div>
                 </div>
               ))}
+
+              <Paginacion
+                pagina={pagina}
+                totalPaginas={totalPaginas}
+                total={total}
+                etiqueta="torneos"
+                onCambio={irAPagina}
+              />
             </div>
           )}
         </div>
