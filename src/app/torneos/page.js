@@ -3,6 +3,8 @@ import Link from "next/link";
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
+import SearchParamTransitionProvider from "@/components/ui/SearchParamTransitionProvider";
+import TorneoYearTabs from "./TorneoYearTabs";
 
 import { getTorneos, getFiltroAno } from "../utils/db";
 import { withMinDelay } from "@/lib/withMinDelay";
@@ -62,93 +64,71 @@ export default async function TorneosPage({ searchParams }) {
         </div>
       </HeroSection>
 
-      <section className="bg-black px-5 pb-16 pt-8 sm:px-8 lg:px-14">
-        <div className="mx-auto flex max-w-[1240px] flex-col gap-8">
-          {featured && (
-            <div className="relative animate-fade-up overflow-hidden border border-white/10 bg-gradient-to-br from-primary-900/40 via-dark-gray-3-700 to-tekken-blue-900/20 p-7">
-              <span className="font-display text-sm tracking-[0.24em] text-tekken-blue-400">
-                ÚLTIMO TORNEO
-              </span>
-              <h2 className="m-0 mt-1.5 font-display text-3xl italic sm:text-4xl">
-                {featured.nombre_torneo}
-              </h2>
-              <p className="m-0 mt-1 font-body text-sm text-white/60">
-                {parseFecha(featured.fecha_torneo).day} de{" "}
-                {parseFecha(featured.fecha_torneo).monthLabel} de {featured.temporada}
-              </p>
-              <Button
-                href={`/torneo-resultado/${featured.torneo_id}`}
-                className="mt-5 px-6 py-2.5 text-lg"
-              >
-                VER RESULTADOS <span>&rarr;</span>
-              </Button>
-            </div>
-          )}
-
-          <div className="flex flex-wrap animate-fade-up gap-2 [animation-delay:.08s]">
-            <Link
-              href="/torneos"
-              className={`border px-4 py-1.5 font-display text-sm tracking-[0.08em] transition-colors duration-300 ${
-                selectedYear === "all"
-                  ? "border-primary-500 bg-primary-500 text-white"
-                  : "border-white/15 bg-white/[.04] text-white/70 hover:border-white/30"
-              }`}
-            >
-              Todos
-            </Link>
-            {anos.map((year) => (
-              <Link
-                key={year}
-                href={`/torneos?year=${year}`}
-                className={`border px-4 py-1.5 font-display text-sm tracking-[0.08em] transition-colors duration-300 ${
-                  selectedYear === year
-                    ? "border-primary-500 bg-primary-500 text-white"
-                    : "border-white/15 bg-white/[.04] text-white/70 hover:border-white/30"
-                }`}
-              >
-                {year}
-              </Link>
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            {filtered.map((torneo, index) => {
-              const { day, monthLabel, year } = parseFecha(torneo.fecha_torneo);
-              const isFeatured = featured && torneo.torneo_id === featured.torneo_id;
-
-              return (
-                <Link
-                  key={torneo.torneo_id}
-                  href={`/torneo-resultado/${torneo.torneo_id}`}
-                  style={fadeDelay(index)}
-                  className={`grid animate-fade-up grid-cols-[64px_1fr_24px] items-center gap-4 border-l-[3px] px-5 py-4 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${
-                    isFeatured ? "border-l-tekken-blue-400" : "border-l-primary-500"
-                  } ${index % 2 === 1 ? "bg-white/[.055]" : "bg-white/[.03]"}`}
+      <SearchParamTransitionProvider value={selectedYear}>
+        <section className="bg-black px-5 pb-16 pt-8 sm:px-8 lg:px-14">
+          <div className="mx-auto flex max-w-[1240px] flex-col gap-8">
+            {featured && (
+              <div className="relative animate-fade-up overflow-hidden border border-white/10 bg-gradient-to-br from-primary-900/40 via-dark-gray-3-700 to-tekken-blue-900/20 p-7">
+                <span className="font-display text-sm tracking-[0.24em] text-tekken-blue-400">
+                  ÚLTIMO TORNEO
+                </span>
+                <h2 className="m-0 mt-1.5 font-display text-3xl italic sm:text-4xl">
+                  {featured.nombre_torneo}
+                </h2>
+                <p className="m-0 mt-1 font-body text-sm text-white/60">
+                  {parseFecha(featured.fecha_torneo).day} de{" "}
+                  {parseFecha(featured.fecha_torneo).monthLabel} de {featured.temporada}
+                </p>
+                <Button
+                  href={`/torneo-resultado/${featured.torneo_id}`}
+                  className="mt-5 px-6 py-2.5 text-lg"
                 >
-                  <div className="flex flex-col items-center leading-none">
-                    <span className="font-display text-3xl">{day}</span>
-                    <span className="font-display text-xs tracking-[0.1em] text-white/50">
-                      {monthLabel} {year}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-display text-xl italic">{torneo.nombre_torneo}</span>
-                    <span className="font-body text-xs uppercase tracking-[0.08em] text-white/45">
-                      Torneo ranked
-                    </span>
-                  </div>
-                  <span className="justify-self-end text-white/40">&rarr;</span>
-                </Link>
-              );
-            })}
-            {filtered.length === 0 && (
-              <p className="py-10 text-center font-body text-white/50">
-                No hay torneos para este año.
-              </p>
+                  VER RESULTADOS <span>&rarr;</span>
+                </Button>
+              </div>
             )}
+
+            <TorneoYearTabs anos={anos} />
+
+            <div className="flex flex-col gap-2">
+              {filtered.map((torneo, index) => {
+                const { day, monthLabel, year } = parseFecha(torneo.fecha_torneo);
+                const isFeatured = featured && torneo.torneo_id === featured.torneo_id;
+
+                return (
+                  <Link
+                    key={torneo.torneo_id}
+                    href={`/torneo-resultado/${torneo.torneo_id}`}
+                    style={fadeDelay(index)}
+                    className={`grid animate-fade-up grid-cols-[64px_1fr_24px] items-center gap-4 border-l-[3px] px-5 py-4 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${
+                      isFeatured ? "border-l-tekken-blue-400" : "border-l-primary-500"
+                    } ${index % 2 === 1 ? "bg-white/[.055]" : "bg-white/[.03]"}`}
+                  >
+                    <div className="flex flex-col items-center leading-none">
+                      <span className="font-display text-3xl">{day}</span>
+                      <span className="font-display text-xs tracking-[0.1em] text-white/50">
+                        {monthLabel} {year}
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="font-display text-xl italic">{torneo.nombre_torneo}</span>
+                      <span className="font-body text-xs uppercase tracking-[0.08em] text-white/45">
+                        Torneo ranked
+                      </span>
+                    </div>
+                    <span className="justify-self-end text-white/40">&rarr;</span>
+                  </Link>
+                );
+              })}
+              {filtered.length === 0 && (
+                <p className="py-10 text-center font-body text-white/50">
+                  No hay torneos para este año.
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </SearchParamTransitionProvider>
     </>
   );
 }

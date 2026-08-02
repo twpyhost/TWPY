@@ -155,4 +155,44 @@ test.describe("TS-TOR | Torneos publicos", () => {
     await expect(filaDeTorneo(page, TORNEO_PREVIO)).toBeVisible();
     await expect(filaDeTorneo(page, TORNEO_VIEJO)).toHaveCount(0);
   });
+
+  /**
+   * TC-TOR-007 | El pill de temporada elegido queda activo apenas se hace click,
+   *   sin esperar a que la navegacion termine
+   * Descripcion: igual que el selector de /ranking, el filtro de temporada usa
+   *   estado optimista -- el pill clickeado se marca activo en el frame del
+   *   click, no cuando el router finalmente compromete la navegacion. Se frena
+   *   la respuesta de red a proposito para poder observar ese hueco: con un
+   *   <Link> plano (el codigo actual) la clase activa solo cambia cuando la
+   *   navegacion compromete, asi que este test falla contra el codigo viejo y
+   *   pasa una vez que el click pasa por `navigate()`.
+   * Precondiciones: dos temporadas sembradas.
+   * Pasos:
+   *   1. Registrar una demora de red para la URL de la temporada anterior
+   *      ANTES de navegar (para atrapar tambien el prefetch de <Link>)
+   *   2. Ir a /torneos
+   *   3. Click en el pill de la temporada anterior
+   *   4. Verificar la clase activa dentro de una ventana mas corta que la demora
+   * Resultado esperado: el pill queda activo bien dentro de la ventana corta,
+   *   sin esperar la respuesta demorada.
+   * Tecnica: MBT (transicion de estado) | Prioridad: alta
+   */
+  test("TC-TOR-007 | el pill elegido queda activo apenas se hace click", async ({ page }) => {
+    // Registrado antes de goto() para atrapar tambien el prefetch automatico
+    // de <Link> al montar la pagina, no solo el click.
+    await page.route(`**/torneos?year=${TEMPORADA_ANTERIOR}`, async (route) => {
+      await new Promise((r) => setTimeout(r, 800));
+      await route.continue();
+    });
+
+    await page.goto("/torneos");
+
+    const pillAnterior = page.locator(`a[href="/torneos?year=${TEMPORADA_ANTERIOR}"]`);
+    await pillAnterior.click();
+
+    // La navegacion real tarda >=800ms (por la ruta demorada); si la clase
+    // activa aparece dentro de 300ms, vino del estado optimista, no del
+    // commit de la navegacion.
+    await expect(pillAnterior).toHaveClass(/border-primary-500/, { timeout: 300 });
+  });
 });
