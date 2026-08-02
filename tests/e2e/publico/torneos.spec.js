@@ -195,4 +195,63 @@ test.describe("TS-TOR | Torneos publicos", () => {
     // commit de la navegacion.
     await expect(pillAnterior).toHaveClass(/border-primary-500/, { timeout: 300 });
   });
+
+  /**
+   * TC-TOR-008 | El loading de la lista anuncia la temporada elegida y no toca
+   *   el hero ni el torneo destacado
+   * Descripcion: mismo invariante que TC-RANK-006 en /ranking: durante la
+   *   transicion, el spinner scopeado a la lista dice "CARGANDO TEMPORADA
+   *   <la elegida>" desde el primer frame, nunca la temporada de partida.
+   *   Ademas la tarjeta de "ULTIMO TORNEO" (que no depende del filtro) sigue
+   *   visible durante toda la transicion.
+   * Precondiciones: dos temporadas sembradas.
+   * Pasos:
+   *   1. Ir a /torneos
+   *   2. Click en el pill de la temporada anterior
+   *   3. Muestrear el texto del spinner y la visibilidad del destacado
+   *      mientras dura la carga
+   * Resultado esperado: todos los textos observados nombran la temporada
+   *   elegida; ninguno nombra "TODOS"; el destacado nunca desaparece.
+   * Tecnica: MBT (invariante durante la transicion) | Prioridad: alta
+   */
+  test("TC-TOR-008 | el loading de la lista anuncia la temporada elegida", async ({ page }) => {
+    await page.goto("/torneos");
+    await expect(page.getByRole("heading", { name: "Torneo E2E Actual" })).toBeVisible();
+
+    const { observados, destacadoSiempreVisible } = await page.evaluate(
+      async ({ year }) => {
+        const leerSpinner = () => {
+          const nodo = [...document.querySelectorAll("span")].find(
+            (s) => s.children.length === 0 && s.textContent.trim().startsWith("CARGANDO"),
+          );
+          return nodo ? nodo.textContent.trim() : null;
+        };
+        const destacadoVisible = () =>
+          [...document.querySelectorAll("h2")].some((h) =>
+            h.textContent.includes("Torneo E2E Actual"),
+          );
+
+        const textos = new Set();
+        let destacadoSiempreVisible = true;
+        document.querySelector(`a[href="/torneos?year=${year}"]`).click();
+
+        for (let i = 0; i < 40; i++) {
+          const texto = leerSpinner();
+          if (texto) textos.add(texto);
+          else if (textos.size > 0) break;
+          if (!destacadoVisible()) destacadoSiempreVisible = false;
+          await new Promise((r) => setTimeout(r, 50));
+        }
+        return { observados: [...textos], destacadoSiempreVisible };
+      },
+      { year: TEMPORADA_ANTERIOR },
+    );
+
+    expect(observados.length).toBeGreaterThan(0);
+    for (const texto of observados) {
+      expect(texto).toContain(String(TEMPORADA_ANTERIOR));
+      expect(texto).not.toContain("TODOS");
+    }
+    expect(destacadoSiempreVisible).toBe(true);
+  });
 });

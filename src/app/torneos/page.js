@@ -5,6 +5,7 @@ import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
 import SearchParamTransitionProvider from "@/components/ui/SearchParamTransitionProvider";
 import TorneoYearTabs from "./TorneoYearTabs";
+import TorneoListBoundary from "./TorneoListBoundary";
 
 import { getTorneos, getFiltroAno } from "../utils/db";
 import { withMinDelay } from "@/lib/withMinDelay";
@@ -90,42 +91,44 @@ export default async function TorneosPage({ searchParams }) {
 
             <TorneoYearTabs anos={anos} />
 
-            <div className="flex flex-col gap-2">
-              {filtered.map((torneo, index) => {
-                const { day, monthLabel, year } = parseFecha(torneo.fecha_torneo);
-                const isFeatured = featured && torneo.torneo_id === featured.torneo_id;
+            <TorneoListBoundary>
+              <div className="flex flex-col gap-2">
+                {filtered.map((torneo, index) => {
+                  const { day, monthLabel, year } = parseFecha(torneo.fecha_torneo);
+                  const isFeatured = featured && torneo.torneo_id === featured.torneo_id;
 
-                return (
-                  <Link
-                    key={torneo.torneo_id}
-                    href={`/torneo-resultado/${torneo.torneo_id}`}
-                    style={fadeDelay(index)}
-                    className={`grid animate-fade-up grid-cols-[64px_1fr_24px] items-center gap-4 border-l-[3px] px-5 py-4 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${
-                      isFeatured ? "border-l-tekken-blue-400" : "border-l-primary-500"
-                    } ${index % 2 === 1 ? "bg-white/[.055]" : "bg-white/[.03]"}`}
-                  >
-                    <div className="flex flex-col items-center leading-none">
-                      <span className="font-display text-3xl">{day}</span>
-                      <span className="font-display text-xs tracking-[0.1em] text-white/50">
-                        {monthLabel} {year}
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-display text-xl italic">{torneo.nombre_torneo}</span>
-                      <span className="font-body text-xs uppercase tracking-[0.08em] text-white/45">
-                        Torneo ranked
-                      </span>
-                    </div>
-                    <span className="justify-self-end text-white/40">&rarr;</span>
-                  </Link>
-                );
-              })}
-              {filtered.length === 0 && (
-                <p className="py-10 text-center font-body text-white/50">
-                  No hay torneos para este año.
-                </p>
-              )}
-            </div>
+                  return (
+                    <Link
+                      key={torneo.torneo_id}
+                      href={`/torneo-resultado/${torneo.torneo_id}`}
+                      style={fadeDelay(index)}
+                      className={`grid animate-fade-up grid-cols-[64px_1fr_24px] items-center gap-4 border-l-[3px] px-5 py-4 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${
+                        isFeatured ? "border-l-tekken-blue-400" : "border-l-primary-500"
+                      } ${index % 2 === 1 ? "bg-white/[.055]" : "bg-white/[.03]"}`}
+                    >
+                      <div className="flex flex-col items-center leading-none">
+                        <span className="font-display text-3xl">{day}</span>
+                        <span className="font-display text-xs tracking-[0.1em] text-white/50">
+                          {monthLabel} {year}
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-display text-xl italic">{torneo.nombre_torneo}</span>
+                        <span className="font-body text-xs uppercase tracking-[0.08em] text-white/45">
+                          Torneo ranked
+                        </span>
+                      </div>
+                      <span className="justify-self-end text-white/40">&rarr;</span>
+                    </Link>
+                  );
+                })}
+                {filtered.length === 0 && (
+                  <p className="py-10 text-center font-body text-white/50">
+                    No hay torneos para este año.
+                  </p>
+                )}
+              </div>
+            </TorneoListBoundary>
           </div>
         </section>
       </SearchParamTransitionProvider>
