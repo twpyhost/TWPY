@@ -9,7 +9,7 @@ import { useSearchParamTransition } from "@/components/ui/SearchParamTransitionP
 // plain left-click to run the navigation inside useTransition, so
 // RankingTableBoundary can show the scoped spinner immediately instead of
 // waiting on the router's buffered same-route searchParams navigation
-// (see SeasonTransitionProvider.js).
+// (see SearchParamTransitionProvider.js).
 export default function SeasonTabs({ seasons }) {
   // La temporada mostrada es optimista: el indicador y el resaltado se mueven
   // en el frame del click, sin esperar los ~50-100ms del shell del servidor.
