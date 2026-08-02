@@ -1,10 +1,18 @@
-import Link from "next/link";
+"use client";
+
+import { useSeasonTransition } from "./SeasonTransitionProvider";
 
 // Selector de temporadas: mismo lenguaje visual (pill track + indicador
-// deslizante) que el diseño de Claude Design para Ranking, pero navegando
-// via ?year= + <Link> (server-rendered) en vez del cross-fade client-side
-// del prototipo — mismo patron ya usado por el filtro de anos de Torneos.
+// deslizante) que el diseno de Claude Design para Ranking, navegando via
+// ?year=. Kept as an <a> (not a <button>) so browser affordances (open in
+// new tab, right-click, ctrl/cmd-click) keep working -- but intercepts a
+// plain left-click to run the navigation inside useTransition, so
+// RankingTableBoundary can show the scoped spinner immediately instead of
+// waiting on the router's buffered same-route searchParams navigation
+// (see SeasonTransitionProvider.js).
 export default function SeasonTabs({ seasons, activeYear }) {
+  const { navigate } = useSeasonTransition();
+
   const n = seasons.length;
   const activeIndex = Math.max(
     seasons.findIndex((season) => season.year === activeYear),
@@ -23,11 +31,29 @@ export default function SeasonTabs({ seasons, activeYear }) {
       />
       {seasons.map((season) => {
         const isActive = season.year === activeYear;
+        const href = season.isDefault ? "/ranking" : `/ranking?year=${season.year}`;
 
         return (
-          <Link
+          <a
             key={season.year}
-            href={season.isDefault ? "/ranking" : `/ranking?year=${season.year}`}
+            href={href}
+            onClick={(event) => {
+              // Let modified clicks (ctrl/cmd/shift/middle-click) fall
+              // through to normal browser handling (open in new tab, etc.)
+              // instead of hijacking them into a client transition.
+              if (
+                event.defaultPrevented ||
+                event.button !== 0 ||
+                event.metaKey ||
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.altKey
+              ) {
+                return;
+              }
+              event.preventDefault();
+              navigate(href);
+            }}
             className="relative z-[2] flex flex-1 flex-col items-center justify-center gap-0.5 px-1.5 py-2"
           >
             <span
@@ -46,7 +72,7 @@ export default function SeasonTabs({ seasons, activeYear }) {
             >
               {season.status === "EN CURSO" ? "EN CURSO" : "FINAL"}
             </span>
-          </Link>
+          </a>
         );
       })}
     </div>
