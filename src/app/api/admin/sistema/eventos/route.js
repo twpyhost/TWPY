@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { consultarPagina, leerPaginacion, POR_PAGINA_LOG } from "@/lib/paginacion";
 
 const TIPO_LABEL = {
   health: "HEALTH",
@@ -17,17 +18,18 @@ export async function GET(req) {
     if (auth.error) return auth.error;
 
     const { searchParams } = new URL(req.url);
-    const limit = Math.min(Number(searchParams.get("limit")) || 20, 100);
+    const { pagina, porPagina, desde, hasta } = leerPaginacion(searchParams, POR_PAGINA_LOG);
 
     const supabase = getSupabaseAdmin();
 
-    const { data: eventos, error } = await supabase
-      .from("sistema_eventos")
-      .select("id, tipo, ok, detalle, created_at")
-      .order("created_at", { ascending: false })
-      .limit(limit);
-
-    if (error) throw error;
+    const { filas: eventos, total } = await consultarPagina(
+      ({ head }) =>
+        supabase
+          .from("sistema_eventos")
+          .select("id, tipo, ok, detalle, created_at", { count: "exact", head })
+          .order("created_at", { ascending: false }),
+      { desde, hasta },
+    );
 
     const resultado = eventos.map((evento) => ({
       id: evento.id,
@@ -41,7 +43,10 @@ export async function GET(req) {
       }`,
     }));
 
-    return Response.json({ eventos: resultado }, { status: 200 });
+    return Response.json(
+      { eventos: resultado, total, pagina, porPagina },
+      { status: 200 },
+    );
   } catch (error) {
     console.error(error);
     return Response.json(

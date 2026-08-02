@@ -5,7 +5,15 @@ const nextConfig = [...nextPlugin];
 export default [
   ...nextConfig,
   {
-    ignores: [".next/**", "node_modules/**"],
+    // playwright-report/ y test-results/ son salida de la suite (JS
+    // bundleado del reporte HTML, trazas, videos): no es codigo del proyecto.
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "playwright-report/**",
+      "test-results/**",
+      "blob-report/**",
+    ],
   },
   {
     rules: {

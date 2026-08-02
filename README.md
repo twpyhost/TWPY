@@ -60,6 +60,14 @@ Docker Desktop corriendo y `supabase start` levantado (stack local de
 Supabase) — los tests con DB nunca tocan el proyecto remoto. Scripts:
 `npm run test:unit`, `npm run test:e2e`, `npm run test:ui`.
 
+La suite e2e siembra y limpia sus propios datos sola (globalSetup /
+globalTeardown) y crea el usuario admin que necesita el project
+`e2e-admin`. Despues de correrla, `npx playwright show-report` abre el
+reporte HTML.
+
+El plan de pruebas y el catalogo de casos (clases de equivalencia, valores
+limite, matriz pairwise y modelos de estado) estan en `docs/qa/`.
+
 ## Deploy (Vercel)
 
 1. Importar el repo en Vercel.

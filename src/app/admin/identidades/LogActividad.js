@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import StatusChip from "@/components/ui/StatusChip";
+import Paginacion from "@/components/admin/Paginacion";
 import { ETIQUETAS_EVENTO } from "@/lib/identidadDescripcion";
-
-const POR_PAGINA = 10;
+import { POR_PAGINA_LOG as POR_PAGINA } from "@/lib/paginacion";
 
 export default function LogActividad({ log, onCambio }) {
   const [deshaciendoId, setDeshaciendoId] = useState(null);
@@ -96,31 +96,13 @@ export default function LogActividad({ log, onCambio }) {
         ))}
       </div>
 
-      {totalPaginas > 1 && (
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <span className="font-body text-xs text-white/45">
-            Página {pagina} de {totalPaginas} · {log.length} eventos
-          </span>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setPagina((p) => Math.max(1, p - 1))}
-              disabled={pagina === 1}
-              className="border border-white/15 bg-white/[.04] px-3 py-1.5 font-display text-xs tracking-[0.08em] text-white hover:bg-white/10 disabled:opacity-40"
-            >
-              ‹ ANTERIOR
-            </button>
-            <button
-              type="button"
-              onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-              disabled={pagina === totalPaginas}
-              className="border border-white/15 bg-white/[.04] px-3 py-1.5 font-display text-xs tracking-[0.08em] text-white hover:bg-white/10 disabled:opacity-40"
-            >
-              SIGUIENTE ›
-            </button>
-          </div>
-        </div>
-      )}
+      <Paginacion
+        pagina={pagina}
+        totalPaginas={totalPaginas}
+        total={log.length}
+        etiqueta="eventos"
+        onCambio={setPagina}
+      />
     </div>
   );
 }

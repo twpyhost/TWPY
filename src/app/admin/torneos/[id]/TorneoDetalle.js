@@ -6,6 +6,10 @@ import Link from "next/link";
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 import StatusChip from "@/components/ui/StatusChip";
+import ChallongeLinkButton from "@/components/ui/ChallongeLinkButton";
+import Paginacion from "@/components/admin/Paginacion";
+import { usePaginacionUrl } from "@/components/admin/usePaginacionUrl";
+import { POR_PAGINA_TABLA } from "@/lib/paginacion";
 
 const ESTADO_LABEL = {
   vinculado: { texto: "VINCULADO", tone: "success" },
@@ -20,10 +24,12 @@ export default function TorneoDetalle({ torneoId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const { pagina, query, irAPagina } = usePaginacionUrl();
+
   const cargar = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/admin/torneos/${torneoId}`);
+      const response = await fetch(`/api/admin/torneos/${torneoId}?${query}`);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "No se pudo cargar el torneo");
       setDatos(data);
@@ -32,7 +38,7 @@ export default function TorneoDetalle({ torneoId }) {
     } finally {
       setLoading(false);
     }
-  }, [torneoId]);
+  }, [torneoId, query]);
 
   useEffect(() => {
     cargar();
@@ -52,18 +58,26 @@ export default function TorneoDetalle({ torneoId }) {
     );
   }
 
-  const { torneo, participantes } = datos;
+  const { torneo, participantes, podio = [], total = 0 } = datos;
+  const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA_TABLA));
 
   return (
     <>
       <HeroSection className="px-5 pb-6 pt-11 sm:px-8 sm:pt-16 lg:px-14 lg:pt-[84px]">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-3">
-          <Link
-            href="/admin/torneos"
-            className="inline-flex w-fit items-center gap-2 font-display text-sm tracking-[0.14em] text-white/60 hover:text-primary-500"
-          >
-            <span>&larr;</span> VOLVER A TORNEOS
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/admin/torneos"
+              className="inline-flex w-fit items-center gap-2 font-display text-sm tracking-[0.14em] text-white/60 hover:text-primary-500"
+            >
+              <span>&larr;</span> VOLVER A TORNEOS
+            </Link>
+            <ChallongeLinkButton
+              url={torneo.url_challonge}
+              className="px-4 py-1.5"
+              textoClassName="text-sm"
+            />
+          </div>
           <RibbonTag>ADMIN · DETALLE DE TORNEO</RibbonTag>
           <h1 className="-ml-1.5 m-0 font-display text-[clamp(38px,5.4vw,64px)] italic leading-[.95] tracking-[0.01em]">
             {torneo.nombre}
@@ -77,11 +91,11 @@ export default function TorneoDetalle({ torneoId }) {
 
       <section className="bg-black px-5 pb-24 pt-8 sm:px-8 lg:px-14">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-8">
-          {participantes.length > 0 && (
+          {podio.length > 0 && (
             <div className="flex flex-col gap-3">
               <h2 className="m-0 font-display text-xl tracking-[0.04em]">Top 4</h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {participantes.slice(0, 4).map((p) => (
+                {podio.map((p) => (
                   <div
                     key={p.id}
                     className="flex flex-col gap-1.5 border border-white/10 bg-white/[.03] p-4"
@@ -101,22 +115,6 @@ export default function TorneoDetalle({ torneoId }) {
               </div>
             </div>
           )}
-
-          <div className="flex min-h-[220px] flex-col items-center justify-center gap-2 border border-dashed border-white/[.16] bg-white/[.02] p-8 text-center">
-            <span className="font-display text-lg tracking-[0.06em] text-white/40">
-              BRACKET EMBEBIDO · CHALLONGE IFRAME
-            </span>
-            {torneo.url_challonge && (
-              <a
-                href={torneo.url_challonge}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-body text-xs text-tekken-blue-400 hover:text-tekken-blue-300"
-              >
-                Ver bracket en Challonge →
-              </a>
-            )}
-          </div>
 
           <div className="flex flex-col gap-3">
             <h2 className="m-0 font-display text-xl tracking-[0.04em]">Participantes</h2>
@@ -140,6 +138,14 @@ export default function TorneoDetalle({ torneoId }) {
                 );
               })}
             </div>
+
+            <Paginacion
+              pagina={pagina}
+              totalPaginas={totalPaginas}
+              total={total}
+              etiqueta="participantes"
+              onCambio={irAPagina}
+            />
           </div>
         </div>
       </section>

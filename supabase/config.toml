@@ -220,7 +220,17 @@ web3 = 30
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
-enable_signup = false
+#
+# OJO: en el CLI de Supabase este flag no controla solo el alta, controla el
+# PROVEEDOR de email entero (GOTRUE_EXTERNAL_EMAIL_ENABLED). Con false, hasta
+# el login con email/password devuelve "Email logins are disabled", que es
+# justo como entra el admin al panel. Queda en true para que el stack local
+# sirva para probar el panel; el alta publica igual esta cerrada por
+# `enable_signup = false` en [auth] (mas arriba), que es global.
+#
+# Esto es config del stack LOCAL. Si alguna vez corres `supabase config push`,
+# revisa antes que no reabra el registro en el proyecto remoto.
+enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true

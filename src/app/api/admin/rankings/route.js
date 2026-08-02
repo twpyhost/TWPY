@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { getMovimiento } from "@/lib/data/movimiento";
+import { consultarPagina, escaparLike, leerPaginacion } from "@/lib/paginacion";
 
 export async function GET(req) {
   try {
@@ -19,11 +20,15 @@ export async function GET(req) {
     const temporadas = [...new Set(temporadasData.map((t) => t.temporada))];
 
     const { searchParams } = new URL(req.url);
+    const { pagina, porPagina, q, desde, hasta } = leerPaginacion(searchParams);
     const temporadaParam = searchParams.get("temporada");
     const temporada = temporadaParam ? Number(temporadaParam) : temporadas[0];
 
     if (!temporada) {
-      return Response.json({ rankings: [], temporadas: [] }, { status: 200 });
+      return Response.json(
+        { rankings: [], temporadas: [], total: 0, pagina, porPagina },
+        { status: 200 },
+      );
     }
 
     const { data: torneosTemporada, error: torneosError } = await supabase
@@ -36,25 +41,46 @@ export async function GET(req) {
     if (torneosError) throw torneosError;
 
     if (torneosTemporada.length === 0) {
-      return Response.json({ rankings: [], temporadas }, { status: 200 });
+      return Response.json(
+        { rankings: [], temporadas, total: 0, pagina, porPagina },
+        { status: 200 },
+      );
     }
 
     const [ultimo, anterior] = torneosTemporada;
 
-    const { data: snapshots, error: snapshotsError } = await supabase
-      .from("ranking_snapshots")
-      .select("player_id, posicion_global, puntaje_acumulado, jugador:players ( id, display_name )")
-      .eq("torneo_id", ultimo.id)
-      .order("posicion_global", { ascending: true });
+    // El filtro por nombre viaja al servidor (sobre el join a players) para
+    // que busque en toda la temporada y no solo en la pagina visible.
+    const construir = ({ head }) => {
+      let consulta = supabase
+        .from("ranking_snapshots")
+        .select(
+          "player_id, posicion_global, puntaje_acumulado, jugador:players!inner ( id, display_name )",
+          { count: "exact", head },
+        )
+        .eq("torneo_id", ultimo.id);
 
-    if (snapshotsError) throw snapshotsError;
+      if (q) {
+        consulta = consulta.ilike("players.display_name", `%${escaparLike(q)}%`);
+      }
+
+      return consulta.order("posicion_global", { ascending: true });
+    };
+
+    const { filas: snapshots, total } = await consultarPagina(construir, { desde, hasta });
+
+    // Los agregados (movimiento y torneos jugados) se acotan a los jugadores
+    // de la pagina en vez de traer toda la temporada.
+    const idsPagina = snapshots.map((s) => s.player_id);
+    const idsFiltro = idsPagina.length > 0 ? idsPagina : [-1];
 
     const posicionesAnteriores = new Map();
     if (anterior) {
       const { data: previos, error: previosError } = await supabase
         .from("ranking_snapshots")
         .select("player_id, posicion_global")
-        .eq("torneo_id", anterior.id);
+        .eq("torneo_id", anterior.id)
+        .in("player_id", idsFiltro);
 
       if (previosError) throw previosError;
       previos.forEach((s) => posicionesAnteriores.set(s.player_id, s.posicion_global));
@@ -75,7 +101,7 @@ export async function GET(req) {
       .from("tournament_participants_raw")
       .select("player_id")
       .in("torneo_id", torneosDeLaTemporada.map((t) => t.id))
-      .not("player_id", "is", null);
+      .in("player_id", idsFiltro);
     if (participacionesError) throw participacionesError;
 
     const torneosPorJugador = new Map();
@@ -92,7 +118,10 @@ export async function GET(req) {
       movimiento: getMovimiento(s.posicion_global, posicionesAnteriores.get(s.player_id)),
     }));
 
-    return Response.json({ rankings, temporadas, temporada }, { status: 200 });
+    return Response.json(
+      { rankings, temporadas, temporada, total, pagina, porPagina },
+      { status: 200 },
+    );
   } catch (error) {
     console.error(error);
     return Response.json(

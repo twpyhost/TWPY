@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
-import ChallongeLinkButton from "./ChallongeLinkButton";
+import ChallongeLinkButton from "@/components/ui/ChallongeLinkButton";
 import { getTorneoResultados, getTorneos } from "@/app/utils/db";
 import { withMinDelay } from "@/lib/withMinDelay";
 import { fadeDelay } from "@/lib/fadeDelay";

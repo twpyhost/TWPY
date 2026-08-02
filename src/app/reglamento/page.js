@@ -242,37 +242,46 @@ export default function ReglamentoPage() {
             </aside>
 
             <div className="flex min-w-0 flex-1 flex-col gap-10">
-              {SECTIONS.map((section) => (
-                <div key={section.id} id={section.id} className="scroll-mt-[100px]">
-                  <RibbonTag
-                    variant={section.accent === "cyan" ? "cyan" : "primary"}
-                    className="mb-3.5"
-                  >
-                    {section.title}
-                  </RibbonTag>
-                  <div className="flex flex-col gap-0.5">
-                    {section.rules.map((rule) => (
-                      <div
-                        key={rule.n}
-                        style={fadeDelay(ruleIndex++, { step: 25, max: 300 })}
-                        className={`grid animate-fade-up grid-cols-[56px_1fr] items-start gap-4 border-l-[3px] px-5 py-4 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${ACCENT_BORDER[section.accent]} ${
-                          rule.critical ? "bg-primary-500/10" : "bg-white/[.04]"
-                        }`}
-                      >
-                        <span className="font-display text-4xl leading-[.8] text-white/25">
-                          {rule.n}
-                        </span>
-                        <div className="flex flex-col gap-2.5">
-                          {rule.critical && <RibbonTag variant="white">DESCALIFICACIÓN</RibbonTag>}
-                          <p className="m-0 font-body text-base leading-[1.62] text-white/90">
-                            {rule.content}
-                          </p>
+              {SECTIONS.map((section) => {
+                // Mismo delay que la primera regla de la seccion: el subtitulo
+                // entra junto con su contenido en vez de aparecer instantaneo.
+                // Se lee antes del map de reglas, que es el que incrementa
+                // ruleIndex.
+                const headingDelay = fadeDelay(ruleIndex, { step: 25, max: 300 });
+
+                return (
+                  <div key={section.id} id={section.id} className="scroll-mt-[100px]">
+                    <RibbonTag
+                      variant={section.accent === "cyan" ? "cyan" : "primary"}
+                      style={headingDelay}
+                      className="mb-3.5 animate-fade-up"
+                    >
+                      {section.title}
+                    </RibbonTag>
+                    <div className="flex flex-col gap-0.5">
+                      {section.rules.map((rule) => (
+                        <div
+                          key={rule.n}
+                          style={fadeDelay(ruleIndex++, { step: 25, max: 300 })}
+                          className={`grid animate-fade-up grid-cols-[56px_1fr] items-start gap-4 border-l-[3px] px-5 py-4 transition-all duration-300 hover:translate-x-1.5 hover:bg-primary-500/10 ${ACCENT_BORDER[section.accent]} ${
+                            rule.critical ? "bg-primary-500/10" : "bg-white/[.04]"
+                          }`}
+                        >
+                          <span className="font-display text-4xl leading-[.8] text-white/25">
+                            {rule.n}
+                          </span>
+                          <div className="flex flex-col gap-2.5">
+                            {rule.critical && <RibbonTag variant="white">DESCALIFICACIÓN</RibbonTag>}
+                            <p className="m-0 font-body text-base leading-[1.62] text-white/90">
+                              {rule.content}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

@@ -1,10 +1,3 @@
-- [HECHO] La actividad reciente en admin dashboard debe mostrar qué se hizo y con cuales cuentas
-- [HECHO] Confirmar fusión debe mostrar un modal advirtiendo que la fusión es irreversible (si asi lo es, claude avisame)
-  -> Ya lo hacía (ribbon + texto + checkbox obligatorio) y sí, es irreversible (fusionar está excluido a
-     propósito de los tipos deshacibles). Se completó el warningText para decir explícitamente que el
-     jugador duplicado no se borra (queda oculto, marcado como fusionado) y que no hay undo desde el panel.
-- [HECHO] El sidebar de admin dashboard no debe hacer blink cuando cambia de pagina dentro de la misma dashboard, solamente el contenido a la derecha
-- [HECHO] Crear diseño para la configuración de puntajes y posiciones en la pagina rankings en admin dashboard (crear nueva posicion con su puntaje)
 - Añadir OAUTH con Discord
   -> El código ya está completo (botón Discord en /auth/login + /auth/callback con gate por is_admin()).
      Falta: habilitar el provider en el dashboard de Supabase (redirect URLs de prod/local) y decidir cómo
@@ -13,8 +6,53 @@
 - Añadir links de las redes sociales
   -> El footer ya tiene los 4 íconos (Discord/Instagram/X/Facebook) con href="#". Falta que me pases las
      URLs reales para cablearlas (y si querés sumar TikTok/YouTube/Twitch hay que dibujar el SVG, no existe en el repo).
-- [HECHO] Cambiar la palabra login por blackhand en navbar
-- [HECHO] src/app/api/previsualizar_torneo/route.js -- confirmado sin consumidor, borrado.
-
 v1.1
 añadir soporte a la focus league, la primera fase de grupos con vista de grupos y sus miembros, puntajes en grupos, fechas de peleas de los participantes dentro de los grupos, y luego la segunda fase como un torneo challonge normal
+
+HECHO
+- [HECHO] Arreglar subtitulos en página de reglamento que no se animan al cargar igual que con los demás elementos
+  -> RibbonTag ahora acepta `style`; los 6 subtítulos llevan animate-fade-up con el mismo delay
+     escalonado que la primera regla de su sección.
+- [HECHO] Quitar el placeholder de embedding de challonge del admin dashboard torneos resultados, solo dejar un boton de abrir bracket en challonge entre los botones superiores
+  -> Se borró la caja punteada. ChallongeLinkButton se movió a src/components/ui/ y ahora lo usan la
+     página pública, el hero del detalle admin (junto a VOLVER) y cada fila de /admin/torneos.
+     Si el torneo no tiene url_challonge, el botón no se renderiza.
+- [HECHO] Al hacer click en la seleccion de temporadas en ranking, en el loading, aparece por un breve momento "cargando temporadas" y muestra la temporada actual, y luego muestra la temporada seleccionada, antes de terminar el loading y mostrar la tabla con datos nuevos
+  -> SeasonTransitionProvider expone una temporada optimista (useOptimistic) que consumen el spinner,
+     los tabs y el eyebrow del hero. RankingTableBoundary pasó a ser dueño de los dos fallbacks, así
+     que ambos anuncian siempre la temporada elegida.
+- [HECHO] No reiniciar la posicion del desplazamiento vertical de la pagina cuando se cambia el selector de temporadas
+  -> router.push(href, { scroll: false }) en SeasonTransitionProvider. Nota: si la temporada nueva
+     tiene menos filas, el navegador igual recorta el scroll al nuevo alto del documento — eso es
+     clamping del browser, no un reset.
+- [HECHO] Agregar paginacion en las varias páginas del admin dashboard excepto la que ya tiene
+  -> Server-side con ?page= en jugadores, torneos, rankings, cola de identidades, log de sistema y
+     participantes del detalle de torneo. Los buscadores y filtros también viajan al servidor (si no,
+     filtrarían solo la página visible). El log de actividad de identidades mantiene su paginación en
+     memoria pero usa el control compartido src/components/admin/Paginacion.js.
+- [HECHO] Para OPUS: Crear tests suites, cases, scenarios e2e con playwright ejecutable por mi mismo, sin IA, dejarlos en la carpeta default de playwright y ejecutable con npx playwright test. Utilizar equivalent partitioning y boundary value, con pairwise y MBT, documentar cada test con titulo, descripción, pasos, expected result. En el formato que los QA de ISTQB designan como más óptimo.
+  -> 81 casos e2e en 8 suites bajo tests/e2e/ (publico/ y admin/). Siembra y limpieza automáticas,
+     usuario admin de pruebas creado por el project "setup". Docs en docs/qa/plan-de-pruebas.md y
+     docs/qa/casos-de-prueba.md. Ejecutada: 135/135 en verde (81 e2e + 51 unit/integración + 3 de
+     setup), dos corridas seguidas, más control de mutación.
+     Dos cosas que aparecieron al ejecutarla y hubo que arreglar:
+       1. .env.local pisaba las variables que inyecta el webServer de Playwright, así que el
+          servidor de pruebas hablaba con el Supabase de PRODUCCIÓN. Se arregló con NODE_ENV=test
+          (Next no carga .env.local en ese modo) + reuseExistingServer:false.
+       2. [auth.email] enable_signup en supabase/config.toml no controla solo el alta: apaga el
+          proveedor de email entero, así que ni el login del admin funcionaba en local. Quedó en
+          true; el alta pública sigue cerrada por el enable_signup global de [auth].
+
+PENDIENTE (encontrado por los tests, fuera del alcance de estos 6 ítems)
+- /torneo-resultado/<id inexistente> muestra la página 404 pero responde HTTP 200 (soft 404).
+  Google puede indexar esas URLs. Pasa porque la página ya empezó a streamear antes de llegar al
+  notFound(). El test TC-TOR-005 lo documenta y verifica el contenido, no el status.
+- [HECHO] Cambiar la palabra login por blackhand en navbar
+- [HECHO] src/app/api/previsualizar_torneo/route.js -- confirmado sin consumidor, borrado.
+- [HECHO] La actividad reciente en admin dashboard debe mostrar qué se hizo y con cuales cuentas
+- [HECHO] Confirmar fusión debe mostrar un modal advirtiendo que la fusión es irreversible (si asi lo es, claude avisame)
+  -> Ya lo hacía (ribbon + texto + checkbox obligatorio) y sí, es irreversible (fusionar está excluido a
+     propósito de los tipos deshacibles). Se completó el warningText para decir explícitamente que el
+     jugador duplicado no se borra (queda oculto, marcado como fusionado) y que no hay undo desde el panel.
+- [HECHO] El sidebar de admin dashboard no debe hacer blink cuando cambia de pagina dentro de la misma dashboard, solamente el contenido a la derecha
+- [HECHO] Crear diseño para la configuración de puntajes y posiciones en la pagina rankings en admin dashboard (crear nueva posicion con su puntaje)

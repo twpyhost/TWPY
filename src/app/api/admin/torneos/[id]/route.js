@@ -2,6 +2,21 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { eliminarTorneo } from "@/lib/torneos";
+import { consultarPagina, leerPaginacion } from "@/lib/paginacion";
+
+const SELECT_PARTICIPANTE =
+  "id, challonge_id, challonge_username, nombre_participante, posicion, puntaje, player_id, jugador:players ( id, display_name )";
+
+function normalizarParticipante(p) {
+  return {
+    id: p.id,
+    nombre_participante: p.nombre_participante,
+    posicion: p.posicion,
+    puntaje: p.puntaje,
+    estado: p.player_id ? "vinculado" : p.challonge_id ? "pendiente" : "sin_cuenta",
+    jugador: p.jugador ? { id: p.jugador.id, nombre: p.jugador.display_name } : null,
+  };
+}
 
 export async function GET(req, { params }) {
   try {
@@ -27,31 +42,39 @@ export async function GET(req, { params }) {
       return Response.json({ error: "El torneo no existe" }, { status: 404 });
     }
 
-    const { data: participantes, error: participantesError } = await supabase
+    const { searchParams } = new URL(req.url);
+    const { pagina, porPagina, desde, hasta } = leerPaginacion(searchParams);
+
+    const { filas: participantes, total } = await consultarPagina(
+      ({ head }) =>
+        supabase
+          .from("tournament_participants_raw")
+          .select(SELECT_PARTICIPANTE, { count: "exact", head })
+          .eq("torneo_id", torneoId)
+          .order("posicion", { ascending: true }),
+      { desde, hasta },
+    );
+
+    // El podio se pide aparte: es el top 4 del torneo, no el de la pagina
+    // actual, asi que tiene que seguir igual cuando pasas a la pagina 2.
+    const { data: podio, error: podioError } = await supabase
       .from("tournament_participants_raw")
-      .select(
-        "id, challonge_id, challonge_username, nombre_participante, posicion, puntaje, player_id, jugador:players ( id, display_name )",
-      )
+      .select(SELECT_PARTICIPANTE)
       .eq("torneo_id", torneoId)
-      .order("posicion", { ascending: true });
+      .order("posicion", { ascending: true })
+      .limit(4);
 
-    if (participantesError) throw participantesError;
-
-    const participantesResultado = participantes.map((p) => ({
-      id: p.id,
-      nombre_participante: p.nombre_participante,
-      posicion: p.posicion,
-      puntaje: p.puntaje,
-      estado: p.player_id
-        ? "vinculado"
-        : p.challonge_id
-          ? "pendiente"
-          : "sin_cuenta",
-      jugador: p.jugador ? { id: p.jugador.id, nombre: p.jugador.display_name } : null,
-    }));
+    if (podioError) throw podioError;
 
     return Response.json(
-      { torneo, participantes: participantesResultado },
+      {
+        torneo,
+        participantes: participantes.map(normalizarParticipante),
+        podio: podio.map(normalizarParticipante),
+        total,
+        pagina,
+        porPagina,
+      },
       { status: 200 },
     );
   } catch (error) {
