@@ -1,3 +1,5 @@
+v1.1
+- Añadir soporte a la focus league, la primera fase de grupos con vista de grupos y sus miembros, puntajes en grupos, fechas de peleas de los participantes dentro de los grupos, y luego la segunda fase como un torneo challonge normal
 - Añadir OAUTH con Discord
   -> El código ya está completo (botón Discord en /auth/login + /auth/callback con gate por is_admin()).
      Falta: habilitar el provider en el dashboard de Supabase (redirect URLs de prod/local) y decidir cómo
@@ -6,8 +8,6 @@
 - Añadir links de las redes sociales
   -> El footer ya tiene los 4 íconos (Discord/Instagram/X/Facebook) con href="#". Falta que me pases las
      URLs reales para cablearlas (y si querés sumar TikTok/YouTube/Twitch hay que dibujar el SVG, no existe en el repo).
-v1.1
-añadir soporte a la focus league, la primera fase de grupos con vista de grupos y sus miembros, puntajes en grupos, fechas de peleas de los participantes dentro de los grupos, y luego la segunda fase como un torneo challonge normal
 
 HECHO
 - [HECHO] Arreglar subtitulos en página de reglamento que no se animan al cargar igual que con los demás elementos
@@ -43,10 +43,7 @@ HECHO
           proveedor de email entero, así que ni el login del admin funcionaba en local. Quedó en
           true; el alta pública sigue cerrada por el enable_signup global de [auth].
 
-PENDIENTE (encontrado por los tests, fuera del alcance de estos 6 ítems)
-- /torneo-resultado/<id inexistente> muestra la página 404 pero responde HTTP 200 (soft 404).
-  Google puede indexar esas URLs. Pasa porque la página ya empezó a streamear antes de llegar al
-  notFound(). El test TC-TOR-005 lo documenta y verifica el contenido, no el status.
+
 - [HECHO] Cambiar la palabra login por blackhand en navbar
 - [HECHO] src/app/api/previsualizar_torneo/route.js -- confirmado sin consumidor, borrado.
 - [HECHO] La actividad reciente en admin dashboard debe mostrar qué se hizo y con cuales cuentas

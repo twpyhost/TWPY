@@ -3,7 +3,7 @@ import AnimatedCount from "@/components/ui/AnimatedCount";
 import SeasonTabs from "./SeasonTabs";
 import SeasonRibbon from "./SeasonRibbon";
 import RankingTable from "./RankingTable";
-import SeasonTransitionProvider from "./SeasonTransitionProvider";
+import SearchParamTransitionProvider from "@/components/ui/SearchParamTransitionProvider";
 import RankingTableBoundary from "./RankingTableBoundary";
 
 import { getFiltroAno, getRankingsCount } from "../utils/db";
@@ -35,7 +35,7 @@ export default async function RankingPage({ searchParams }) {
   }));
 
   return (
-    <SeasonTransitionProvider temporada={temporada}>
+    <SearchParamTransitionProvider value={temporada}>
       <HeroSection className="px-5 pb-11 pt-11 sm:px-8 sm:pt-16 lg:px-14 lg:pt-[84px]">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-6">
           <div className="flex flex-wrap items-end justify-between gap-8">
@@ -66,6 +66,6 @@ export default async function RankingPage({ searchParams }) {
       <RankingTableBoundary>
         <RankingTable temporada={temporada} />
       </RankingTableBoundary>
-    </SeasonTransitionProvider>
+    </SearchParamTransitionProvider>
   );
 }
