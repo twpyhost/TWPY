@@ -49,7 +49,7 @@ export const metadata = {
     description: DESCRIPCION,
     type: "website",
     locale: "es_PY",
-    images: ["/images/LOGO TWPY/PNG/TWPY LOGO VARIANTES-04.png"],
+    images: ["/images/LOGO TWPY/PNG/TWPY LOGO VARIANTES-06.png"],
   },
 };
 
