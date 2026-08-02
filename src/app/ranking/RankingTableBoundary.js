@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 
 import RankingTableLoading from "./RankingTableLoading";
-import { useSeasonTransition } from "./SeasonTransitionProvider";
+import { useSearchParamTransition } from "@/components/ui/SearchParamTransitionProvider";
 
 // Dueno de los DOS estados de carga de la tabla, para que ambos anuncien la
 // misma temporada:
@@ -21,7 +21,7 @@ import { useSeasonTransition } from "./SeasonTransitionProvider";
 // el label saltaba de una a la otra a mitad del loading. Ahora los dos leen
 // `temporadaMostrada` (optimista) del contexto.
 export default function RankingTableBoundary({ children }) {
-  const { isPending, temporadaMostrada } = useSeasonTransition();
+  const { isPending, valorMostrado: temporadaMostrada } = useSearchParamTransition();
 
   const cargando = <RankingTableLoading temporada={temporadaMostrada} />;
 

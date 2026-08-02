@@ -1,6 +1,6 @@
 "use client";
 
-import { useSeasonTransition } from "./SeasonTransitionProvider";
+import { useSearchParamTransition } from "@/components/ui/SearchParamTransitionProvider";
 
 // Selector de temporadas: mismo lenguaje visual (pill track + indicador
 // deslizante) que el diseno de Claude Design para Ranking, navegando via
@@ -13,7 +13,7 @@ import { useSeasonTransition } from "./SeasonTransitionProvider";
 export default function SeasonTabs({ seasons }) {
   // La temporada mostrada es optimista: el indicador y el resaltado se mueven
   // en el frame del click, sin esperar los ~50-100ms del shell del servidor.
-  const { navigate, temporadaMostrada } = useSeasonTransition();
+  const { navigate, valorMostrado: temporadaMostrada } = useSearchParamTransition();
 
   const n = seasons.length;
   const activeIndex = Math.max(
