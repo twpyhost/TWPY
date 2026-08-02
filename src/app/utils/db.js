@@ -5,4 +5,5 @@ export {
   getCompetidores,
   getFiltroAno,
   getTorneoResultados,
+  getRankingsCount,
 } from "@/lib/data";

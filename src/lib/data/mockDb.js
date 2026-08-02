@@ -1,5 +1,5 @@
-import torneos from "@/torneos.json";
-import resultado from "@/resultado.json";
+import torneos from "@/torneos.json" with { type: "json" };
+import resultado from "@/resultado.json" with { type: "json" };
 
 import { getMovimiento } from "./movimiento";
 
@@ -54,36 +54,43 @@ const getCompetidores = async () => {
   );
 };
 
-const getRankings = async () => {
+const getRankings = async (temporada) => {
+  const torneosTemporada = temporada
+    ? torneos.filter((torneo) => torneo.fecha.split("-")[0] === temporada)
+    : torneos;
+  const idsTemporada = new Set(torneosTemporada.map((torneo) => torneo.id));
+
   const totals = new Map();
   const previousTotals = new Map();
-  const latestTournamentId = [...torneos].sort((a, b) =>
+  const latestTournamentId = [...torneosTemporada].sort((a, b) =>
     b.fecha.localeCompare(a.fecha),
   )[0]?.id;
 
-  resultado.torneos.forEach((torneo) => {
-    torneo.competidores.forEach((competidor) => {
-      const current = totals.get(competidor.id) || {
-        id: competidor.id,
-        nombre: competidor.name,
-        puntaje: 0,
-      };
-
-      current.puntaje += competidor.score;
-      totals.set(competidor.id, current);
-
-      if (torneo.id !== latestTournamentId) {
-        const previous = previousTotals.get(competidor.id) || {
+  resultado.torneos
+    .filter((torneo) => idsTemporada.has(torneo.id))
+    .forEach((torneo) => {
+      torneo.competidores.forEach((competidor) => {
+        const current = totals.get(competidor.id) || {
           id: competidor.id,
           nombre: competidor.name,
           puntaje: 0,
         };
 
-        previous.puntaje += competidor.score;
-        previousTotals.set(competidor.id, previous);
-      }
+        current.puntaje += competidor.score;
+        totals.set(competidor.id, current);
+
+        if (torneo.id !== latestTournamentId) {
+          const previous = previousTotals.get(competidor.id) || {
+            id: competidor.id,
+            nombre: competidor.name,
+            puntaje: 0,
+          };
+
+          previous.puntaje += competidor.score;
+          previousTotals.set(competidor.id, previous);
+        }
+      });
     });
-  });
 
   const rankings = buildRanking(totals);
   const previousRankings = buildRanking(previousTotals);
@@ -98,6 +105,11 @@ const getRankings = async () => {
   });
 };
 
+const getRankingsCount = async (temporada) => {
+  const rankings = await getRankings(temporada);
+  return rankings.length;
+};
+
 const getFiltroAno = async () => {
   const years = torneos.map((torneo) => torneo.fecha.split("-")[0]);
   return [...new Set(years)].sort((a, b) => b.localeCompare(a));
@@ -109,6 +121,7 @@ export {
   getCompetidores,
   getFiltroAno,
   getTorneoResultados,
+  getRankingsCount,
 };
 
 function buildRanking(totals) {

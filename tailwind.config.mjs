@@ -142,6 +142,42 @@ export default {
           from: { opacity: 0, transform: "translateY(8px)" },
           to: { opacity: 1, transform: "none" },
         },
+        glitch404: {
+          "0%, 88%, 100%": {
+            transform: "translate(0,0)",
+            opacity: 1,
+            textShadow: "0 4px 30px rgba(0,0,0,.85)",
+          },
+          "89%": {
+            transform: "translate(-4px,2px)",
+            opacity: 0.92,
+            textShadow:
+              "3px 0 rgb(var(--color-tekken-blue-400)), -3px 0 rgb(var(--color-primary-500))",
+          },
+          "90%": {
+            transform: "translate(3px,-2px)",
+            opacity: 0.95,
+            textShadow:
+              "-3px 0 rgb(var(--color-tekken-blue-400)), 3px 0 rgb(var(--color-primary-500))",
+          },
+          "91%": {
+            transform: "translate(-2px,0)",
+            opacity: 0.9,
+            textShadow:
+              "2px 0 rgb(var(--color-tekken-blue-400)), -2px 0 rgb(var(--color-primary-500))",
+          },
+          "92%": {
+            transform: "translate(0,0)",
+            opacity: 1,
+            textShadow: "0 4px 30px rgba(0,0,0,.85)",
+          },
+        },
+        koStamp: {
+          "0%": { transform: "scale(2.6) rotate(-8deg)", opacity: 0 },
+          "60%": { transform: "scale(.94) rotate(-8deg)", opacity: 1 },
+          "80%": { transform: "scale(1.04) rotate(-8deg)" },
+          "100%": { transform: "scale(1) rotate(-8deg)", opacity: 1 },
+        },
       },
       animation: {
         "glow-pulse": "glowPulse 7s ease-in-out infinite",
@@ -160,6 +196,8 @@ export default {
         "line-grow": "lineGrow .9s cubic-bezier(.16,.84,.24,1) both",
         "pulse-dot": "pulseDot 2s ease-in-out infinite",
         "card-in": "cardIn .35s cubic-bezier(.4,0,.2,1) both",
+        "glitch-404": "glitch404 5s ease-in-out .6s infinite",
+        "ko-stamp": "koStamp .7s cubic-bezier(.16,.84,.24,1) both",
       },
     },
   },

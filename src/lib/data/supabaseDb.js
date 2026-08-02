@@ -85,17 +85,23 @@ const getCompetidores = async () => {
     .sort((a, b) => a.nombre.localeCompare(b.nombre));
 };
 
-const getRankings = async () => {
+const getRankings = async (temporada) => {
   const supabase = getClient();
 
-  // Ultimos dos torneos de la temporada mas reciente: el ultimo define el
-  // ranking actual y el anterior sirve para calcular el movimiento.
-  const { data: ultimosTorneos, error: torneosError } = await supabase
+  // Ultimos dos torneos de la temporada pedida (o de la mas reciente si no
+  // se especifica una): el ultimo define el ranking y el anterior sirve
+  // para calcular el movimiento.
+  let torneosQuery = supabase
     .from("torneos")
     .select("id, temporada")
     .order("temporada", { ascending: false })
-    .order("fecha_inicio", { ascending: false })
-    .limit(2);
+    .order("fecha_inicio", { ascending: false });
+
+  if (temporada) {
+    torneosQuery = torneosQuery.eq("temporada", temporada);
+  }
+
+  const { data: ultimosTorneos, error: torneosError } = await torneosQuery.limit(2);
 
   if (torneosError) {
     throw new Error(`Error al obtener torneos: ${torneosError.message}`);
@@ -149,6 +155,42 @@ const getRankings = async () => {
   }));
 };
 
+const getRankingsCount = async (temporada) => {
+  const supabase = getClient();
+
+  let torneosQuery = supabase
+    .from("torneos")
+    .select("id, temporada")
+    .order("temporada", { ascending: false })
+    .order("fecha_inicio", { ascending: false });
+
+  if (temporada) {
+    torneosQuery = torneosQuery.eq("temporada", temporada);
+  }
+
+  const { data: ultimosTorneos, error: torneosError } =
+    await torneosQuery.limit(1);
+
+  if (torneosError) {
+    throw new Error(`Error al obtener torneos: ${torneosError.message}`);
+  }
+
+  if (!ultimosTorneos || ultimosTorneos.length === 0) {
+    return 0;
+  }
+
+  const { count, error: countError } = await supabase
+    .from("ranking_snapshots")
+    .select("player_id", { count: "exact", head: true })
+    .eq("torneo_id", ultimosTorneos[0].id);
+
+  if (countError) {
+    throw new Error(`Error al contar ranking: ${countError.message}`);
+  }
+
+  return count ?? 0;
+};
+
 const getFiltroAno = async () => {
   const { data, error } = await getClient()
     .from("torneos")
@@ -168,4 +210,5 @@ export {
   getCompetidores,
   getFiltroAno,
   getTorneoResultados,
+  getRankingsCount,
 };
