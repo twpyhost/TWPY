@@ -180,7 +180,7 @@ test.describe("TS-TOR | Torneos publicos", () => {
   test("TC-TOR-007 | el pill elegido queda activo apenas se hace click", async ({ page }) => {
     // Registrado antes de goto() para atrapar tambien el prefetch automatico
     // de <Link> al montar la pagina, no solo el click.
-    await page.route(`**/torneos?year=${TEMPORADA_ANTERIOR}`, async (route) => {
+    await page.route(`**/torneos?year=${TEMPORADA_ANTERIOR}*`, async (route) => {
       await new Promise((r) => setTimeout(r, 800));
       await route.continue();
     });
