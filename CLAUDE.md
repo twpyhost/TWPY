@@ -37,6 +37,7 @@ Users → Cloudflare (DNS/CDN) → Vercel (Next.js frontend) → Supabase (DB/Au
 - `docs/superpowers/specs/` — feature design specs (brainstorming output) written before implementation plans.
 - `docs/superpowers/plans/` — implementation plans, one per spec.
 - `docs/admin-dashboard-brief.md`, `docs/infrastructure.md` — standalone briefs referenced elsewhere in this file.
+- `docs/tech-debt-backlog.md` — running log of real, non-blocking findings deferred from code review/implementation work, grouped by the feature/date that surfaced them. Append here rather than losing deferred items to a closed conversation.
 
 ---
 
