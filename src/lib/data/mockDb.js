@@ -1,5 +1,5 @@
-import torneos from "@/torneos.json" assert { type: "json" };
-import resultado from "@/resultado.json" assert { type: "json" };
+import torneos from "@/torneos.json" with { type: "json" };
+import resultado from "@/resultado.json" with { type: "json" };
 
 import { getMovimiento } from "./movimiento";
 
