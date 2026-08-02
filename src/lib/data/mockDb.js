@@ -1,5 +1,5 @@
-import torneos from "@/torneos.json";
-import resultado from "@/resultado.json";
+import torneos from "@/torneos.json" assert { type: "json" };
+import resultado from "@/resultado.json" assert { type: "json" };
 
 import { getMovimiento } from "./movimiento";
 
@@ -105,6 +105,11 @@ const getRankings = async (temporada) => {
   });
 };
 
+const getRankingsCount = async (temporada) => {
+  const rankings = await getRankings(temporada);
+  return rankings.length;
+};
+
 const getFiltroAno = async () => {
   const years = torneos.map((torneo) => torneo.fecha.split("-")[0]);
   return [...new Set(years)].sort((a, b) => b.localeCompare(a));
@@ -116,6 +121,7 @@ export {
   getCompetidores,
   getFiltroAno,
   getTorneoResultados,
+  getRankingsCount,
 };
 
 function buildRanking(totals) {
