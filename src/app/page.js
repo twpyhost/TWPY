@@ -74,7 +74,7 @@ export default function Home() {
             variant="outline"
             className="px-[clamp(20px,5vw,34px)] py-[clamp(11px,2.8vw,14px)] text-[clamp(15px,4vw,19px)] tracking-[.16em] hover:-translate-y-0.5 hover:border-tekken-blue-400 hover:text-tekken-blue-400"
           >
-            PRÓXIMOS TORNEOS
+            HISTÓRICO DE TORNEOS
           </Button>
         </div>
       </div>
