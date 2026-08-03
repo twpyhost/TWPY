@@ -106,8 +106,7 @@ export default function LoginPage() {
               <span className="text-primary-500">ARENA</span>
             </h1>
             <p className="m-0 max-w-[420px] font-body text-base leading-[1.65] text-white/70">
-              Accedé a tu cuenta para inscribirte a los torneos, seguir tu ranking y ver tus
-              próximos combates del fixture.
+              Accedé a tu cuenta para administrar los torneos de TWPY.
             </p>
             <div className="flex gap-9 border-t border-white/10 pt-3">
               <div className="flex flex-col">
