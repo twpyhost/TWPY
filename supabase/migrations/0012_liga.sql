@@ -118,3 +118,11 @@ create policy "lectura publica" on liga_fechas        for select using (true);
 create policy "lectura publica" on liga_grupos        for select using (true);
 create policy "lectura publica" on liga_participantes for select using (true);
 create policy "lectura publica" on liga_partidos      for select using (true);
+
+-- 0007 otorgo "grant all on all tables" solo a las tablas que existian en
+-- ese momento -- estas son nuevas y necesitan el mismo grant explicito
+-- (sin esto ni siquiera service_role puede escribir en un ambiente nuevo,
+-- ver el mismo caso en 0008_sistema_eventos.sql). RLS sigue siendo la
+-- barrera real fila-a-fila.
+grant all on ligas, liga_fechas, liga_grupos, liga_participantes, liga_partidos
+  to anon, authenticated, service_role;

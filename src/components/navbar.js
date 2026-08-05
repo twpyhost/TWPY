@@ -11,6 +11,7 @@ import logo from "../../public/images/misc/tekken8-logo-sm.png";
 const NAV_ITEMS = [
   { name: "RANKING", href: "/ranking" },
   { name: "TORNEOS", href: "/torneos" },
+  { name: "LIGA", href: "/liga" },
   { name: "COMPETIDORES", href: "/competidores" },
   { name: "REGLAMENTO", href: "/reglamento" },
 ];
