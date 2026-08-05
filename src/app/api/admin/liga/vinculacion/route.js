@@ -109,6 +109,10 @@ export async function POST(req) {
 
     revalidatePath("/liga");
     if (crearComo) revalidatePath("/competidores");
+    // El badge de pendientes del sidebar admin lo calcula src/app/admin/layout.js
+    // -- sin esto queda desactualizado hasta un reload completo (el layout no
+    // se re-renderiza en una navegacion client-side normal).
+    revalidatePath("/admin", "layout");
 
     return Response.json(
       { message: "Participante vinculado", playerId: jugador.id },

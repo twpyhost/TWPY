@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 import HeroSection from "@/components/ui/HeroSection";
@@ -9,6 +10,7 @@ import RibbonTag from "@/components/ui/RibbonTag";
 import BuscadorJugador from "@/app/admin/identidades/BuscadorJugador";
 
 export default function Vinculacion() {
+  const router = useRouter();
   const [pendientes, setPendientes] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,6 +24,15 @@ export default function Vinculacion() {
       setLoading(false);
     }
   }, []);
+
+  // El badge de pendientes vive en el layout server-side (AdminShell via
+  // src/app/admin/layout.js) -- revalidatePath del lado del server no
+  // actualiza por si solo un layout ya montado, hace falta pedirle a Next
+  // que vuelva a buscarlo.
+  const cargarYRefrescarSidebar = useCallback(async () => {
+    await cargar();
+    router.refresh();
+  }, [cargar, router]);
 
   useEffect(() => {
     cargar();
@@ -62,7 +73,11 @@ export default function Vinculacion() {
             </p>
           ) : (
             pendientes.map((item) => (
-              <FilaPendiente key={item.participanteId} item={item} onResuelto={cargar} />
+              <FilaPendiente
+                key={item.participanteId}
+                item={item}
+                onResuelto={cargarYRefrescarSidebar}
+              />
             ))
           )}
         </div>
