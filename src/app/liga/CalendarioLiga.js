@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import RibbonTag from "@/components/ui/RibbonTag";
 
 // Arma, por fecha, los grupos que juegan ese dia con sus peleas y quien
@@ -52,38 +54,31 @@ export default function CalendarioLiga({ fechas, grupos }) {
                     <span className="font-display text-xs tracking-[0.1em] text-primary-500">
                       {bloque.grupoNombre.toUpperCase()}
                     </span>
-                    <div className="flex flex-col gap-1">
+                    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-2 gap-y-1 font-body text-sm">
                       {bloque.partidos.map((partido) => (
-                        <div
-                          key={partido.id}
-                          className="flex items-center justify-between gap-2 font-body text-sm"
-                        >
+                        <Fragment key={partido.id}>
                           <span
-                            className={
+                            className={`truncate text-right ${
                               partido.ganadorId === partido.participanteAId
                                 ? "font-bold text-success"
                                 : "text-white/70"
-                            }
+                            }`}
                           >
                             {partido.nombreA}
                           </span>
-                          {partido.ganadorId == null ? (
-                            <span className="font-display text-[10px] tracking-[0.08em] text-white/30">
-                              PENDIENTE
-                            </span>
-                          ) : (
-                            <span className="font-display text-[11px] text-white/30">VS</span>
-                          )}
+                          <span className="flex items-center justify-center whitespace-nowrap font-display text-[10px] tracking-[0.08em] text-white/30">
+                            {partido.ganadorId == null ? "PENDIENTE" : "VS"}
+                          </span>
                           <span
-                            className={
+                            className={`truncate text-left ${
                               partido.ganadorId === partido.participanteBId
                                 ? "font-bold text-success"
                                 : "text-white/70"
-                            }
+                            }`}
                           >
                             {partido.nombreB}
                           </span>
-                        </div>
+                        </Fragment>
                       ))}
                     </div>
                     {bloque.descansaNombre && (
