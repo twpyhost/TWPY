@@ -1,7 +1,9 @@
 import torneos from "@/torneos.json" with { type: "json" };
 import resultado from "@/resultado.json" with { type: "json" };
+import liga from "@/liga.json" with { type: "json" };
 
 import { getMovimiento } from "./movimiento";
+import { armarLiga } from "@/lib/ligaData";
 
 const getTorneos = async () => {
   return torneos.map((torneo) => {
@@ -115,6 +117,14 @@ const getFiltroAno = async () => {
   return [...new Set(years)].sort((a, b) => b.localeCompare(a));
 };
 
+const getLiga = async (slug) => {
+  if (liga.liga.slug !== slug) {
+    return null;
+  }
+
+  return armarLiga(liga);
+};
+
 export {
   getTorneos,
   getRankings,
@@ -122,6 +132,7 @@ export {
   getFiltroAno,
   getTorneoResultados,
   getRankingsCount,
+  getLiga,
 };
 
 function buildRanking(totals) {

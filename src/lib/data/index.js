@@ -11,4 +11,5 @@ export const {
   getFiltroAno,
   getTorneoResultados,
   getRankingsCount,
+  getLiga,
 } = db;

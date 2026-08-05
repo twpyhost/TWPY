@@ -6,4 +6,5 @@ export {
   getFiltroAno,
   getTorneoResultados,
   getRankingsCount,
+  getLiga,
 } from "@/lib/data";
