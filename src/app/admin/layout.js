@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/adminAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import AdminShell from "@/components/admin/AdminShell";
+import { obtenerLigaActual, contarPendientesVincularLiga } from "@/lib/ligaAdmin";
 
 // Guard centralizado (antes duplicado en cada admin/*/page.js). El limite
 // de seguridad real sigue siendo requireAdmin() en las rutas de API: esto
@@ -26,9 +27,13 @@ export default async function AdminLayout({ children }) {
     .limit(1)
     .maybeSingle();
 
+  const ligaActual = await obtenerLigaActual(supabase);
+  const ligaPendingCount = await contarPendientesVincularLiga(supabase, ligaActual?.id);
+
   return (
     <AdminShell
       pendingCount={count ?? 0}
+      ligaPendingCount={ligaPendingCount}
       userEmail={user.email}
       supabaseOk={ultimoHealth ? ultimoHealth.ok : null}
     >

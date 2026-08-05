@@ -25,3 +25,28 @@ export async function obtenerGrupoPorNumero(supabase, ligaId, numero) {
   if (error) throw error;
   return data;
 }
+
+// Badge del nav de admin (mismo patron que el pendingCount de Identidades
+// en AdminShell, pero contando liga_participantes en vez de
+// tournament_participants_raw).
+export async function contarPendientesVincularLiga(supabase, ligaId) {
+  if (!ligaId) return 0;
+
+  const { data: grupos, error: gruposError } = await supabase
+    .from("liga_grupos")
+    .select("id")
+    .eq("liga_id", ligaId);
+  if (gruposError) throw gruposError;
+
+  const grupoIds = grupos.map((g) => g.id);
+  if (grupoIds.length === 0) return 0;
+
+  const { count, error: countError } = await supabase
+    .from("liga_participantes")
+    .select("id", { count: "exact", head: true })
+    .in("grupo_id", grupoIds)
+    .is("player_id", null);
+  if (countError) throw countError;
+
+  return count ?? 0;
+}
