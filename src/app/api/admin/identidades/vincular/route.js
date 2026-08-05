@@ -37,6 +37,10 @@ export async function POST(req) {
     revalidatePath("/ranking");
     revalidatePath("/competidores");
     revalidatePath("/torneos");
+    // El badge de "Pendientes" del sidebar admin lo calcula
+    // src/app/admin/layout.js -- sin esto queda desactualizado hasta un
+    // reload completo.
+    revalidatePath("/admin", "layout");
 
     return Response.json(
       { message: "Participante vinculado", ...resultado },
