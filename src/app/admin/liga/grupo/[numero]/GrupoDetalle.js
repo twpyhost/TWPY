@@ -120,22 +120,26 @@ export default function GrupoDetalle({ numero }) {
       const timeoutPrevio = destacadosTimeouts.current.get(id);
       if (timeoutPrevio) clearTimeout(timeoutPrevio);
     }
-    setDestacados((prev) => {
-      const siguiente = new Set(prev);
-      for (const id of ids) siguiente.add(id);
-      return siguiente;
-    });
-    for (const id of ids) {
-      const timeoutId = setTimeout(() => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
         setDestacados((prev) => {
           const siguiente = new Set(prev);
-          siguiente.delete(id);
+          for (const id of ids) siguiente.add(id);
           return siguiente;
         });
-        destacadosTimeouts.current.delete(id);
-      }, 500);
-      destacadosTimeouts.current.set(id, timeoutId);
-    }
+        for (const id of ids) {
+          const timeoutId = setTimeout(() => {
+            setDestacados((prev) => {
+              const siguiente = new Set(prev);
+              siguiente.delete(id);
+              return siguiente;
+            });
+            destacadosTimeouts.current.delete(id);
+          }, 500);
+          destacadosTimeouts.current.set(id, timeoutId);
+        }
+      });
+    });
   };
 
   const moverEnDraft = (bloque, indiceEnBloque, direccion) => {
