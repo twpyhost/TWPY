@@ -140,3 +140,70 @@ behavior `/ranking`'s season selector already had.
    **Proposed fix**: Update the two references next time `TODO.todo` is
    touched.
    **Status**: Open
+
+---
+
+## 2026-08-06 — Desempate manual (admin) rediseño
+
+Surfaced across the 5 task reviews and the final whole-branch review of
+[`docs/superpowers/plans/2026-08-06-liga-desempate-admin.md`](superpowers/plans/2026-08-06-liga-desempate-admin.md),
+which reworked the manual tie-break UI in `/admin/liga/grupo/[numero]` (local
+draft reorder, explicit Confirmar/Descartar, and a guard blocking closing a
+group with unresolved ties).
+
+1. **What**: Confirmar/Descartar don't check `grupo.cerrado` (pre-existing
+   gap, not introduced by this plan — the `PUT /desempate` endpoint itself
+   has never checked `cerrado` either).
+   **Where**: `src/app/admin/liga/grupo/[numero]/GrupoDetalle.js` (the
+   Confirmar/Descartar buttons, unlike the ↑/↓ arrows, don't disable on
+   `grupo.cerrado`); `src/app/api/admin/liga/grupos/[numero]/desempate/route.js`
+   (no `cerrado` check at all).
+   **Why it matters**: A narrow but real sequence bypasses "a closed group
+   rejects changes" (the exact invariant `TC-LIGA-ADMIN-002` tests for match
+   results): create a local reorder draft on an already-resolved block
+   (no `empatado`, so closing isn't blocked), close the group without
+   confirming that draft, then click the still-visible Confirmar — it
+   succeeds and rewrites `orden_desempate` on a closed group.
+   **Proposed fix**: Add a `cerrado` check to the `PUT /desempate` route
+   (mirroring the one added to `PUT /cerrar` in Task 2 of the plan above),
+   and disable Confirmar/Descartar in the UI when `grupo.cerrado` is true,
+   same as the arrows already do.
+   **Status**: Open
+
+2. **What**: `claveBloque(grupo.tabla, bloque)` recomputed up to 5x per row
+   that has arrows/Confirmar/Descartar visible.
+   **Where**: `src/app/admin/liga/grupo/[numero]/GrupoDetalle.js` (disabled
+   checks on both arrows, both Confirmar/Descartar, plus inside
+   `hayCambiosPendientes`).
+   **Why it matters**: Harmless at this table's size (groups of ~7), but a
+   `const clave = bloque ? claveBloque(grupo.tabla, bloque) : null;` once
+   per row would read cleaner and avoid the repetition.
+   **Proposed fix**: Hoist the one computation to the top of each row's
+   render and reference it everywhere in that row.
+   **Status**: Open
+
+3. **What**: `!grupo.cerrado && hayEmpatesPendientes` repeated verbatim 3x.
+   **Where**: `src/app/admin/liga/grupo/[numero]/GrupoDetalle.js` (the
+   "CERRAR GRUPO" button's `disabled`, `title`, and the warning `<p>`'s
+   render guard).
+   **Why it matters**: Trivial style nit — the three copies are adjacent
+   and easy to keep in sync, but a single named `const` would remove the
+   duplication entirely.
+   **Proposed fix**: `const bloqueadoPorEmpate = !grupo.cerrado && hayEmpatesPendientes;`
+   once, reuse it in all three spots.
+   **Status**: Open
+
+4. **What**: No test pins "a local reorder draft is NOT persisted until
+   Confirmar is clicked" independently of the persistence-after-reload test.
+   **Where**: `tests/e2e/admin/ligaDesempate.spec.js`
+   (`TC-LIGA-DESEMPATE-003` covers "confirm persists across reload" but
+   nothing reloads *before* confirming to prove the draft alone changed
+   nothing server-side).
+   **Why it matters**: This is the literal bug this whole feature exists to
+   fix (arrows used to save on every click); reading the code confirms
+   `moverEnDraft` never calls `fetch`, but no test would catch a future
+   regression that made drafts auto-save.
+   **Proposed fix**: In `TC-LIGA-DESEMPATE-003` (or a new test), move a row,
+   `page.reload()` *before* clicking Confirmar, and assert the original
+   (pre-move) order is what comes back.
+   **Status**: Open
