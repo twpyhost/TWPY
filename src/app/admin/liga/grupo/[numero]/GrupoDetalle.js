@@ -85,6 +85,8 @@ export default function GrupoDetalle({ numero }) {
     return filas;
   }, [grupo, bloques, ordenDraft]);
 
+  const hayEmpatesPendientes = grupo?.tabla.some((f) => f.empatado) ?? false;
+
   const cargarGanador = async (partidoId, ganadorId) => {
     setGuardandoPartidoId(partidoId);
     try {
@@ -226,10 +228,21 @@ export default function GrupoDetalle({ numero }) {
             <Button
               variant="outline"
               onClick={() => setModalCerrarAbierto(true)}
-              className="px-5 py-2.5 text-base"
+              disabled={!grupo.cerrado && hayEmpatesPendientes}
+              title={
+                !grupo.cerrado && hayEmpatesPendientes
+                  ? "Resolvé los empates pendientes antes de cerrar el grupo"
+                  : undefined
+              }
+              className="px-5 py-2.5 text-base disabled:opacity-40"
             >
               {grupo.cerrado ? "REABRIR GRUPO" : "CERRAR GRUPO"}
             </Button>
+            {!grupo.cerrado && hayEmpatesPendientes && (
+              <p className="w-full text-right font-body text-xs text-warning">
+                Resolvé los empates pendientes antes de cerrar el grupo.
+              </p>
+            )}
           </div>
         </div>
       </HeroSection>

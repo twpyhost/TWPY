@@ -118,4 +118,37 @@ test.describe("TS-LIGA-DESEMPATE | Desempate manual en la fase de grupos", () =>
     const segundaFilaDespues = page.getByRole("row").nth(2);
     await expect(segundaFilaDespues.getByRole("cell").nth(1)).toHaveText(nombreMovido);
   });
+
+  /**
+   * TC-LIGA-DESEMPATE-004 | CERRAR GRUPO se deshabilita con empates pendientes
+   * Descripcion: un grupo recien sembrado esta totalmente empatado (0
+   *   puntos para todos) -- el boton CERRAR GRUPO debe estar deshabilitado.
+   *   Resolviendo el unico bloque empatado (mover + confirmar) el boton se
+   *   habilita y el cierre funciona.
+   * Pasos:
+   *   1. Ir a /admin/liga/grupo/4 -- verificar CERRAR GRUPO deshabilitado.
+   *   2. Mover y confirmar el bloque empatado (resuelve todo el grupo, que
+   *      es un solo bloque de 7).
+   *   3. Verificar CERRAR GRUPO habilitado, hacer click y confirmar en el modal.
+   * Resultado esperado: el badge pasa a "CERRADO".
+   * Tecnica: caso feliz sobre una restriccion de negocio | Prioridad: alta
+   */
+  test("TC-LIGA-DESEMPATE-004 | CERRAR GRUPO se deshabilita y habilita segun haya empates", async ({
+    page,
+  }) => {
+    await page.goto("/admin/liga/grupo/4");
+
+    const botonCerrar = page.getByRole("button", { name: "CERRAR GRUPO" });
+    await expect(botonCerrar).toBeDisabled();
+
+    await page.getByRole("row").nth(1).getByRole("button", { name: "Bajar" }).click();
+    await page.getByRole("button", { name: "Confirmar" }).click();
+    await expect(page.getByText("Desempate guardado")).toBeVisible();
+
+    await expect(botonCerrar).toBeEnabled();
+    await botonCerrar.click();
+    await page.getByRole("button", { name: "CERRAR", exact: true }).click();
+
+    await expect(page.getByText("CERRADO", { exact: true })).toBeVisible();
+  });
 });
