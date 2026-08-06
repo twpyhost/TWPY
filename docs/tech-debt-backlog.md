@@ -207,3 +207,102 @@ group with unresolved ties).
    `page.reload()` *before* clicking Confirmar, and assert the original
    (pre-move) order is what comes back.
    **Status**: Open
+
+---
+
+## 2026-08-06 — Desempate: panel de confirmar + feedback de movimiento
+
+Surfaced during the final whole-branch review of
+[`docs/superpowers/plans/2026-08-06-liga-desempate-panel-y-feedback.md`](superpowers/plans/2026-08-06-liga-desempate-panel-y-feedback.md),
+which moved the manual tie-break Confirmar/Descartar buttons out of the live
+table into a panel below it, and added row-highlight animation when a tied
+block is moved with ↑/↓.
+
+1. **What**: `.env.local` connects to remote production Supabase by design
+   (documented in `playwright.config.js` for test-side mitigation), but a
+   plain `npm run dev` invocation bypasses test safety and can silently talk
+   to production if started by mistake.
+   **Where**: `.env.local`, `playwright.config.js` (context); no specific
+   diff line — this is a project-wide dev-environment characteristic, not a
+   code defect.
+   **Why it matters**: During this branch's manual UI verification, `npm run
+   dev` was briefly started and connected to production before being caught
+   and terminated — no request was served, so no data changed, but the setup
+   makes this an easy mistake to repeat.
+   **Proposed fix**: Add a lightweight dev-time guard: `next dev` should print
+   a warning (or refuse to start) if `NEXT_PUBLIC_SUPABASE_URL` doesn't look
+   like a local URL (e.g., `127.0.0.1` or `localhost`), so a stray `npm run
+   dev` can't silently talk to prod.
+   **Status**: Open
+
+2. **What**: `claveBloque(grupo.tabla, bloque)` and `hayCambiosPendientes(bloque)`
+   are recomputed twice per pending block on every render.
+   **Where**: `src/app/admin/liga/grupo/[numero]/GrupoDetalle.js` (once in the
+   `bloquesPendientes` filter, once inside the panel's `.map` — and
+   `hayCambiosPendientes` internally recomputes `claveBloque` again).
+   **Why it matters**: Harmless at this table's size (~7 participants), but
+   worth flattening if the file is touched again; computing once per block
+   and passing it down reads cleaner.
+   **Proposed fix**: Compute `clave` and `hayCambios` once per block and pass
+   them down instead of recomputing.
+   **Status**: Open
+
+3. **What**: The new "DESEMPATES PENDIENTES" panel is ~45 lines of inline JSX
+   in an already large render function; a cleaner extraction would be a small
+   custom hook `useDestacados()` wrapping the row-highlight state/ref/effect
+   and `destacarFilas` function.
+   **Where**: `src/app/admin/liga/grupo/[numero]/GrupoDetalle.js`.
+   **Why it matters**: The component is 537 lines and growing; extracting the
+   self-contained hook would remove one concern from the body at zero coupling
+   cost. At current size, not urgent, but worth doing whenever the file is
+   next touched.
+   **Proposed fix**: Extract `useDestacados()` into its own hook (co-located
+   in the same file or a small new file, per this codebase's convention for
+   single-consumer hooks), returning `{ destacados, destacarFilas }`.
+   **Status**: Open
+
+4. **What**: The panel's first-block divider never suppresses via
+   `first:border-t-0 first:pt-0`, because the panel's first DOM child is the
+   "DESEMPATES PENDIENTES" `<span>` heading, not the first block row.
+   **Where**: `src/app/admin/liga/grupo/[numero]/GrupoDetalle.js` (the
+   per-block `<div>` className).
+   **Why it matters**: Cosmetic only — an extra thin divider line appears
+   directly under the panel heading. This bug was present in the plan's own
+   prescribed code, faithfully reproduced; it's a plan defect, not an
+   implementer mistake.
+   **Proposed fix**: Move the heading out of the flex container the `first:`
+   selector targets, or use `:not(:first-child)` / `[&:nth-child(2)]:border-t-0`
+   scoped correctly to block rows only.
+   **Status**: Open
+
+5. **What**: The panel's Confirmar/Descartar buttons (and the arrows, and the
+   `PUT /api/admin/liga/grupos/[numero]/desempate` route) don't check
+   `grupo.cerrado` — only the ↑/↓ arrows in the table do.
+   **Where**: `src/app/admin/liga/grupo/[numero]/GrupoDetalle.js` (panel
+   buttons), `src/app/api/admin/liga/grupos/[numero]/desempate/route.js` (no
+   `cerrado` check). Pre-existing (the in-table buttons this panel replaced
+   had the identical gap), but the panel makes a stale, still-clickable
+   Confirmar more visible/persistent than a tucked-in table-row button did.
+   **Why it matters**: A narrow sequence (draft created on an already-resolved
+   block before closing the group) lets an admin change a closed group's
+   tie-break order via a lingering Confirmar button, bypassing "a closed group
+   rejects changes." (See the related entry in the `2026-08-06 — Desempate
+   manual (admin) rediseño` section above for the full scenario.)
+   **Proposed fix**: Add a `cerrado` check to the `PUT /desempate` route, and
+   disable the panel's Confirmar/Descartar (not just the arrows) when
+   `grupo.cerrado` is true.
+   **Status**: Open
+
+6. **What**: `destacarFilas` doesn't re-trigger a fresh flash if a row is
+   moved again while its highlight is still active (within the 500ms window)
+   — the class doesn't change, so no new CSS transition fires.
+   **Where**: `src/app/admin/liga/grupo/[numero]/GrupoDetalle.js`
+   (`destacarFilas` function).
+   **Why it matters**: Slightly undercuts the feature's goal on rapid repeated
+   clicks of the same row, though a visual signal remains present (the swap
+   partner always flashes fresh, so this is a minor UX edge case).
+   **Proposed fix**: Force a fresh transition on re-trigger (e.g., briefly
+   remove and re-add the highlight class, or key the flash by a bump counter
+   instead of simple set membership). Likely not worth the added complexity
+   unless it surfaces as real user feedback.
+   **Status**: Open
