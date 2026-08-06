@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { obtenerLigaActual, obtenerGrupoPorNumero } from "@/lib/ligaAdmin";
+import { calcularTabla } from "@/lib/ligaTabla";
 
 export async function PUT(req, { params }) {
   try {
@@ -27,6 +28,33 @@ export async function PUT(req, { params }) {
     const grupo = await obtenerGrupoPorNumero(supabase, liga.id, numero);
     if (!grupo) {
       return Response.json({ error: "Grupo no encontrado" }, { status: 404 });
+    }
+
+    if (cerrado) {
+      const { data: participantes, error: participantesError } = await supabase
+        .from("liga_participantes")
+        .select("id, grupo_id, nombre, player_id, orden_desempate")
+        .eq("grupo_id", grupo.id);
+      if (participantesError) throw participantesError;
+
+      const { data: partidos, error: partidosError } = await supabase
+        .from("liga_partidos")
+        .select("participante_a_id, participante_b_id, ganador_id")
+        .eq("grupo_id", grupo.id);
+      if (partidosError) throw partidosError;
+
+      const tabla = calcularTabla(participantes, partidos, {
+        cuposClasificados: grupo.cupos_clasificados,
+      });
+      if (tabla.some((fila) => fila.empatado)) {
+        return Response.json(
+          {
+            error:
+              "Hay empates sin resolver: asigna un orden de desempate antes de cerrar el grupo",
+          },
+          { status: 409 },
+        );
+      }
     }
 
     const { error: updateError } = await supabase
