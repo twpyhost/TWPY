@@ -100,3 +100,22 @@ export function calcularTabla(participantes, partidos, opciones = {}) {
     };
   });
 }
+
+// Bloques contiguos que comparten puntaje, resueltos o no -- a diferencia
+// del campo `empatado` (que se apaga apenas todos tienen orden_desempate),
+// esto agrupa por puntos para que el admin pueda seguir reordenando un
+// bloque despues de resolverlo. `calcularTabla` ya deja las filas
+// ordenadas por puntos, asi que un bloque es siempre un rango contiguo.
+export function bloquesPorPuntos(tabla) {
+  const bloques = [];
+  let i = 0;
+  while (i < tabla.length) {
+    let j = i + 1;
+    while (j < tabla.length && tabla[j].puntos === tabla[i].puntos) {
+      j += 1;
+    }
+    if (j - i > 1) bloques.push({ inicio: i, fin: j });
+    i = j;
+  }
+  return bloques;
+}

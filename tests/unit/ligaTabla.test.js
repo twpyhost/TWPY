@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { calcularTabla } from "../../src/lib/ligaTabla.js";
+import { calcularTabla, bloquesPorPuntos } from "../../src/lib/ligaTabla.js";
 
 function participante(id, nombre, ordenDesempate = null, playerId = null) {
   return { id, nombre, player_id: playerId, orden_desempate: ordenDesempate };
@@ -114,5 +114,44 @@ test.describe("calcularTabla", () => {
 
   test("orden estable con tabla vacia", () => {
     expect(calcularTabla([], [])).toEqual([]);
+  });
+});
+
+test.describe("bloquesPorPuntos", () => {
+  test("agrupa un bloque de 2 aunque ya tenga orden_desempate asignado", () => {
+    const participantes = [participante(1, "A", 1), participante(2, "B", 2)];
+    const tabla = calcularTabla(participantes, []); // ambos en 0 puntos, ya resuelto
+
+    expect(bloquesPorPuntos(tabla)).toEqual([{ inicio: 0, fin: 2 }]);
+  });
+
+  test("detecta varios bloques a distinto puntaje y deja afuera a quien no comparte puntos", () => {
+    const participantes = [
+      participante(1, "A"),
+      participante(2, "B"),
+      participante(3, "C"),
+      participante(4, "D"),
+    ];
+    // A le gana a C y D (2 puntos, sola en su puntaje).
+    // C y D le ganan a B (1 punto cada una, empatadas entre si).
+    // B pierde ambas (0 puntos, sola en su puntaje).
+    const partidos = [
+      partido(1, 3, 1),
+      partido(1, 4, 1),
+      partido(2, 3, 3),
+      partido(2, 4, 4),
+    ];
+    const tabla = calcularTabla(participantes, partidos);
+
+    expect(tabla.map((f) => f.nombre)).toEqual(["A", "C", "D", "B"]);
+    expect(bloquesPorPuntos(tabla)).toEqual([{ inicio: 1, fin: 3 }]);
+  });
+
+  test("no devuelve bloques si nadie comparte puntaje", () => {
+    const participantes = [participante(1, "A"), participante(2, "B"), participante(3, "C")];
+    const partidos = [partido(1, 2, 1), partido(1, 3, 1), partido(2, 3, 2)];
+    const tabla = calcularTabla(participantes, partidos);
+
+    expect(bloquesPorPuntos(tabla)).toEqual([]);
   });
 });
