@@ -84,7 +84,10 @@ export function calcularTabla(participantes, partidos, opciones = {}) {
     const finDeBloque = i === filas.length || filas[i].puntos !== filas[inicioBloque].puntos;
     if (finDeBloque) {
       const bloque = filas.slice(inicioBloque, i);
-      const resuelto = bloque.length <= 1 || bloque.every((f) => f.ordenDesempate != null);
+      const ordenes = bloque.map((f) => f.ordenDesempate);
+      const resuelto =
+        bloque.length <= 1 ||
+        (ordenes.every((o) => o != null) && new Set(ordenes).size === bloque.length);
       for (const f of bloque) empatadoPorId.set(f.participanteId, !resuelto);
       inicioBloque = i;
     }

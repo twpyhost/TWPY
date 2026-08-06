@@ -102,6 +102,24 @@ test.describe("calcularTabla", () => {
     expect(tablaResuelta.every((f) => !f.empatado)).toBe(true);
   });
 
+  test("empatado sigue true si dos sub-bloques resueltos por separado colisionan al fusionarse", () => {
+    // Simula dos empates de a 2 resueltos independientemente (cada uno con
+    // orden_desempate 1 y 2), que luego -- por nuevos resultados -- terminan
+    // en el mismo bloque de puntos. Todos tienen orden_desempate no nulo,
+    // pero los valores se repiten: el bloque fusionado NO esta realmente
+    // resuelto y el sort caeria a alfabetico sin que nadie lo haya elegido.
+    const participantes = [
+      participante(1, "A", 1),
+      participante(2, "B", 2),
+      participante(3, "C", 1),
+      participante(4, "D", 2),
+    ];
+    // Los 4 quedan en 0 puntos -- un unico bloque de tamano 4.
+    const tabla = calcularTabla(participantes, []);
+
+    expect(tabla.every((f) => f.empatado)).toBe(true);
+  });
+
   test("top 5 clasificado y ultimos 2 eliminado en un grupo de 7", () => {
     const participantes = Array.from({ length: 7 }, (_, i) =>
       participante(i + 1, `P${i + 1}`),
