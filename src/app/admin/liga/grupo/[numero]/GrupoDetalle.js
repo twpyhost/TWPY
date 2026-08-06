@@ -125,6 +125,11 @@ export default function GrupoDetalle({ numero }) {
     return draft.some((id, i) => id !== servidor[i]);
   };
 
+  const bloquesPendientes = bloques.filter((bloque) => {
+    const primeraFila = filasVisibles[bloque.inicio];
+    return (primeraFila?.empatado ?? false) || hayCambiosPendientes(bloque);
+  });
+
   const confirmarBloque = async (bloque) => {
     const clave = claveBloque(grupo.tabla, bloque);
     const orden = ordenDraft[clave] ?? ordenServidorBloque(grupo.tabla, bloque);
@@ -333,39 +338,6 @@ export default function GrupoDetalle({ numero }) {
                               </button>
                             </div>
                           )}
-                          {bloque &&
-                            indice === bloque.fin - 1 &&
-                            (() => {
-                              const bloqueSinResolver = fila.empatado;
-                              const hayCambios = hayCambiosPendientes(bloque);
-                              if (!bloqueSinResolver && !hayCambios) return null;
-                              return (
-                                <div className="mt-1 inline-flex gap-1">
-                                  <button
-                                    type="button"
-                                    disabled={bloquesGuardando.has(
-                                      claveBloque(grupo.tabla, bloque),
-                                    )}
-                                    onClick={() => confirmarBloque(bloque)}
-                                    className="border border-success/40 bg-success/10 px-2 py-1 text-[11px] font-bold text-success disabled:opacity-40"
-                                  >
-                                    Confirmar
-                                  </button>
-                                  {hayCambios && (
-                                    <button
-                                      type="button"
-                                      disabled={bloquesGuardando.has(
-                                        claveBloque(grupo.tabla, bloque),
-                                      )}
-                                      onClick={() => descartarBloque(bloque)}
-                                      className="border border-white/20 bg-white/[.04] px-2 py-1 text-[11px] text-white/70 disabled:opacity-40"
-                                    >
-                                      Descartar
-                                    </button>
-                                  )}
-                                </div>
-                              );
-                            })()}
                         </td>
                       </tr>
                     );
@@ -377,6 +349,52 @@ export default function GrupoDetalle({ numero }) {
               Clasifican los primeros {grupo.cuposClasificados} · quedan eliminados los últimos 2.
               Las filas resaltadas tienen un empate sin desempatar.
             </p>
+            {bloquesPendientes.length > 0 && (
+              <div className="flex flex-col gap-2 border border-white/10 bg-white/[.03] p-4">
+                <span className="font-display text-sm tracking-[0.08em] text-white/60">
+                  DESEMPATES PENDIENTES
+                </span>
+                {bloquesPendientes.map((bloque) => {
+                  const nombres = filasVisibles
+                    .slice(bloque.inicio, bloque.fin)
+                    .map((f) => f.nombre)
+                    .join(", ");
+                  const clave = claveBloque(grupo.tabla, bloque);
+                  const guardando = bloquesGuardando.has(clave);
+                  const hayCambios = hayCambiosPendientes(bloque);
+                  return (
+                    <div
+                      key={clave}
+                      className="flex flex-wrap items-center justify-between gap-2 border-t border-white/[.06] pt-2 first:border-t-0 first:pt-0"
+                    >
+                      <span className="font-body text-sm text-white/80">
+                        Puestos {bloque.inicio + 1}–{bloque.fin}: {nombres}
+                      </span>
+                      <div className="inline-flex gap-1">
+                        <button
+                          type="button"
+                          disabled={guardando}
+                          onClick={() => confirmarBloque(bloque)}
+                          className="border border-success/40 bg-success/10 px-3 py-1.5 text-xs font-bold text-success disabled:opacity-40"
+                        >
+                          Confirmar
+                        </button>
+                        {hayCambios && (
+                          <button
+                            type="button"
+                            disabled={guardando}
+                            onClick={() => descartarBloque(bloque)}
+                            className="border border-white/20 bg-white/[.04] px-3 py-1.5 text-xs text-white/70 disabled:opacity-40"
+                          >
+                            Descartar
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-3">

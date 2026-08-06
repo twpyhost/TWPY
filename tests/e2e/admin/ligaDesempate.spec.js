@@ -159,11 +159,15 @@ test.describe("TS-LIGA-DESEMPATE | Desempate manual en la fase de grupos", () =>
    *   -- sin verse forzado a mover una fila y volver a moverla para generar
    *   un draft. Un grupo recien sembrado (grupo 5) esta totalmente empatado
    *   (0 puntos para todos), asi que el primer bloque cubre todo el grupo.
+   *   Verifica que el boton Confirmar esta en un panel separado debajo de la tabla,
+   *   no dentro de la tabla.
    * Pasos:
    *   1. Ir a /admin/liga/grupo/5.
-   *   2. Click en "Confirmar" en el primer bloque SIN tocar ninguna flecha
-   *      ↑/↓ primero.
-   * Resultado esperado: aparece el toast "Desempate guardado".
+   *   2. Verificar que existe el panel "DESEMPATES PENDIENTES" fuera de la tabla.
+   *   3. Verificar que "Confirmar" NO esta dentro del elemento <table>.
+   *   4. Click en "Confirmar".
+   *   5. Verificar que el panel desaparece tras confirmarse.
+   * Resultado esperado: aparece el toast "Desempate guardado" y el panel desaparece.
    * Tecnica: caso feliz sobre una restriccion de negocio | Prioridad: alta
    */
   test("TC-LIGA-DESEMPATE-005 | confirmar un bloque empatado sin mover ninguna fila", async ({
@@ -171,7 +175,12 @@ test.describe("TS-LIGA-DESEMPATE | Desempate manual en la fase de grupos", () =>
   }) => {
     await page.goto("/admin/liga/grupo/5");
 
+    await expect(page.getByText("DESEMPATES PENDIENTES")).toBeVisible();
+    await expect(page.locator("table").getByRole("button", { name: "Confirmar" })).toHaveCount(0);
+
     await page.getByRole("button", { name: "Confirmar" }).click();
     await expect(page.getByText("Desempate guardado")).toBeVisible();
+
+    await expect(page.getByText("DESEMPATES PENDIENTES")).not.toBeVisible();
   });
 });
