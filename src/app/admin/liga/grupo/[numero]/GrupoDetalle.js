@@ -32,19 +32,23 @@ export default function GrupoDetalle({ numero }) {
   const [loading, setLoading] = useState(true);
   const [guardandoPartidoId, setGuardandoPartidoId] = useState(null);
   const [ordenDraft, setOrdenDraft] = useState({});
+  const [bloquesGuardando, setBloquesGuardando] = useState(new Set());
   const [modalCerrarAbierto, setModalCerrarAbierto] = useState(false);
   const [cambiandoCerrado, setCambiandoCerrado] = useState(false);
 
-  const cargar = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/admin/liga/grupos/${numero}`);
-      const body = await response.json();
-      setData(response.ok ? body : null);
-    } finally {
-      setLoading(false);
-    }
-  }, [numero]);
+  const cargar = useCallback(
+    async ({ silent = false } = {}) => {
+      if (!silent) setLoading(true);
+      try {
+        const response = await fetch(`/api/admin/liga/grupos/${numero}`);
+        const body = await response.json();
+        setData(response.ok ? body : null);
+      } finally {
+        if (!silent) setLoading(false);
+      }
+    },
+    [numero],
+  );
 
   useEffect(() => {
     cargar();
@@ -91,7 +95,7 @@ export default function GrupoDetalle({ numero }) {
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "No se pudo actualizar el partido");
-      await cargar();
+      await cargar({ silent: true });
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -111,6 +115,56 @@ export default function GrupoDetalle({ numero }) {
     setOrdenDraft((prev) => ({ ...prev, [clave]: nuevo }));
   };
 
+  const hayCambiosPendientes = (bloque) => {
+    const clave = claveBloque(grupo.tabla, bloque);
+    const draft = ordenDraft[clave];
+    if (!draft) return false;
+    const servidor = ordenServidorBloque(grupo.tabla, bloque);
+    return draft.some((id, i) => id !== servidor[i]);
+  };
+
+  const confirmarBloque = async (bloque) => {
+    const clave = claveBloque(grupo.tabla, bloque);
+    const orden = ordenDraft[clave];
+    if (!orden) return;
+
+    setBloquesGuardando((prev) => new Set(prev).add(clave));
+    try {
+      const response = await fetch(`/api/admin/liga/grupos/${numero}/desempate`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orden }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "No se pudo guardar el desempate");
+
+      setOrdenDraft((prev) => {
+        const siguiente = { ...prev };
+        delete siguiente[clave];
+        return siguiente;
+      });
+      toast.success("Desempate guardado");
+      await cargar({ silent: true });
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setBloquesGuardando((prev) => {
+        const siguiente = new Set(prev);
+        siguiente.delete(clave);
+        return siguiente;
+      });
+    }
+  };
+
+  const descartarBloque = (bloque) => {
+    const clave = claveBloque(grupo.tabla, bloque);
+    setOrdenDraft((prev) => {
+      const siguiente = { ...prev };
+      delete siguiente[clave];
+      return siguiente;
+    });
+  };
+
   const cambiarCerrado = async (cerrado) => {
     setCambiandoCerrado(true);
     try {
@@ -123,7 +177,7 @@ export default function GrupoDetalle({ numero }) {
       if (!response.ok) throw new Error(body.error || "No se pudo cambiar el estado del grupo");
       toast.success(body.message);
       setModalCerrarAbierto(false);
-      await cargar();
+      await cargar({ silent: true });
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -241,7 +295,11 @@ export default function GrupoDetalle({ numero }) {
                             <div className="inline-flex gap-1">
                               <button
                                 type="button"
-                                disabled={indice === bloque.inicio || grupo.cerrado}
+                                disabled={
+                                  indice === bloque.inicio ||
+                                  grupo.cerrado ||
+                                  bloquesGuardando.has(claveBloque(grupo.tabla, bloque))
+                                }
                                 onClick={() => moverEnDraft(bloque, indice, -1)}
                                 className="flex h-6 w-6 items-center justify-center border border-white/20 bg-white/[.04] text-xs text-white disabled:opacity-30"
                                 aria-label="Subir"
@@ -250,12 +308,36 @@ export default function GrupoDetalle({ numero }) {
                               </button>
                               <button
                                 type="button"
-                                disabled={indice === bloque.fin - 1 || grupo.cerrado}
+                                disabled={
+                                  indice === bloque.fin - 1 ||
+                                  grupo.cerrado ||
+                                  bloquesGuardando.has(claveBloque(grupo.tabla, bloque))
+                                }
                                 onClick={() => moverEnDraft(bloque, indice, 1)}
                                 className="flex h-6 w-6 items-center justify-center border border-white/20 bg-white/[.04] text-xs text-white disabled:opacity-30"
                                 aria-label="Bajar"
                               >
                                 ↓
+                              </button>
+                            </div>
+                          )}
+                          {bloque && indice === bloque.fin - 1 && hayCambiosPendientes(bloque) && (
+                            <div className="mt-1 inline-flex gap-1">
+                              <button
+                                type="button"
+                                disabled={bloquesGuardando.has(claveBloque(grupo.tabla, bloque))}
+                                onClick={() => confirmarBloque(bloque)}
+                                className="border border-success/40 bg-success/10 px-2 py-1 text-[11px] font-bold text-success disabled:opacity-40"
+                              >
+                                Confirmar
+                              </button>
+                              <button
+                                type="button"
+                                disabled={bloquesGuardando.has(claveBloque(grupo.tabla, bloque))}
+                                onClick={() => descartarBloque(bloque)}
+                                className="border border-white/20 bg-white/[.04] px-2 py-1 text-[11px] text-white/70 disabled:opacity-40"
+                              >
+                                Descartar
                               </button>
                             </div>
                           )}

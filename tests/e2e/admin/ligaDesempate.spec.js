@@ -85,4 +85,37 @@ test.describe("TS-LIGA-DESEMPATE | Desempate manual en la fase de grupos", () =>
     const primeraFila = page.getByRole("row").nth(1); // fila 0 es el encabezado
     await expect(primeraFila.getByRole("button", { name: "Bajar" })).toBeVisible();
   });
+
+  /**
+   * TC-LIGA-DESEMPATE-003 | Confirmar un desempate lo guarda de verdad
+   * Descripcion: mover una fila con las flechas no debe guardar nada hasta
+   *   que se confirme; al confirmar debe aparecer un toast y el nuevo orden
+   *   debe sobrevivir un F5 real (prueba de que quedo en la base, no solo en
+   *   el estado local del componente).
+   * Pasos:
+   *   1. Ir a /admin/liga/grupo/3 (recien sembrado: los 7 participantes
+   *      estan en 0 puntos, un solo bloque empatado con todo el grupo).
+   *   2. Click en "Bajar" en la primera fila -- el nombre que estaba primero
+   *      pasa a la segunda fila.
+   *   3. Click en "Confirmar".
+   *   4. Recargar la pagina.
+   * Resultado esperado: el toast "Desempate guardado" aparece tras el paso
+   *   3, y despues de recargar la fila que se movio sigue en la posicion 2.
+   * Tecnica: caso feliz de punta a punta | Prioridad: alta
+   */
+  test("TC-LIGA-DESEMPATE-003 | confirmar un desempate lo persiste", async ({ page }) => {
+    await page.goto("/admin/liga/grupo/3");
+
+    const primeraFilaAntes = page.getByRole("row").nth(1);
+    const nombreMovido = await primeraFilaAntes.getByRole("cell").nth(1).innerText();
+
+    await primeraFilaAntes.getByRole("button", { name: "Bajar" }).click();
+    await page.getByRole("button", { name: "Confirmar" }).click();
+    await expect(page.getByText("Desempate guardado")).toBeVisible();
+
+    await page.reload();
+
+    const segundaFilaDespues = page.getByRole("row").nth(2);
+    await expect(segundaFilaDespues.getByRole("cell").nth(1)).toHaveText(nombreMovido);
+  });
 });
