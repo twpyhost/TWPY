@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
@@ -33,6 +33,8 @@ export default function GrupoDetalle({ numero }) {
   const [guardandoPartidoId, setGuardandoPartidoId] = useState(null);
   const [ordenDraft, setOrdenDraft] = useState({});
   const [bloquesGuardando, setBloquesGuardando] = useState(new Set());
+  const [destacados, setDestacados] = useState(new Set());
+  const destacadosTimeouts = useRef(new Map());
   const [modalCerrarAbierto, setModalCerrarAbierto] = useState(false);
   const [cambiandoCerrado, setCambiandoCerrado] = useState(false);
 
@@ -53,6 +55,14 @@ export default function GrupoDetalle({ numero }) {
   useEffect(() => {
     cargar();
   }, [cargar]);
+
+  useEffect(() => {
+    return () => {
+      for (const timeoutId of destacadosTimeouts.current.values()) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, []);
 
   const grupo = data?.grupo;
   const fechas = data?.fechas ?? [];
@@ -105,6 +115,29 @@ export default function GrupoDetalle({ numero }) {
     }
   };
 
+  const destacarFilas = (ids) => {
+    for (const id of ids) {
+      const timeoutPrevio = destacadosTimeouts.current.get(id);
+      if (timeoutPrevio) clearTimeout(timeoutPrevio);
+    }
+    setDestacados((prev) => {
+      const siguiente = new Set(prev);
+      for (const id of ids) siguiente.add(id);
+      return siguiente;
+    });
+    for (const id of ids) {
+      const timeoutId = setTimeout(() => {
+        setDestacados((prev) => {
+          const siguiente = new Set(prev);
+          siguiente.delete(id);
+          return siguiente;
+        });
+        destacadosTimeouts.current.delete(id);
+      }, 500);
+      destacadosTimeouts.current.set(id, timeoutId);
+    }
+  };
+
   const moverEnDraft = (bloque, indiceEnBloque, direccion) => {
     const clave = claveBloque(grupo.tabla, bloque);
     const actual = ordenDraft[clave] ?? ordenServidorBloque(grupo.tabla, bloque);
@@ -112,9 +145,14 @@ export default function GrupoDetalle({ numero }) {
     const otroLocal = posLocal + direccion;
     if (otroLocal < 0 || otroLocal >= actual.length) return;
 
+    const idMovido = actual[posLocal];
+    const idOtro = actual[otroLocal];
+
     const nuevo = [...actual];
     [nuevo[posLocal], nuevo[otroLocal]] = [nuevo[otroLocal], nuevo[posLocal]];
     setOrdenDraft((prev) => ({ ...prev, [clave]: nuevo }));
+
+    destacarFilas([idMovido, idOtro]);
   };
 
   const hayCambiosPendientes = (bloque) => {
@@ -283,8 +321,12 @@ export default function GrupoDetalle({ numero }) {
                     return (
                       <tr
                         key={fila.participanteId}
-                        className={`border-b border-white/[.06] ${
-                          fila.empatado ? "bg-warning/[.06]" : ""
+                        className={`border-b border-white/[.06] transition-colors duration-500 ${
+                          destacados.has(fila.participanteId)
+                            ? "bg-primary-500/20"
+                            : fila.empatado
+                              ? "bg-warning/[.06]"
+                              : ""
                         } ${estado === "clasificado" ? "border-l-2 border-l-success" : ""} ${
                           estado === "eliminado" ? "border-l-2 border-l-error" : ""
                         }`}
