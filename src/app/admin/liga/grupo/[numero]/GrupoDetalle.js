@@ -9,7 +9,7 @@ import RibbonTag from "@/components/ui/RibbonTag";
 import StatusChip from "@/components/ui/StatusChip";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
-import { bloquesPorPuntos } from "@/lib/ligaTabla";
+import { bloquesPorPuntos, estadoParaPosicion } from "@/lib/ligaTabla";
 
 // Identifica un bloque de forma estable entre renders, por el conjunto de
 // participantes que lo componen -- no por su posicion en la tabla -- para
@@ -203,9 +203,11 @@ export default function GrupoDetalle({ numero }) {
                       (b) => indice >= b.inicio && indice < b.fin,
                     );
                     const posicion = indice + 1;
-                    let estado = "neutral";
-                    if (posicion <= grupo.cuposClasificados) estado = "clasificado";
-                    else if (posicion > filasVisibles.length - 2) estado = "eliminado";
+                    const estado = estadoParaPosicion(
+                      posicion,
+                      filasVisibles.length,
+                      grupo.cuposClasificados,
+                    );
 
                     return (
                       <tr

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { calcularTabla, bloquesPorPuntos } from "../../src/lib/ligaTabla.js";
+import { calcularTabla, bloquesPorPuntos, estadoParaPosicion } from "../../src/lib/ligaTabla.js";
 
 function participante(id, nombre, ordenDesempate = null, playerId = null) {
   return { id, nombre, player_id: playerId, orden_desempate: ordenDesempate };
@@ -114,6 +114,29 @@ test.describe("calcularTabla", () => {
 
   test("orden estable con tabla vacia", () => {
     expect(calcularTabla([], [])).toEqual([]);
+  });
+});
+
+test.describe("estadoParaPosicion", () => {
+  test("clasificado dentro de los cupos", () => {
+    expect(estadoParaPosicion(1, 10, 5)).toBe("clasificado");
+    expect(estadoParaPosicion(5, 10, 5)).toBe("clasificado");
+  });
+
+  test("eliminado en los ultimos 2 puestos", () => {
+    expect(estadoParaPosicion(9, 10, 5)).toBe("eliminado");
+    expect(estadoParaPosicion(10, 10, 5)).toBe("eliminado");
+  });
+
+  test("neutral entre los cupos clasificados y los ultimos 2", () => {
+    expect(estadoParaPosicion(6, 10, 5)).toBe("neutral");
+    expect(estadoParaPosicion(8, 10, 5)).toBe("neutral");
+  });
+
+  test("clasificado tiene prioridad si los cupos se superponen con el corte de eliminado", () => {
+    // Grupo chico: total 2, cuposClasificados 5 -- todos entrarian por cupos
+    // y por corte de eliminado a la vez; clasificado gana.
+    expect(estadoParaPosicion(1, 2, 5)).toBe("clasificado");
   });
 });
 

@@ -7,6 +7,17 @@
 // participantes: [{ id, nombre, player_id, orden_desempate }]
 // partidos:      [{ participante_a_id, participante_b_id, ganador_id }]
 // opciones:      { cuposClasificados = 5 }
+
+// Corte de clasificado/eliminado segun la posicion en la tabla. Extraida
+// para que `calcularTabla` y la tabla en vivo del admin (GrupoDetalle, que
+// recalcula el orden localmente mientras el admin arrastra un desempate)
+// compartan exactamente la misma regla.
+export function estadoParaPosicion(posicion, total, cuposClasificados) {
+  if (posicion <= cuposClasificados) return "clasificado";
+  if (posicion > total - 2) return "eliminado";
+  return "neutral";
+}
+
 export function calcularTabla(participantes, partidos, opciones = {}) {
   const cuposClasificados = opciones.cuposClasificados ?? 5;
 
@@ -82,9 +93,7 @@ export function calcularTabla(participantes, partidos, opciones = {}) {
   const total = filas.length;
   return filas.map((f, indice) => {
     const posicion = indice + 1;
-    let estado = "neutral";
-    if (posicion <= cuposClasificados) estado = "clasificado";
-    else if (posicion > total - 2) estado = "eliminado";
+    const estado = estadoParaPosicion(posicion, total, cuposClasificados);
 
     return {
       posicion,
