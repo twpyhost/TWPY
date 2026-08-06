@@ -24,6 +24,13 @@ import {
 // El plan de pruebas y el catalogo de casos viven en docs/qa/.
 export default defineConfig({
   fullyParallel: false,
+  // Fijado en 1: dos specs (liga.spec.js y ligaDesempate.spec.js) siembran
+  // su propia liga en beforeAll y dependen de que obtenerLigaActual() elija
+  // "la liga creada mas recientemente" -- si Playwright corriera sus
+  // beforeAll en paralelo en workers distintos (el default, ya que
+  // fullyParallel: false solo serializa tests DENTRO de un archivo, no
+  // entre archivos), podrian pisarse entre si y corromper ambas corridas.
+  workers: 1,
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
     // Para poder ver que paso cuando algo falla sin tener que reproducirlo.
