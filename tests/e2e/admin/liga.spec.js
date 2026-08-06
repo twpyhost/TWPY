@@ -58,6 +58,9 @@ test.describe("TS-LIGA-ADMIN | Admin de liga", () => {
    * Descripcion: despues de cerrar el grupo desde el boton + modal de
    *   confirmacion, las peleas dejan de ser clickeables.
    * Pasos:
+   *   0. (setup) Asignar orden_desempate a todos los participantes del
+   *      grupo 2 por DB, para que el guard de empates sin resolver no
+   *      bloquee el cierre -- no es lo que este test verifica.
    *   1. Ir a /admin/liga/grupo/2
    *   2. Click en "CERRAR GRUPO" y confirmar en el modal
    * Resultado esperado: el badge pasa a "CERRADO" y los botones de las
@@ -65,6 +68,30 @@ test.describe("TS-LIGA-ADMIN | Admin de liga", () => {
    * Tecnica: caso feliz sobre una restriccion de negocio | Prioridad: alta
    */
   test("TC-LIGA-ADMIN-002 | un grupo cerrado no acepta cambios", async ({ page }) => {
+    // El grupo recien sembrado esta totalmente empatado en 0 puntos (sin
+    // resultados cargados), asi que el guard de "empates sin resolver"
+    // rechazaria el cierre. Ese guard no es lo que este test verifica --
+    // resolvemos el empate por DB (orden_desempate) antes de cerrar, sin
+    // tocar resultados ni depender del flujo de UI de desempate.
+    const { data: grupo2 } = await supabase
+      .from("liga_grupos")
+      .select("id")
+      .eq("liga_id", ligaId)
+      .eq("numero", 2)
+      .single();
+    const { data: participantesGrupo2 } = await supabase
+      .from("liga_participantes")
+      .select("id")
+      .eq("grupo_id", grupo2.id);
+    await Promise.all(
+      participantesGrupo2.map((participante, indice) =>
+        supabase
+          .from("liga_participantes")
+          .update({ orden_desempate: indice + 1 })
+          .eq("id", participante.id),
+      ),
+    );
+
     await page.goto("/admin/liga/grupo/2");
 
     await page.getByRole("button", { name: "CERRAR GRUPO" }).click();
