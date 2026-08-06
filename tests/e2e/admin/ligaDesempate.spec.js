@@ -151,4 +151,27 @@ test.describe("TS-LIGA-DESEMPATE | Desempate manual en la fase de grupos", () =>
 
     await expect(page.getByText("CERRADO", { exact: true })).toBeVisible();
   });
+
+  /**
+   * TC-LIGA-DESEMPATE-005 | Confirmar un bloque empatado sin mover ninguna fila
+   * Descripcion: si el admin esta de acuerdo con el orden que ya se muestra
+   *   en pantalla para un bloque empatado, debe poder confirmarlo tal cual
+   *   -- sin verse forzado a mover una fila y volver a moverla para generar
+   *   un draft. Un grupo recien sembrado (grupo 5) esta totalmente empatado
+   *   (0 puntos para todos), asi que el primer bloque cubre todo el grupo.
+   * Pasos:
+   *   1. Ir a /admin/liga/grupo/5.
+   *   2. Click en "Confirmar" en el primer bloque SIN tocar ninguna flecha
+   *      ↑/↓ primero.
+   * Resultado esperado: aparece el toast "Desempate guardado".
+   * Tecnica: caso feliz sobre una restriccion de negocio | Prioridad: alta
+   */
+  test("TC-LIGA-DESEMPATE-005 | confirmar un bloque empatado sin mover ninguna fila", async ({
+    page,
+  }) => {
+    await page.goto("/admin/liga/grupo/5");
+
+    await page.getByRole("button", { name: "Confirmar" }).click();
+    await expect(page.getByText("Desempate guardado")).toBeVisible();
+  });
 });

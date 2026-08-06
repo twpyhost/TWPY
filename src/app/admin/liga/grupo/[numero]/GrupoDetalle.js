@@ -127,8 +127,7 @@ export default function GrupoDetalle({ numero }) {
 
   const confirmarBloque = async (bloque) => {
     const clave = claveBloque(grupo.tabla, bloque);
-    const orden = ordenDraft[clave];
-    if (!orden) return;
+    const orden = ordenDraft[clave] ?? ordenServidorBloque(grupo.tabla, bloque);
 
     setBloquesGuardando((prev) => new Set(prev).add(clave));
     try {
@@ -334,26 +333,39 @@ export default function GrupoDetalle({ numero }) {
                               </button>
                             </div>
                           )}
-                          {bloque && indice === bloque.fin - 1 && hayCambiosPendientes(bloque) && (
-                            <div className="mt-1 inline-flex gap-1">
-                              <button
-                                type="button"
-                                disabled={bloquesGuardando.has(claveBloque(grupo.tabla, bloque))}
-                                onClick={() => confirmarBloque(bloque)}
-                                className="border border-success/40 bg-success/10 px-2 py-1 text-[11px] font-bold text-success disabled:opacity-40"
-                              >
-                                Confirmar
-                              </button>
-                              <button
-                                type="button"
-                                disabled={bloquesGuardando.has(claveBloque(grupo.tabla, bloque))}
-                                onClick={() => descartarBloque(bloque)}
-                                className="border border-white/20 bg-white/[.04] px-2 py-1 text-[11px] text-white/70 disabled:opacity-40"
-                              >
-                                Descartar
-                              </button>
-                            </div>
-                          )}
+                          {bloque &&
+                            indice === bloque.fin - 1 &&
+                            (() => {
+                              const bloqueSinResolver = fila.empatado;
+                              const hayCambios = hayCambiosPendientes(bloque);
+                              if (!bloqueSinResolver && !hayCambios) return null;
+                              return (
+                                <div className="mt-1 inline-flex gap-1">
+                                  <button
+                                    type="button"
+                                    disabled={bloquesGuardando.has(
+                                      claveBloque(grupo.tabla, bloque),
+                                    )}
+                                    onClick={() => confirmarBloque(bloque)}
+                                    className="border border-success/40 bg-success/10 px-2 py-1 text-[11px] font-bold text-success disabled:opacity-40"
+                                  >
+                                    Confirmar
+                                  </button>
+                                  {hayCambios && (
+                                    <button
+                                      type="button"
+                                      disabled={bloquesGuardando.has(
+                                        claveBloque(grupo.tabla, bloque),
+                                      )}
+                                      onClick={() => descartarBloque(bloque)}
+                                      className="border border-white/20 bg-white/[.04] px-2 py-1 text-[11px] text-white/70 disabled:opacity-40"
+                                    >
+                                      Descartar
+                                    </button>
+                                  )}
+                                </div>
+                              );
+                            })()}
                         </td>
                       </tr>
                     );
