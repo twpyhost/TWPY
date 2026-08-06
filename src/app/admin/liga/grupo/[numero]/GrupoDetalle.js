@@ -9,33 +9,29 @@ import RibbonTag from "@/components/ui/RibbonTag";
 import StatusChip from "@/components/ui/StatusChip";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import { bloquesPorPuntos } from "@/lib/ligaTabla";
 
-// Bloques contiguos de la tabla que comparten puntos y estan `empatado`
-// (calcularTabla ya los deja agrupados por puntos en orden, ver
-// src/lib/ligaTabla.js).
-function bloquesEmpatados(tabla) {
-  const bloques = [];
-  let i = 0;
-  while (i < tabla.length) {
-    if (!tabla[i].empatado) {
-      i += 1;
-      continue;
-    }
-    let j = i + 1;
-    while (j < tabla.length && tabla[j].empatado && tabla[j].puntos === tabla[i].puntos) {
-      j += 1;
-    }
-    bloques.push({ inicio: i, fin: j });
-    i = j;
-  }
-  return bloques;
+// Identifica un bloque de forma estable entre renders, por el conjunto de
+// participantes que lo componen -- no por su posicion en la tabla -- para
+// que un borrador de reordenamiento (ordenDraft) siga siendo valido aunque
+// otro bloque cambie de tamano en un refresco de datos.
+function claveBloque(tabla, bloque) {
+  return tabla
+    .slice(bloque.inicio, bloque.fin)
+    .map((f) => f.participanteId)
+    .sort((a, b) => a - b)
+    .join("-");
+}
+
+function ordenServidorBloque(tabla, bloque) {
+  return tabla.slice(bloque.inicio, bloque.fin).map((f) => f.participanteId);
 }
 
 export default function GrupoDetalle({ numero }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [guardandoPartidoId, setGuardandoPartidoId] = useState(null);
-  const [guardandoDesempate, setGuardandoDesempate] = useState(false);
+  const [ordenDraft, setOrdenDraft] = useState({});
   const [modalCerrarAbierto, setModalCerrarAbierto] = useState(false);
   const [cambiandoCerrado, setCambiandoCerrado] = useState(false);
 
@@ -69,7 +65,21 @@ export default function GrupoDetalle({ numero }) {
     return mapa;
   }, [grupo]);
 
-  const bloques = useMemo(() => (grupo ? bloquesEmpatados(grupo.tabla) : []), [grupo]);
+  const bloques = useMemo(() => (grupo ? bloquesPorPuntos(grupo.tabla) : []), [grupo]);
+
+  const filasVisibles = useMemo(() => {
+    if (!grupo) return [];
+    const filaPorId = new Map(grupo.tabla.map((f) => [f.participanteId, f]));
+    const filas = [...grupo.tabla];
+    for (const bloque of bloques) {
+      const clave = claveBloque(grupo.tabla, bloque);
+      const orden = ordenDraft[clave] ?? ordenServidorBloque(grupo.tabla, bloque);
+      for (let k = 0; k < orden.length; k += 1) {
+        filas[bloque.inicio + k] = filaPorId.get(orden[k]);
+      }
+    }
+    return filas;
+  }, [grupo, bloques, ordenDraft]);
 
   const cargarGanador = async (partidoId, ganadorId) => {
     setGuardandoPartidoId(partidoId);
@@ -89,30 +99,16 @@ export default function GrupoDetalle({ numero }) {
     }
   };
 
-  const moverEnBloque = async (bloque, indiceEnBloque, direccion) => {
-    const filas = grupo.tabla.slice(bloque.inicio, bloque.fin);
+  const moverEnDraft = (bloque, indiceEnBloque, direccion) => {
+    const clave = claveBloque(grupo.tabla, bloque);
+    const actual = ordenDraft[clave] ?? ordenServidorBloque(grupo.tabla, bloque);
     const posLocal = indiceEnBloque - bloque.inicio;
     const otroLocal = posLocal + direccion;
-    if (otroLocal < 0 || otroLocal >= filas.length) return;
+    if (otroLocal < 0 || otroLocal >= actual.length) return;
 
-    const nuevo = [...filas];
+    const nuevo = [...actual];
     [nuevo[posLocal], nuevo[otroLocal]] = [nuevo[otroLocal], nuevo[posLocal]];
-
-    setGuardandoDesempate(true);
-    try {
-      const response = await fetch(`/api/admin/liga/grupos/${numero}/desempate`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orden: nuevo.map((f) => f.participanteId) }),
-      });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "No se pudo guardar el desempate");
-      await cargar();
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setGuardandoDesempate(false);
-    }
+    setOrdenDraft((prev) => ({ ...prev, [clave]: nuevo }));
   };
 
   const cambiarCerrado = async (cerrado) => {
@@ -202,21 +198,26 @@ export default function GrupoDetalle({ numero }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {grupo.tabla.map((fila, indice) => {
+                  {filasVisibles.map((fila, indice) => {
                     const bloque = bloques.find(
                       (b) => indice >= b.inicio && indice < b.fin,
                     );
+                    const posicion = indice + 1;
+                    let estado = "neutral";
+                    if (posicion <= grupo.cuposClasificados) estado = "clasificado";
+                    else if (posicion > filasVisibles.length - 2) estado = "eliminado";
+
                     return (
                       <tr
                         key={fila.participanteId}
                         className={`border-b border-white/[.06] ${
                           fila.empatado ? "bg-warning/[.06]" : ""
-                        } ${fila.estado === "clasificado" ? "border-l-2 border-l-success" : ""} ${
-                          fila.estado === "eliminado" ? "border-l-2 border-l-error" : ""
+                        } ${estado === "clasificado" ? "border-l-2 border-l-success" : ""} ${
+                          estado === "eliminado" ? "border-l-2 border-l-error" : ""
                         }`}
                       >
                         <td className="px-3 py-2.5 font-display text-lg text-white/70">
-                          {fila.posicion}
+                          {posicion}
                         </td>
                         <td className="px-3 py-2.5 font-body text-sm font-bold text-white">
                           {fila.nombre}
@@ -234,12 +235,12 @@ export default function GrupoDetalle({ numero }) {
                           {fila.puntos}
                         </td>
                         <td className="px-3 py-2.5 text-right">
-                          {fila.empatado && bloque && (
+                          {bloque && (
                             <div className="inline-flex gap-1">
                               <button
                                 type="button"
-                                disabled={indice === bloque.inicio || guardandoDesempate || grupo.cerrado}
-                                onClick={() => moverEnBloque(bloque, indice, -1)}
+                                disabled={indice === bloque.inicio || grupo.cerrado}
+                                onClick={() => moverEnDraft(bloque, indice, -1)}
                                 className="flex h-6 w-6 items-center justify-center border border-white/20 bg-white/[.04] text-xs text-white disabled:opacity-30"
                                 aria-label="Subir"
                               >
@@ -247,8 +248,8 @@ export default function GrupoDetalle({ numero }) {
                               </button>
                               <button
                                 type="button"
-                                disabled={indice === bloque.fin - 1 || guardandoDesempate || grupo.cerrado}
-                                onClick={() => moverEnBloque(bloque, indice, 1)}
+                                disabled={indice === bloque.fin - 1 || grupo.cerrado}
+                                onClick={() => moverEnDraft(bloque, indice, 1)}
                                 className="flex h-6 w-6 items-center justify-center border border-white/20 bg-white/[.04] text-xs text-white disabled:opacity-30"
                                 aria-label="Bajar"
                               >
