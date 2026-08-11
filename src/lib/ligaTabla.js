@@ -3,9 +3,9 @@
 // (tabla en vivo del grupo).
 //
 // Cada partido es un first-to-3 y se carga el marcador (3-0, 3-1 o 3-2):
-// PTS = matches ganados (no victorias). Los empates de PTS se rompen
-// automaticamente por diferencia de matches y luego por sets ganados; solo
-// si esos tres valores coinciden se cae al desempate manual del admin
+// PTS = FT ganados (1 punto por set ganado). Los empates de PTS se rompen
+// automaticamente por diferencia de matches y luego por matches ganados;
+// solo si esos tres valores coinciden se cae al desempate manual del admin
 // (orden_desempate).
 //
 // participantes: [{ id, nombre, player_id, orden_desempate }]
@@ -29,11 +29,11 @@ export function formatearDif(dif) {
   return dif > 0 ? `+${dif}` : String(dif);
 }
 
-// Criterios que el sistema resuelve solo, en orden: puntos (matches
-// ganados), diferencia de matches y sets ganados. Dos filas con la misma
-// clave son un empate real que el admin tiene que ordenar a mano.
+// Criterios que el sistema resuelve solo, en orden: puntos (FT ganados),
+// diferencia de matches y matches ganados. Dos filas con la misma clave son
+// un empate real que el admin tiene que ordenar a mano.
 function mismoNivelAuto(a, b) {
-  return a.puntos === b.puntos && a.dif === b.dif && a.g === b.g;
+  return a.puntos === b.puntos && a.dif === b.dif && a.mg === b.mg;
 }
 
 export function calcularTabla(participantes, partidos, opciones = {}) {
@@ -87,14 +87,14 @@ export function calcularTabla(participantes, partidos, opciones = {}) {
       mg: s.mg,
       mp: s.mp,
       dif: s.mg - s.mp,
-      puntos: s.mg,
+      puntos: s.g,
     };
   });
 
   filas.sort((a, b) => {
     if (b.puntos !== a.puntos) return b.puntos - a.puntos;
     if (b.dif !== a.dif) return b.dif - a.dif;
-    if (b.g !== a.g) return b.g - a.g;
+    if (b.mg !== a.mg) return b.mg - a.mg;
     if (a.ordenDesempate == null && b.ordenDesempate != null) return 1;
     if (a.ordenDesempate != null && b.ordenDesempate == null) return -1;
     if (a.ordenDesempate != null && b.ordenDesempate != null) {
@@ -147,7 +147,7 @@ export function calcularTabla(participantes, partidos, opciones = {}) {
 }
 
 // Bloques contiguos que los criterios automaticos (puntos, diferencia de
-// matches, sets ganados) no separan, resueltos o no -- a diferencia del
+// matches, matches ganados) no separan, resueltos o no -- a diferencia del
 // campo `empatado` (que se apaga apenas todos tienen orden_desempate), esto
 // los agrupa igual para que el admin pueda seguir reordenando un bloque
 // despues de resolverlo. `calcularTabla` ya deja las filas ordenadas, asi
