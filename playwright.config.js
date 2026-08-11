@@ -11,8 +11,10 @@ import {
 //   datos      -- verifica el stack local y siembra la data de la suite.
 //   limpieza   -- teardown de `datos`.
 //   setup      -- crea el admin de pruebas y guarda su sesion.
+//   setup-liga -- crea el usuario con rol 'liga' y guarda su sesion.
 //   e2e        -- paginas publicas, siempre como visitante anonimo.
 //   e2e-admin  -- panel de administracion, con la sesion del setup.
+//   e2e-liga   -- separacion de roles, con la sesion del rol 'liga'.
 //
 // La siembra es un project y no globalSetup para que `--project=unit` siga
 // corriendo sin Docker: solo paga el costo del stack quien lo declara como
@@ -63,6 +65,13 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"], baseURL: "http://localhost:3000" },
     },
     {
+      name: "setup-liga",
+      testDir: "./tests/e2e/fixtures",
+      testMatch: "liga.setup.js",
+      dependencies: ["datos"],
+      use: { ...devices["Desktop Chrome"], baseURL: "http://localhost:3000" },
+    },
+    {
       name: "e2e",
       testDir: "./tests/e2e/publico",
       testMatch: "**/*.spec.js",
@@ -78,6 +87,17 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         baseURL: "http://localhost:3000",
         storageState: "tests/e2e/.auth/admin.json",
+      },
+    },
+    {
+      name: "e2e-liga",
+      testDir: "./tests/e2e/rol-liga",
+      testMatch: "**/*.spec.js",
+      dependencies: ["setup-liga"],
+      use: {
+        ...devices["Desktop Chrome"],
+        baseURL: "http://localhost:3000",
+        storageState: "tests/e2e/.auth/liga.json",
       },
     },
   ],

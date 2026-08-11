@@ -24,6 +24,7 @@ la matriz pairwise y el modelo de estados, vive en
 | Gate de acceso | `/auth/login`, todas las rutas `/admin/*` como anónimo | TS-AUTH |
 | Panel (lectura) | las 6 secciones de `/admin` con sesión admin | TS-ADM |
 | Paginación del panel | `?page=` y filtros en las listas de `/admin` | TS-PAG |
+| Separación de roles | `/admin/*` y `/api/admin/*` con sesión de rol `liga` | TS-ROL |
 
 ### Fuera de alcance (y por qué)
 
@@ -83,6 +84,7 @@ pruebas la URL y las claves del stack local (las *demo keys* fijas que imprime
 npx playwright test                          # todo: unit + integracion + e2e
 npx playwright test --project=e2e            # solo paginas publicas
 npx playwright test --project=e2e-admin      # solo el panel (arrastra su setup)
+npx playwright test --project=e2e-liga       # solo la separacion de roles
 npx playwright test --project=unit           # unit + integracion, sin browser
 npx playwright test tests/unit --project=unit # solo unit: no necesita Docker
 npx playwright test --ui                     # modo interactivo
@@ -101,6 +103,9 @@ Los mismos comandos están como scripts: `npm test`, `npm run test:e2e`,
 - El project `setup` crea el usuario admin de pruebas, hace login real contra
   `/api/auth/login` y guarda la sesión en `tests/e2e/.auth/admin.json`
   (ignorado por git). El project `e2e-admin` depende de él.
+- El project `setup-liga` hace lo mismo con un usuario de rol `liga`
+  (`tests/e2e/.auth/liga.json`); del él depende `e2e-liga`. Los dos usuarios
+  los borra el teardown de `datos`.
 - Playwright levanta `next dev` solo. Si ya tenés uno corriendo en el 3000, lo
   reutiliza.
 

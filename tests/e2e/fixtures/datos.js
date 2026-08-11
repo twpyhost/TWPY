@@ -32,6 +32,10 @@ export const JUGADORES_TEMPORADA_ANTERIOR = 3;
 export const ADMIN_EMAIL = "e2e-admin@twpy.test";
 export const ADMIN_PASSWORD = "e2e-admin-password-1234";
 
+// Usuario con el rol 'liga' (solo la seccion Liga del panel, migracion 0014).
+export const LIGA_EMAIL = "e2e-liga@twpy.test";
+export const LIGA_PASSWORD = "e2e-liga-password-1234";
+
 export function nombreJugador(indice) {
   return `${PREFIJO_JUGADOR} ${String(indice).padStart(2, "0")}`;
 }

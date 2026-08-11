@@ -1,11 +1,11 @@
-import { requireAdmin } from "@/lib/apiAuth";
+import { requireLiga } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { armarGrupo } from "@/lib/ligaData";
 import { obtenerLigaActual, obtenerGrupoPorNumero } from "@/lib/ligaAdmin";
 
 export async function GET(_req, { params }) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requireLiga();
     if (auth.error) return auth.error;
 
     const numero = Number((await params).numero);

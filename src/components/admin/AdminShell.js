@@ -7,10 +7,13 @@ import toast from "react-hot-toast";
 
 import StatusDot from "@/components/ui/StatusDot";
 
+// `soloAdmin: true` = seccion exclusiva del superusuario. El rol 'liga' solo
+// ve Liga (ver migracion 0014 y requireSuperusuario()).
 const NAV_ITEMS = [
   {
     href: "/admin/identidades",
     label: "Identidades",
+    soloAdmin: true,
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -29,6 +32,7 @@ const NAV_ITEMS = [
   {
     href: "/admin/jugadores",
     label: "Jugadores",
+    soloAdmin: true,
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -48,6 +52,7 @@ const NAV_ITEMS = [
   {
     href: "/admin/torneos",
     label: "Torneos",
+    soloAdmin: true,
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -86,6 +91,7 @@ const NAV_ITEMS = [
   {
     href: "/admin/rankings",
     label: "Rankings",
+    soloAdmin: true,
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -104,6 +110,7 @@ const NAV_ITEMS = [
   {
     href: "/admin/sistema",
     label: "Sistema",
+    soloAdmin: true,
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -148,13 +155,15 @@ export default function AdminShell({
   pendingCount = 0,
   ligaPendingCount = 0,
   userEmail = "",
+  isAdmin = false,
   supabaseOk = null,
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const activeItem = NAV_ITEMS.find((item) => pathname?.startsWith(item.href));
+  const navItems = isAdmin ? NAV_ITEMS : NAV_ITEMS.filter((item) => !item.soloAdmin);
+  const activeItem = navItems.find((item) => pathname?.startsWith(item.href));
   const sectionTitle = activeItem?.label ?? "Admin";
 
   // Unico punto de salida de sesion del sitio: el diseno lo pone como ultimo
@@ -209,7 +218,7 @@ export default function AdminShell({
         </div>
 
         <nav className="flex flex-col gap-0.5 py-3">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const active = pathname?.startsWith(item.href);
             const badgeProp = BADGE_COUNTS[item.href];
             const badgeCount = badgeProp === "ligaPendingCount" ? ligaPendingCount : pendingCount;
@@ -262,7 +271,9 @@ export default function AdminShell({
           </span>
           <div className="flex min-w-0 flex-col">
             <span className="truncate text-[13px] font-bold">{userEmail}</span>
-            <span className="text-[11px] text-white/45">Admin · TWPY</span>
+            <span className="text-[11px] text-white/45">
+              {isAdmin ? "Admin · TWPY" : "Liga · TWPY"}
+            </span>
           </div>
         </div>
       </aside>

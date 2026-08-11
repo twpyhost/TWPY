@@ -27,9 +27,13 @@ son ejecuciones, que es lo que reporta Playwright.
 | TS-AUTH | Gate de acceso | `tests/e2e/publico/auth-gate.spec.js` | 14 |
 | TS-ADM | Panel (lectura) | `tests/e2e/admin/lectura.spec.js` | 12 |
 | TS-PAG | Paginación del panel | `tests/e2e/admin/paginacion.spec.js` | 21 |
+| TS-ROL | Separación de roles del panel | `tests/e2e/rol-liga/rolLiga.spec.js` | 19 |
 
-A eso se suman los 51 casos de `tests/unit/` + `tests/integration/` que corren
-en el project `unit`: **132 en total** con `npx playwright test`.
+A eso se suman los casos de `tests/unit/` + `tests/integration/` que corren en
+el project `unit`. El total exacto de una corrida sale de `npx playwright test
+--list` (hoy: 194). El índice de arriba **no** incluye todavía las suites de
+liga (`tests/e2e/admin/liga.spec.js`, `ligaDesempate.spec.js`,
+`tests/e2e/publico/liga.spec.js`), que se agregaron sin pasar por acá.
 
 ---
 
@@ -301,6 +305,19 @@ Cubierto por TC-ADM-007.
 | TC-PAG-009 | El filtro por cuenta se refleja en la URL | pairwise | media |
 | TC-PAG-010 | Los stats de identidades no dependen de la página | MBT (invariante) | media |
 
+### TS-ROL — Separación de roles del panel
+
+Corre con la sesión del rol `liga` (project `e2e-liga`), no con la del admin.
+
+| Id | Título | Técnica | Prioridad |
+|---|---|---|---|
+| TC-ROL-001 | `/admin` redirige al rol liga a `/admin/liga` | MBT (transición por rol) | alta |
+| TC-ROL-002 | `/admin/liga` carga con sesión de rol liga | equivalencia | alta |
+| TC-ROL-003 | Cada sección de superusuario lo manda a `/no-autorizado` (×8) | equivalencia | alta |
+| TC-ROL-004 | El sidebar no muestra las secciones de superusuario | MBT (estados alcanzables) | media |
+| TC-ROL-005 | Las APIs de superusuario responden 403 (×5) | equivalencia (seguridad) | alta |
+| TC-ROL-006 | `/api/admin/liga` no rechaza al rol liga | equivalencia | alta |
+
 ---
 
 ## 7. Matriz de trazabilidad
@@ -316,6 +333,7 @@ Cubierto por TC-ADM-007.
 | Rankings: puntos por posición y corte por torneo | `CLAUDE.md` | TC-RANK-001, TC-RANK-003, TC-ADM-008 |
 | Rankings: tendencia ▲/▼ por torneo | `CLAUDE.md` | TC-ADM-008 (datos sembrados con posiciones rotadas) |
 | El panel es la única parte con auth | `CLAUDE.md` | TS-AUTH completa |
+| El rol `liga` solo opera la fase de grupos | `CLAUDE.md`, migración 0014 | TS-ROL completa |
 | Las páginas públicas no requieren login | `CLAUDE.md` | TS-NAV, TS-RANK, TS-TOR, TS-COMP, TS-REG |
 | La vista pública de resultados es legible por anónimos (RLS) | migración 0006 | TC-TOR-003 |
 | Dos cuentas organizadoras (A / B) trazables | `CLAUDE.md` | TC-PAG-009 |

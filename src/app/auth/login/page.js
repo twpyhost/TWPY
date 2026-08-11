@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
 import twpyLogo from "../../../../public/images/LOGO TWPY/PNG/TWPY LOGO VARIANTES-04.png";
@@ -19,10 +18,12 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");
+  // Sin redirectTo se entra por /admin, que manda a cada rol a su seccion
+  // (identidades para el superusuario, liga para el rol 'liga').
   const nextPath =
     redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
       ? redirectTo
-      : "/admin/identidades";
+      : "/admin";
 
   useEffect(() => {
     const update = () => setMobile(window.innerWidth < 780);
@@ -57,19 +58,9 @@ export default function LoginPage() {
     }
   };
 
-  const handleDiscordLogin = async () => {
-    const supabase = getSupabaseBrowserClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "discord",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
-      },
-    });
-
-    if (error) {
-      toast.error("No se pudo iniciar sesion con Discord");
-    }
-  };
+  // El login con Discord queda fuera hasta que el proveedor OAuth este
+  // configurado; el flujo de /auth/callback sigue en su lugar para cuando
+  // se reactive el boton.
 
   return (
     <div
@@ -186,22 +177,6 @@ export default function LoginPage() {
               >
                 {loading ? "Ingresando..." : "INGRESAR"}
               </Button>
-
-              <div className="flex items-center gap-3 text-[11px] tracking-[0.14em] text-white/30">
-                <span className="h-px flex-1 bg-white/[.12]" />O
-                <span className="h-px flex-1 bg-white/[.12]" />
-              </div>
-
-              <button
-                type="button"
-                onClick={handleDiscordLogin}
-                className="flex h-[50px] items-center justify-center gap-2.5 border border-white/[.16] bg-white/[.04] font-display text-lg tracking-[0.06em] text-white transition-colors duration-300 hover:border-[#5865F2] hover:bg-[#5865F2]/[.16]"
-              >
-                <svg viewBox="0 0 24 24" width="19" height="19" fill="#5865F2">
-                  <path d="M20.317 4.369A19.79 19.79 0 0 0 15.885 3c-.211.375-.457.881-.63 1.283a18.27 18.27 0 0 0-5.51 0A11.5 11.5 0 0 0 9.115 3 19.79 19.79 0 0 0 4.683 4.369C1.61 8.86.79 13.24 1.16 17.56a19.9 19.9 0 0 0 5.993 3.04c.483-.66.913-1.36 1.28-2.098a12.9 12.9 0 0 1-2.02-.98c.17-.125.336-.256.497-.39 3.797 1.75 7.898 1.75 11.652 0 .163.134.328.265.497.39-.643.383-1.32.71-2.02.98.367.737.797 1.437 1.28 2.098a19.86 19.86 0 0 0 5.993-3.04c.44-4.998-.738-9.337-2.995-13.19ZM8.68 14.81c-.99 0-1.8-.916-1.8-2.045 0-1.13.79-2.046 1.8-2.046 1.02 0 1.827.926 1.8 2.046 0 1.13-.79 2.045-1.8 2.045Zm6.64 0c-.99 0-1.8-.916-1.8-2.045 0-1.13.79-2.046 1.8-2.046 1.02 0 1.826.926 1.8 2.046 0 1.13-.78 2.045-1.8 2.045Z" />
-                </svg>
-                CONTINUAR CON DISCORD
-              </button>
             </form>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/apiAuth";
+import { requireLiga } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { resolvePlayerChain } from "@/lib/players";
 import { sugerirJugador } from "@/lib/nameSimilarity";
@@ -7,7 +7,7 @@ import { obtenerLigaActual } from "@/lib/ligaAdmin";
 
 export async function GET() {
   try {
-    const auth = await requireAdmin();
+    const auth = await requireLiga();
     if (auth.error) return auth.error;
 
     const supabase = getSupabaseAdmin();
@@ -64,7 +64,7 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requireLiga();
     if (auth.error) return auth.error;
 
     const { participanteId, playerId, crearComo } = await req.json();

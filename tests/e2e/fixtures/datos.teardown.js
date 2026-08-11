@@ -1,11 +1,11 @@
 // Project de teardown: corre cuando termino todo lo que depende del project
-// de datos. Borra lo sembrado y el usuario admin de pruebas.
+// de datos. Borra lo sembrado y los usuarios de prueba del panel.
 import { test as teardown } from "@playwright/test";
 
 import { limpiar } from "./seed.js";
-import { borrarAdmin } from "./adminAuth.js";
+import { borrarUsuariosDelPanel } from "./adminAuth.js";
 
-teardown("borrar los datos y el usuario admin de la suite", async () => {
+teardown("borrar los datos y los usuarios del panel de la suite", async () => {
   await limpiar();
-  await borrarAdmin();
+  await borrarUsuariosDelPanel();
 });

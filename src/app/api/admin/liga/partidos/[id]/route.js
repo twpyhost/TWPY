@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/apiAuth";
+import { requireLiga } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
 // Carga (o borra) el resultado de un partido de la fase de grupos.
@@ -12,7 +12,7 @@ import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 // auditoria incluidos) e ignora matchesPerdedor.
 export async function PUT(req, { params }) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requireLiga();
     if (auth.error) return auth.error;
     const { user } = auth;
 

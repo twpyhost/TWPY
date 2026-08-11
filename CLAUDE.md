@@ -128,6 +128,22 @@ Sections: **Resolución de identidades** (highest priority — unlinked particip
 
 Full UI brief lives in `docs/admin-dashboard-brief.md` (or wherever you save the Claude Design brief — see placement note below).
 
+### Panel roles (`roles` / `user_roles`)
+
+**Status: implemented** (migration `0014_rol_liga.sql`, `src/lib/adminAuth.js`, `src/lib/apiAuth.js`).
+
+Two roles grant access to `/admin`, and `admin` includes everything `liga` can do (nobody needs both rows):
+
+| Rol | Alcance |
+| --- | --- |
+| `admin` | Superusuario: todas las secciones. |
+| `liga` | Solo `/admin/liga` — cargar marcadores, desempates, cerrar grupos, vincular participantes. |
+
+- `is_admin()` = "es superusuario" (sin cambios desde 0004). `roles_panel()` devuelve los roles de panel del usuario actual en una sola llamada — la app necesita distinguir los dos casos en el mismo request.
+- Tres capas: `/admin/layout.js` deja entrar a quien tenga cualquiera de los dos; `requireSuperusuario()` frena al rol `liga` en cada página que no es la liga; y el límite real son `requireAdmin()` (superusuario) y `requireLiga()` (cualquiera de los dos, solo en `/api/admin/liga/*`).
+- `/admin` no tiene vista propia: rutea por rol (`homeDelPanel()`), y es a donde apuntan la navbar y el login.
+- No hay UI de gestión de usuarios — el rol se asigna a mano (el snippet SQL está en la cabecera de la migración `0014`).
+
 ---
 
 ## User-facing side

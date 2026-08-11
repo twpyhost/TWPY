@@ -1,11 +1,11 @@
-import { requireAdmin } from "@/lib/apiAuth";
+import { requireLiga } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { armarLiga } from "@/lib/ligaData";
 import { obtenerLigaActual } from "@/lib/ligaAdmin";
 
 export async function GET() {
   try {
-    const auth = await requireAdmin();
+    const auth = await requireLiga();
     if (auth.error) return auth.error;
 
     const supabase = getSupabaseAdmin();
