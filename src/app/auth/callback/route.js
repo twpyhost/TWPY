@@ -15,12 +15,13 @@ export async function GET(request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      // El sitio no tiene area de usuario: la unica sesion valida es la de un
-      // admin. Sin este chequeo, cualquier cuenta de Discord podria abrir
-      // sesion y la navbar le mostraria el boton ADMIN.
-      const { data: isAdmin } = await supabase.rpc("is_admin");
+      // El sitio no tiene area de usuario: la unica sesion valida es la de
+      // alguien con acceso al panel (rol 'admin' o 'liga'). Sin este chequeo,
+      // cualquier cuenta de Discord podria abrir sesion y la navbar le
+      // mostraria el boton ADMIN.
+      const { data: roles } = await supabase.rpc("roles_panel");
 
-      if (!isAdmin) {
+      if (!roles?.length) {
         await supabase.auth.signOut();
         return NextResponse.redirect(new URL("/no-autorizado", origin));
       }

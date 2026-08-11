@@ -29,12 +29,13 @@ export async function POST(req) {
     );
   }
 
-  // El sitio no tiene area de usuario: la unica sesion valida es la de un
-  // admin. Sin este chequeo quedaria una sesion abierta sin permisos y la
-  // navbar mostraria el boton ADMIN igual.
-  const { data: isAdmin } = await supabase.rpc("is_admin");
+  // El sitio no tiene area de usuario: la unica sesion valida es la de
+  // alguien con acceso al panel (rol 'admin' o 'liga'). Sin este chequeo
+  // quedaria una sesion abierta sin permisos y la navbar mostraria el boton
+  // ADMIN igual.
+  const { data: roles } = await supabase.rpc("roles_panel");
 
-  if (!isAdmin) {
+  if (!roles?.length) {
     await supabase.auth.signOut();
     return Response.json(
       { error: "Esta cuenta no tiene acceso al panel" },
@@ -44,6 +45,7 @@ export async function POST(req) {
 
   return Response.json({
     user: { email: data.user.email },
-    isAdmin: true,
+    isAdmin: roles.includes("admin"),
+    isLiga: true,
   });
 }

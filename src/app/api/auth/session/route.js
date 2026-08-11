@@ -1,9 +1,10 @@
 import { getAdminUser } from "@/lib/adminAuth";
 
 export async function GET() {
-  const { user, isAdmin } = await getAdminUser();
+  const { user, isAdmin, isLiga } = await getAdminUser();
   return Response.json({
     user: user ? { email: user.email } : null,
     isAdmin,
+    isLiga,
   });
 }

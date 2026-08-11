@@ -1,60 +1,79 @@
-// Alta y baja del usuario admin que usan los tests del panel.
+// Alta y baja de los usuarios del panel que usan los tests: el superusuario
+// (rol 'admin') y el organizador de liga (rol 'liga', migracion 0014).
 //
 // El alta publica esta deshabilitada (`enable_signup = false` en
 // supabase/config.toml), pero la Admin API con service role la saltea. El rol
-// se otorga insertando en user_roles, que es lo que mira is_admin() -- la
-// funcion security definer de la migracion 0004.
+// se otorga insertando en user_roles, que es lo que miran is_admin() y
+// roles_panel() -- las funciones security definer de 0004 y 0014.
 import { getServiceClient } from "../../testSupabase.js";
-import { ADMIN_EMAIL, ADMIN_PASSWORD } from "./datos.js";
+import {
+  ADMIN_EMAIL,
+  ADMIN_PASSWORD,
+  LIGA_EMAIL,
+  LIGA_PASSWORD,
+} from "./datos.js";
 
-async function buscarUsuario(supabase) {
+async function buscarUsuario(supabase, email) {
   // No hay getUserByEmail en la Admin API: se lista y se filtra.
   const { data, error } = await supabase.auth.admin.listUsers({ perPage: 200 });
   if (error) throw error;
-  return data.users.find((usuario) => usuario.email === ADMIN_EMAIL) ?? null;
+  return data.users.find((usuario) => usuario.email === email) ?? null;
 }
 
-export async function crearAdmin() {
+async function crearUsuarioConRol(email, password, rol) {
   const supabase = getServiceClient();
 
   // Idempotente: si una corrida anterior murio antes del teardown, se reusa.
-  let usuario = await buscarUsuario(supabase);
+  let usuario = await buscarUsuario(supabase, email);
 
   if (!usuario) {
     const { data, error } = await supabase.auth.admin.createUser({
-      email: ADMIN_EMAIL,
-      password: ADMIN_PASSWORD,
+      email,
+      password,
       email_confirm: true,
     });
     if (error) throw error;
     usuario = data.user;
   }
 
-  const { data: rol, error: rolError } = await supabase
+  const { data: fila, error: rolError } = await supabase
     .from("roles")
     .select("id")
-    .eq("name", "admin")
+    .eq("name", rol)
     .maybeSingle();
 
   if (rolError) throw rolError;
-  if (!rol) {
+  if (!fila) {
     throw new Error(
-      "No existe el rol 'admin': corre `npx supabase db reset` para aplicar las migraciones.",
+      `No existe el rol '${rol}': corre \`npx supabase db reset\` para aplicar las migraciones.`,
     );
   }
 
   const { error: asignacionError } = await supabase
     .from("user_roles")
-    .upsert({ user_id: usuario.id, role_id: rol.id }, { onConflict: "user_id,role_id" });
+    .upsert({ user_id: usuario.id, role_id: fila.id }, { onConflict: "user_id,role_id" });
 
   if (asignacionError) throw asignacionError;
 
   return usuario;
 }
 
-export async function borrarAdmin() {
+async function borrarUsuario(email) {
   const supabase = getServiceClient();
-  const usuario = await buscarUsuario(supabase);
+  const usuario = await buscarUsuario(supabase, email);
   // user_roles cae por cascade contra auth.users.
   if (usuario) await supabase.auth.admin.deleteUser(usuario.id);
+}
+
+export function crearAdmin() {
+  return crearUsuarioConRol(ADMIN_EMAIL, ADMIN_PASSWORD, "admin");
+}
+
+export function crearUsuarioLiga() {
+  return crearUsuarioConRol(LIGA_EMAIL, LIGA_PASSWORD, "liga");
+}
+
+export async function borrarUsuariosDelPanel() {
+  await borrarUsuario(ADMIN_EMAIL);
+  await borrarUsuario(LIGA_EMAIL);
 }

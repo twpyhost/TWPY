@@ -103,6 +103,17 @@ Auto-resolution on import is **strictly by `challonge_id`, never by name** (`src
 - Annual sum of points per player, with a **snapshot/cut after each tournament** to preserve historical standing over the year (not just a running total with no history).
 - Each tournament result shows a trend arrow (▲/▼) reflecting change in global ranking position.
 
+### Liga — fase de grupos (separate from the annual ranking)
+
+**Status: implemented** (migrations `0012_liga.sql` + `0013_liga_matches_por_set.sql`, `src/lib/ligaTabla.js`, `src/lib/ligaData.js`, `/admin/liga`, public `/liga`). Specs: `docs/superpowers/specs/2026-08-04-liga-fase-de-grupos-design.md` (base) and `2026-08-11-liga-marcador-por-set-design.md` (current scoring rules — supersedes the base spec's points/tiebreak decisions).
+
+The Liga group stage is run on this site (not Challonge) and is **independent of the annual ranking** — it never touches `ranking_snapshots`, `puntajes_config` or the Challonge importer. Only the final bracket phase runs on Challonge and feeds the ranking through the normal tournament flow.
+
+- Each `liga_partidos` row is one **first-to-3 set**. The admin loads the winner **and the score** (3-0 / 3-1 / 3-2); `matches_a`/`matches_b` hold the per-side match count, kept coherent with `ganador_id` by a check constraint.
+- **PTS = matches won**, not sets won. A player can outrank someone with more set wins — that's intended, which is why the `G` (sets won) column stays visible.
+- Standings order: `puntos` → match difference → sets won → `orden_desempate` (manual, admin-set) → name. Only rows identical on the first three are flagged `empatado`, and a group can't be closed while any remain unresolved.
+- `sembrarLiga` is idempotent and **never** writes `ganador_id`/`matches_a`/`matches_b`/`cargado_*` — re-seeding the fixture can't wipe loaded results.
+
 ### Auto-registration on import
 
 When a tournament is imported and a Challonge participant isn't in `player_challonge_accounts`/`player_aliases` yet:
@@ -113,9 +124,25 @@ When a tournament is imported and a Challonge participant isn't in `player_chall
 
 ## Admin dashboard (separate app section, `/admin`, auth-gated)
 
-Sections: **Resolución de identidades** (highest priority — unlinked participants queue, account merging, manual player registration), **Jugadores**, **Torneos** (sync new / import historical with account selector A|B + preview, source-account badges), **Rankings** (recalculate action), **Contenido** (news/events CRUD), **Sistema** (health check status, Discord bot status, last import status).
+Sections: **Resolución de identidades** (highest priority — unlinked participants queue, account merging, manual player registration), **Jugadores**, **Torneos** (sync new / import historical with account selector A|B + preview, source-account badges), **Liga** (group stage: load set scores, resolve ties, close groups, link participants to players), **Rankings** (recalculate action), **Contenido** (news/events CRUD), **Sistema** (health check status, Discord bot status, last import status).
 
 Full UI brief lives in `docs/admin-dashboard-brief.md` (or wherever you save the Claude Design brief — see placement note below).
+
+### Panel roles (`roles` / `user_roles`)
+
+**Status: implemented** (migration `0014_rol_liga.sql`, `src/lib/adminAuth.js`, `src/lib/apiAuth.js`).
+
+Two roles grant access to `/admin`, and `admin` includes everything `liga` can do (nobody needs both rows):
+
+| Rol | Alcance |
+| --- | --- |
+| `admin` | Superusuario: todas las secciones. |
+| `liga` | Solo `/admin/liga` — cargar marcadores, desempates, cerrar grupos, vincular participantes. |
+
+- `is_admin()` = "es superusuario" (sin cambios desde 0004). `roles_panel()` devuelve los roles de panel del usuario actual en una sola llamada — la app necesita distinguir los dos casos en el mismo request.
+- Tres capas: `/admin/layout.js` deja entrar a quien tenga cualquiera de los dos; `requireSuperusuario()` frena al rol `liga` en cada página que no es la liga; y el límite real son `requireAdmin()` (superusuario) y `requireLiga()` (cualquiera de los dos, solo en `/api/admin/liga/*`).
+- `/admin` no tiene vista propia: rutea por rol (`homeDelPanel()`), y es a donde apuntan la navbar y el login.
+- No hay UI de gestión de usuarios — el rol se asigna a mano (el snippet SQL está en la cabecera de la migración `0014`).
 
 ---
 

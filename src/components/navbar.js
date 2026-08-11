@@ -11,16 +11,18 @@ import logo from "../../public/images/misc/tekken8-logo-sm.png";
 const NAV_ITEMS = [
   { name: "RANKING", href: "/ranking" },
   { name: "TORNEOS", href: "/torneos" },
+  { name: "LIGA", href: "/liga" },
   { name: "COMPETIDORES", href: "/competidores" },
   { name: "REGLAMENTO", href: "/reglamento" },
 ];
 
 // El diseno usa un unico boton que alterna BLACKHAND/ADMIN segun haya sesion
 // (`authLabel`/`authHref` en Home Liga Tekken Paraguay.dc.html). Toda sesion
-// es admin -- lo garantizan /auth/callback y /api/auth/login --, asi que
-// alcanza con mirar `user`. El logoff vive solo dentro del panel admin.
+// tiene acceso al panel -- lo garantizan /auth/callback y /api/auth/login --,
+// asi que alcanza con mirar `user`; a que seccion entra segun su rol lo
+// resuelve /admin. El logoff vive solo dentro del panel admin.
 const AUTH_INVITADO = { name: "BLACKHAND", href: "/auth/login" };
-const AUTH_ADMIN = { name: "ADMIN", href: "/admin/identidades" };
+const AUTH_ADMIN = { name: "ADMIN", href: "/admin" };
 
 export default function Navbar() {
   const pathname = usePathname();

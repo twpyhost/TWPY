@@ -24,8 +24,8 @@ const RUTAS_ADMIN = [
 //   absoluta externa    -> se descarta
 const CASOS_REDIRECT = [
   { clase: "ruta interna", valor: "/admin/jugadores", esperado: "/admin/jugadores" },
-  { clase: "protocol-relative", valor: "//evil.example", esperado: "/admin/identidades" },
-  { clase: "absoluta externa", valor: "https://evil.example", esperado: "/admin/identidades" },
+  { clase: "protocol-relative", valor: "//evil.example", esperado: "/admin" },
+  { clase: "absoluta externa", valor: "https://evil.example", esperado: "/admin" },
 ];
 
 test.describe("TS-AUTH | Gate del panel de administracion", () => {

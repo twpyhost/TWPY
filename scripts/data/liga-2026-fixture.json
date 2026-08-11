@@ -1,0 +1,769 @@
+{
+  "slug": "liga-invitacional-2026",
+  "nombre": "Liga Invitacional · Tekken Warriors Paraguay",
+  "temporada": 2026,
+  "fechas": [
+    {
+      "numero": 1,
+      "fecha": "2026-08-09",
+      "hora": "17:00"
+    },
+    {
+      "numero": 2,
+      "fecha": "2026-08-16",
+      "hora": "17:00"
+    },
+    {
+      "numero": 3,
+      "fecha": "2026-08-23",
+      "hora": "17:00"
+    },
+    {
+      "numero": 4,
+      "fecha": "2026-08-30",
+      "hora": "17:00"
+    },
+    {
+      "numero": 5,
+      "fecha": "2026-09-06",
+      "hora": "17:00"
+    },
+    {
+      "numero": 6,
+      "fecha": "2026-09-13",
+      "hora": "17:00"
+    },
+    {
+      "numero": 7,
+      "fecha": "2026-09-20",
+      "hora": "17:00"
+    },
+    {
+      "numero": 8,
+      "fecha": "2026-09-27",
+      "hora": "17:00"
+    },
+    {
+      "numero": 9,
+      "fecha": "2026-10-04",
+      "hora": "17:00"
+    },
+    {
+      "numero": 10,
+      "fecha": "2026-10-11",
+      "hora": "17:00"
+    },
+    {
+      "numero": 11,
+      "fecha": "2026-10-18",
+      "hora": "17:00"
+    },
+    {
+      "numero": 12,
+      "fecha": "2026-10-25",
+      "hora": "17:00"
+    }
+  ],
+  "grupos": [
+    {
+      "numero": 1,
+      "participantes": [
+        "Wario",
+        "Rox",
+        "Saiken",
+        "Slammers",
+        "Jarri",
+        "ADN21",
+        "Joawquer"
+      ],
+      "partidos": [
+        {
+          "fecha": 1,
+          "orden": 1,
+          "a": "Wario",
+          "b": "Rox"
+        },
+        {
+          "fecha": 1,
+          "orden": 2,
+          "a": "Saiken",
+          "b": "Slammers"
+        },
+        {
+          "fecha": 1,
+          "orden": 3,
+          "a": "Jarri",
+          "b": "ADN21"
+        },
+        {
+          "fecha": 2,
+          "orden": 1,
+          "a": "Rox",
+          "b": "Saiken"
+        },
+        {
+          "fecha": 2,
+          "orden": 2,
+          "a": "Slammers",
+          "b": "Jarri"
+        },
+        {
+          "fecha": 2,
+          "orden": 3,
+          "a": "ADN21",
+          "b": "Joawquer"
+        },
+        {
+          "fecha": 4,
+          "orden": 1,
+          "a": "Wario",
+          "b": "Saiken"
+        },
+        {
+          "fecha": 4,
+          "orden": 2,
+          "a": "Slammers",
+          "b": "ADN21"
+        },
+        {
+          "fecha": 4,
+          "orden": 3,
+          "a": "Jarri",
+          "b": "Joawquer"
+        },
+        {
+          "fecha": 6,
+          "orden": 1,
+          "a": "Wario",
+          "b": "ADN21"
+        },
+        {
+          "fecha": 6,
+          "orden": 2,
+          "a": "Rox",
+          "b": "Jarri"
+        },
+        {
+          "fecha": 6,
+          "orden": 3,
+          "a": "Slammers",
+          "b": "Joawquer"
+        },
+        {
+          "fecha": 7,
+          "orden": 1,
+          "a": "Wario",
+          "b": "Jarri"
+        },
+        {
+          "fecha": 7,
+          "orden": 2,
+          "a": "Rox",
+          "b": "ADN21"
+        },
+        {
+          "fecha": 7,
+          "orden": 3,
+          "a": "Saiken",
+          "b": "Joawquer"
+        },
+        {
+          "fecha": 8,
+          "orden": 1,
+          "a": "Wario",
+          "b": "Slammers"
+        },
+        {
+          "fecha": 8,
+          "orden": 2,
+          "a": "Rox",
+          "b": "Joawquer"
+        },
+        {
+          "fecha": 8,
+          "orden": 3,
+          "a": "Saiken",
+          "b": "ADN21"
+        },
+        {
+          "fecha": 9,
+          "orden": 1,
+          "a": "Wario",
+          "b": "Joawquer"
+        },
+        {
+          "fecha": 9,
+          "orden": 2,
+          "a": "Rox",
+          "b": "Slammers"
+        },
+        {
+          "fecha": 9,
+          "orden": 3,
+          "a": "Saiken",
+          "b": "Jarri"
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "participantes": [
+        "Damian",
+        "Kurosu",
+        "Yuya",
+        "Fate",
+        "Overlord",
+        "Gotenks",
+        "Pavel"
+      ],
+      "partidos": [
+        {
+          "fecha": 1,
+          "orden": 1,
+          "a": "Damian",
+          "b": "Kurosu"
+        },
+        {
+          "fecha": 1,
+          "orden": 2,
+          "a": "Yuya",
+          "b": "Fate"
+        },
+        {
+          "fecha": 1,
+          "orden": 3,
+          "a": "Overlord",
+          "b": "Gotenks"
+        },
+        {
+          "fecha": 3,
+          "orden": 1,
+          "a": "Kurosu",
+          "b": "Yuya"
+        },
+        {
+          "fecha": 3,
+          "orden": 2,
+          "a": "Fate",
+          "b": "Overlord"
+        },
+        {
+          "fecha": 3,
+          "orden": 3,
+          "a": "Gotenks",
+          "b": "Pavel"
+        },
+        {
+          "fecha": 4,
+          "orden": 1,
+          "a": "Damian",
+          "b": "Yuya"
+        },
+        {
+          "fecha": 4,
+          "orden": 2,
+          "a": "Fate",
+          "b": "Gotenks"
+        },
+        {
+          "fecha": 4,
+          "orden": 3,
+          "a": "Overlord",
+          "b": "Pavel"
+        },
+        {
+          "fecha": 6,
+          "orden": 1,
+          "a": "Damian",
+          "b": "Fate"
+        },
+        {
+          "fecha": 6,
+          "orden": 2,
+          "a": "Kurosu",
+          "b": "Overlord"
+        },
+        {
+          "fecha": 6,
+          "orden": 3,
+          "a": "Yuya",
+          "b": "Pavel"
+        },
+        {
+          "fecha": 8,
+          "orden": 1,
+          "a": "Damian",
+          "b": "Overlord"
+        },
+        {
+          "fecha": 8,
+          "orden": 2,
+          "a": "Kurosu",
+          "b": "Gotenks"
+        },
+        {
+          "fecha": 8,
+          "orden": 3,
+          "a": "Fate",
+          "b": "Pavel"
+        },
+        {
+          "fecha": 10,
+          "orden": 1,
+          "a": "Damian",
+          "b": "Gotenks"
+        },
+        {
+          "fecha": 10,
+          "orden": 2,
+          "a": "Kurosu",
+          "b": "Pavel"
+        },
+        {
+          "fecha": 10,
+          "orden": 3,
+          "a": "Yuya",
+          "b": "Overlord"
+        },
+        {
+          "fecha": 11,
+          "orden": 1,
+          "a": "Damian",
+          "b": "Pavel"
+        },
+        {
+          "fecha": 11,
+          "orden": 2,
+          "a": "Kurosu",
+          "b": "Fate"
+        },
+        {
+          "fecha": 11,
+          "orden": 3,
+          "a": "Yuya",
+          "b": "Gotenks"
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "participantes": [
+        "Hosco",
+        "Danns",
+        "Dijeorama",
+        "Tsuki",
+        "Ayrlex",
+        "RIM",
+        "Roxer"
+      ],
+      "partidos": [
+        {
+          "fecha": 1,
+          "orden": 1,
+          "a": "Hosco",
+          "b": "Danns"
+        },
+        {
+          "fecha": 1,
+          "orden": 2,
+          "a": "Dijeorama",
+          "b": "Tsuki"
+        },
+        {
+          "fecha": 1,
+          "orden": 3,
+          "a": "Ayrlex",
+          "b": "RIM"
+        },
+        {
+          "fecha": 3,
+          "orden": 1,
+          "a": "Danns",
+          "b": "Dijeorama"
+        },
+        {
+          "fecha": 3,
+          "orden": 2,
+          "a": "Tsuki",
+          "b": "Ayrlex"
+        },
+        {
+          "fecha": 3,
+          "orden": 3,
+          "a": "RIM",
+          "b": "Roxer"
+        },
+        {
+          "fecha": 5,
+          "orden": 1,
+          "a": "Hosco",
+          "b": "Dijeorama"
+        },
+        {
+          "fecha": 5,
+          "orden": 2,
+          "a": "Tsuki",
+          "b": "RIM"
+        },
+        {
+          "fecha": 5,
+          "orden": 3,
+          "a": "Ayrlex",
+          "b": "Roxer"
+        },
+        {
+          "fecha": 6,
+          "orden": 1,
+          "a": "Hosco",
+          "b": "Tsuki"
+        },
+        {
+          "fecha": 6,
+          "orden": 2,
+          "a": "Danns",
+          "b": "Ayrlex"
+        },
+        {
+          "fecha": 6,
+          "orden": 3,
+          "a": "Dijeorama",
+          "b": "Roxer"
+        },
+        {
+          "fecha": 8,
+          "orden": 1,
+          "a": "Hosco",
+          "b": "Ayrlex"
+        },
+        {
+          "fecha": 8,
+          "orden": 2,
+          "a": "Danns",
+          "b": "RIM"
+        },
+        {
+          "fecha": 8,
+          "orden": 3,
+          "a": "Tsuki",
+          "b": "Roxer"
+        },
+        {
+          "fecha": 10,
+          "orden": 1,
+          "a": "Hosco",
+          "b": "RIM"
+        },
+        {
+          "fecha": 10,
+          "orden": 2,
+          "a": "Danns",
+          "b": "Roxer"
+        },
+        {
+          "fecha": 10,
+          "orden": 3,
+          "a": "Dijeorama",
+          "b": "Ayrlex"
+        },
+        {
+          "fecha": 11,
+          "orden": 1,
+          "a": "Hosco",
+          "b": "Roxer"
+        },
+        {
+          "fecha": 11,
+          "orden": 2,
+          "a": "Danns",
+          "b": "Tsuki"
+        },
+        {
+          "fecha": 11,
+          "orden": 3,
+          "a": "Dijeorama",
+          "b": "RIM"
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "participantes": [
+        "Rushador Cuidadoso",
+        "Lightgear",
+        "Gonza",
+        "Lagann",
+        "Aagony",
+        "The Last Outlaw",
+        "Pat"
+      ],
+      "partidos": [
+        {
+          "fecha": 2,
+          "orden": 1,
+          "a": "Rushador Cuidadoso",
+          "b": "Lightgear"
+        },
+        {
+          "fecha": 2,
+          "orden": 2,
+          "a": "Gonza",
+          "b": "Lagann"
+        },
+        {
+          "fecha": 2,
+          "orden": 3,
+          "a": "Aagony",
+          "b": "The Last Outlaw"
+        },
+        {
+          "fecha": 3,
+          "orden": 1,
+          "a": "Lightgear",
+          "b": "Gonza"
+        },
+        {
+          "fecha": 3,
+          "orden": 2,
+          "a": "Lagann",
+          "b": "Aagony"
+        },
+        {
+          "fecha": 3,
+          "orden": 3,
+          "a": "The Last Outlaw",
+          "b": "Pat"
+        },
+        {
+          "fecha": 5,
+          "orden": 1,
+          "a": "Rushador Cuidadoso",
+          "b": "Gonza"
+        },
+        {
+          "fecha": 5,
+          "orden": 2,
+          "a": "Lagann",
+          "b": "The Last Outlaw"
+        },
+        {
+          "fecha": 5,
+          "orden": 3,
+          "a": "Aagony",
+          "b": "Pat"
+        },
+        {
+          "fecha": 7,
+          "orden": 1,
+          "a": "Rushador Cuidadoso",
+          "b": "Lagann"
+        },
+        {
+          "fecha": 7,
+          "orden": 2,
+          "a": "Lightgear",
+          "b": "Aagony"
+        },
+        {
+          "fecha": 7,
+          "orden": 3,
+          "a": "Gonza",
+          "b": "Pat"
+        },
+        {
+          "fecha": 9,
+          "orden": 1,
+          "a": "Rushador Cuidadoso",
+          "b": "Aagony"
+        },
+        {
+          "fecha": 9,
+          "orden": 2,
+          "a": "Lightgear",
+          "b": "The Last Outlaw"
+        },
+        {
+          "fecha": 9,
+          "orden": 3,
+          "a": "Lagann",
+          "b": "Pat"
+        },
+        {
+          "fecha": 10,
+          "orden": 1,
+          "a": "Rushador Cuidadoso",
+          "b": "The Last Outlaw"
+        },
+        {
+          "fecha": 10,
+          "orden": 2,
+          "a": "Lightgear",
+          "b": "Pat"
+        },
+        {
+          "fecha": 10,
+          "orden": 3,
+          "a": "Gonza",
+          "b": "Aagony"
+        },
+        {
+          "fecha": 12,
+          "orden": 1,
+          "a": "Rushador Cuidadoso",
+          "b": "Pat"
+        },
+        {
+          "fecha": 12,
+          "orden": 2,
+          "a": "Lightgear",
+          "b": "Lagann"
+        },
+        {
+          "fecha": 12,
+          "orden": 3,
+          "a": "Gonza",
+          "b": "The Last Outlaw"
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "participantes": [
+        "Colo",
+        "SSnake",
+        "Trunks",
+        "Bearpy",
+        "Okocom",
+        "Mahito la Mujel",
+        "Milder"
+      ],
+      "partidos": [
+        {
+          "fecha": 2,
+          "orden": 1,
+          "a": "Colo",
+          "b": "SSnake"
+        },
+        {
+          "fecha": 2,
+          "orden": 2,
+          "a": "Trunks",
+          "b": "Bearpy"
+        },
+        {
+          "fecha": 2,
+          "orden": 3,
+          "a": "Okocom",
+          "b": "Mahito la Mujel"
+        },
+        {
+          "fecha": 4,
+          "orden": 1,
+          "a": "SSnake",
+          "b": "Trunks"
+        },
+        {
+          "fecha": 4,
+          "orden": 2,
+          "a": "Bearpy",
+          "b": "Okocom"
+        },
+        {
+          "fecha": 4,
+          "orden": 3,
+          "a": "Mahito la Mujel",
+          "b": "Milder"
+        },
+        {
+          "fecha": 5,
+          "orden": 1,
+          "a": "Colo",
+          "b": "Trunks"
+        },
+        {
+          "fecha": 5,
+          "orden": 2,
+          "a": "Bearpy",
+          "b": "Mahito la Mujel"
+        },
+        {
+          "fecha": 5,
+          "orden": 3,
+          "a": "Okocom",
+          "b": "Milder"
+        },
+        {
+          "fecha": 7,
+          "orden": 1,
+          "a": "Colo",
+          "b": "Bearpy"
+        },
+        {
+          "fecha": 7,
+          "orden": 2,
+          "a": "SSnake",
+          "b": "Okocom"
+        },
+        {
+          "fecha": 7,
+          "orden": 3,
+          "a": "Trunks",
+          "b": "Milder"
+        },
+        {
+          "fecha": 9,
+          "orden": 1,
+          "a": "Colo",
+          "b": "Okocom"
+        },
+        {
+          "fecha": 9,
+          "orden": 2,
+          "a": "SSnake",
+          "b": "Mahito la Mujel"
+        },
+        {
+          "fecha": 9,
+          "orden": 3,
+          "a": "Bearpy",
+          "b": "Milder"
+        },
+        {
+          "fecha": 11,
+          "orden": 1,
+          "a": "Colo",
+          "b": "Mahito la Mujel"
+        },
+        {
+          "fecha": 11,
+          "orden": 2,
+          "a": "SSnake",
+          "b": "Milder"
+        },
+        {
+          "fecha": 11,
+          "orden": 3,
+          "a": "Trunks",
+          "b": "Okocom"
+        },
+        {
+          "fecha": 12,
+          "orden": 1,
+          "a": "Colo",
+          "b": "Milder"
+        },
+        {
+          "fecha": 12,
+          "orden": 2,
+          "a": "SSnake",
+          "b": "Bearpy"
+        },
+        {
+          "fecha": 12,
+          "orden": 3,
+          "a": "Trunks",
+          "b": "Mahito la Mujel"
+        }
+      ]
+    }
+  ]
+}
