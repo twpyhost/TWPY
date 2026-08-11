@@ -5,6 +5,15 @@
 **Supersede:** decisiones de puntaje y desempate de
 `2026-08-04-liga-fase-de-grupos-design.md`
 
+> **Actualización (2026-08-11, posterior a la implementación):** el puntaje
+> volvió al criterio clásico — **PTS = FT ganados** (1 punto por set ganado,
+> `puntos = g`). Los matches se siguen cargando y mostrando, pero pasaron a ser
+> desempate: `puntos` → diferencia de matches → matches ganados (`mg`) →
+> `orden_desempate` → nombre. Todo lo demás de este spec (carga del marcador,
+> constraint, columnas, bloques de empate) sigue vigente; lo que dice "PTS =
+> matches ganados" más abajo es el estado anterior. Los resultados ya cargados
+> no se tocaron: solo cambió el cálculo, retroactivamente.
+
 ---
 
 ## Qué cambia y por qué
@@ -40,7 +49,7 @@ como el desempate.
 | Formato | Solo first-to-3. Otros formatos (FT2, FT5, walkover) quedan fuera |
 | Ranking anual | Sin cambios: la liga sigue siendo independiente de `ranking_snapshots` / `puntajes_config` / el importador de Challonge |
 
-### Consecuencia aceptada de PTS = matches ganados
+### Consecuencia aceptada de PTS = matches ganados (revertida, ver actualización arriba)
 
 Un jugador puede quedar **arriba de otro que ganó más sets**. Ejemplo:
 

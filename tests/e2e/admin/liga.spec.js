@@ -33,13 +33,13 @@ test.describe("TS-LIGA-ADMIN | Admin de liga", () => {
    * TC-LIGA-ADMIN-001 | Cargar un resultado actualiza la tabla en vivo
    * Descripcion: elegir el ganador de una pelea de la fecha 1 y despues su
    *   marcador (3-1) carga el resultado, y la tabla en vivo lo refleja de
-   *   inmediato con los matches ganados como puntaje.
+   *   inmediato con 1 punto por FT ganado.
    * Pasos:
    *   1. Ir a /admin/liga/grupo/1
    *   2. Click en "Wario" en la primera pelea de la Fecha 1
    *   3. Click en "3-1" en esa misma pelea
    * Resultado esperado: la fila de "Wario" queda en la posicion 1 con
-   *   MATCHES 3-1, DIF +2 y PTS 3.
+   *   MATCHES 3-1, DIF +2 y PTS 1.
    * Tecnica: caso feliz | Prioridad: alta
    */
   test("TC-LIGA-ADMIN-001 | cargar un resultado actualiza la tabla", async ({ page }) => {

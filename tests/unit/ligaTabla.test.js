@@ -34,7 +34,7 @@ function partido(a, b, ganador = null, matchesPerdedor = 0) {
 }
 
 test.describe("calcularTabla", () => {
-  test("los puntos son los matches ganados, no las victorias", () => {
+  test("los puntos son los FT ganados, no los matches", () => {
     const participantes = [participante(1, "A"), participante(2, "B")];
     const partidos = [partido(1, 2, 1, 1)]; // A gana 3-1
 
@@ -47,19 +47,20 @@ test.describe("calcularTabla", () => {
     expect(a.mg).toBe(3);
     expect(a.mp).toBe(1);
     expect(a.dif).toBe(2);
-    expect(a.puntos).toBe(3);
+    expect(a.puntos).toBe(1);
 
+    // B se llevo 1 match, pero no gano el FT -> 0 puntos.
     expect(b.g).toBe(0);
     expect(b.p).toBe(1);
     expect(b.mg).toBe(1);
     expect(b.mp).toBe(3);
     expect(b.dif).toBe(-2);
-    expect(b.puntos).toBe(1);
+    expect(b.puntos).toBe(0);
   });
 
   test("acumula los matches de varios partidos", () => {
     const participantes = [participante(1, "A"), participante(2, "B"), participante(3, "C")];
-    // A gana 3-0 y 3-2 -> 6 matches ganados, 2 perdidos.
+    // A gana 3-0 y 3-2 -> 2 FT (2 pts), 6 matches ganados, 2 perdidos.
     const partidos = [partido(1, 2, 1, 0), partido(3, 1, 1, 2)];
 
     const tabla = calcularTabla(participantes, partidos);
@@ -69,7 +70,7 @@ test.describe("calcularTabla", () => {
     expect(a.mg).toBe(6);
     expect(a.mp).toBe(2);
     expect(a.dif).toBe(4);
-    expect(a.puntos).toBe(6);
+    expect(a.puntos).toBe(2);
   });
 
   test("pj cuenta solo partidos con ganador_id no nulo (ignora pendientes)", () => {
@@ -84,7 +85,7 @@ test.describe("calcularTabla", () => {
     expect(c.pj).toBe(0);
   });
 
-  test("un partido viejo con ganador y sin marcador cuenta en pj/g/p pero no suma matches", () => {
+  test("un partido viejo con ganador y sin marcador suma el punto pero no los matches", () => {
     // Datos previos a la migracion 0013 -- no deberian existir, pero el
     // calculo no tiene que romperse si aparece uno.
     const participantes = [participante(1, "A"), participante(2, "B")];
@@ -98,18 +99,18 @@ test.describe("calcularTabla", () => {
     expect(a.pj).toBe(1);
     expect(a.g).toBe(1);
     expect(a.mg).toBe(0);
-    expect(a.puntos).toBe(0);
+    expect(a.puntos).toBe(1);
   });
 
   test("ordena por puntos descendente", () => {
     const participantes = [participante(1, "A"), participante(2, "B"), participante(3, "C")];
-    // A gana 2 (6 pts), B gana 1 y pierde 1 (3 + 1 = 4 pts), C pierde 2 (1 + 0 = 1 pt).
+    // A gana 2 FT (2 pts), B gana 1 y pierde 1 (1 pt), C pierde 2 (0 pts).
     const partidos = [partido(1, 2, 1, 1), partido(1, 3, 1, 0), partido(2, 3, 2, 0)];
 
     const tabla = calcularTabla(participantes, partidos);
 
     expect(tabla.map((f) => f.nombre)).toEqual(["A", "B", "C"]);
-    expect(tabla.map((f) => f.puntos)).toEqual([6, 4, 0]);
+    expect(tabla.map((f) => f.puntos)).toEqual([2, 1, 0]);
   });
 
   test("la diferencia de matches rompe el empate de puntos, sin desempate manual", () => {
@@ -119,8 +120,8 @@ test.describe("calcularTabla", () => {
       participante(3, "C"),
       participante(4, "D"),
     ];
-    // A gana 3-2 y pierde 1-3 -> 4 pts, dif -1.
-    // B gana 3-1 y pierde 1-3 -> 4 pts, dif  0.
+    // A gana 3-2 y pierde 1-3 -> 1 pt, dif -1.
+    // B gana 3-1 y pierde 1-3 -> 1 pt, dif  0.
     const partidos = [
       partido(1, 3, 1, 2),
       partido(1, 4, 4, 1),
@@ -132,18 +133,18 @@ test.describe("calcularTabla", () => {
     const a = tabla.find((f) => f.nombre === "A");
     const b = tabla.find((f) => f.nombre === "B");
 
-    expect(a.puntos).toBe(4);
-    expect(b.puntos).toBe(4);
+    expect(a.puntos).toBe(1);
+    expect(b.puntos).toBe(1);
     expect(b.dif).toBeGreaterThan(a.dif);
     expect(b.posicion).toBeLessThan(a.posicion);
     expect(a.empatado).toBe(false);
     expect(b.empatado).toBe(false);
   });
 
-  test("los sets ganados rompen el empate cuando puntos y diferencia coinciden", () => {
-    // Zeta y Alfa terminan con los mismos matches (6-7, dif -1) pero Zeta
-    // gano 2 sets y Alfa 1 -> Zeta va primera aunque el alfabetico la pondria
-    // segunda.
+  test("los matches ganados rompen el empate cuando puntos y diferencia coinciden", () => {
+    // Zeta y Alfa ganan 1 FT y pierden 1 (1 pt, dif 0), pero Zeta jugo sets
+    // parejos (5 matches ganados) y Alfa dos 3-0 (3) -> Zeta va primera aunque
+    // el alfabetico la pondria segunda.
     const participantes = [
       participante(1, "Zeta"),
       participante(2, "Alfa"),
@@ -151,23 +152,20 @@ test.describe("calcularTabla", () => {
       participante(4, "D"),
       participante(5, "E"),
       participante(6, "F"),
-      participante(7, "G"),
     ];
     const partidos = [
       partido(1, 3, 1, 2), // Zeta gana 3-2
-      partido(1, 4, 1, 2), // Zeta gana 3-2
-      partido(1, 5, 5, 0), // Zeta pierde 0-3
-      partido(2, 6, 2, 1), // Alfa gana 3-1
-      partido(2, 7, 7, 1), // Alfa pierde 1-3
-      partido(2, 3, 3, 2), // Alfa pierde 2-3
+      partido(1, 4, 4, 2), // Zeta pierde 2-3
+      partido(2, 5, 2, 0), // Alfa gana 3-0
+      partido(2, 6, 6, 0), // Alfa pierde 0-3
     ];
 
     const tabla = calcularTabla(participantes, partidos);
     const zeta = tabla.find((f) => f.nombre === "Zeta");
     const alfa = tabla.find((f) => f.nombre === "Alfa");
 
-    expect([zeta.puntos, zeta.mp, zeta.dif, zeta.g]).toEqual([6, 7, -1, 2]);
-    expect([alfa.puntos, alfa.mp, alfa.dif, alfa.g]).toEqual([6, 7, -1, 1]);
+    expect([zeta.puntos, zeta.mg, zeta.mp, zeta.dif]).toEqual([1, 5, 5, 0]);
+    expect([alfa.puntos, alfa.mg, alfa.mp, alfa.dif]).toEqual([1, 3, 3, 0]);
     expect(zeta.posicion).toBeLessThan(alfa.posicion);
     expect(zeta.empatado).toBe(false);
     expect(alfa.empatado).toBe(false);
@@ -192,9 +190,9 @@ test.describe("calcularTabla", () => {
     expect(tabla.map((f) => f.nombre)).toEqual(["Alfa", "Zeta"]);
   });
 
-  test("empatado se marca cuando el bloque comparte puntos/dif/sets y falta desempate", () => {
+  test("empatado se marca cuando el bloque comparte puntos/dif/matches y falta desempate", () => {
     const participantes = [participante(1, "A"), participante(2, "B"), participante(3, "C")];
-    // A les gana 3-0 a ambas: B y C quedan identicas (0 pts, dif -3, 0 sets).
+    // A les gana 3-0 a ambas: B y C quedan identicas (0 pts, dif -3, 0 matches).
     const partidos = [partido(1, 2, 1, 0), partido(1, 3, 1, 0)];
 
     const tabla = calcularTabla(participantes, partidos);
@@ -314,7 +312,7 @@ test.describe("bloquesEmpatados", () => {
       participante(3, "C"),
       participante(4, "D"),
     ];
-    // A y B quedan en 4 puntos con distinta diferencia (ver caso de arriba).
+    // A y B quedan en 1 punto con distinta diferencia (ver caso de arriba).
     const partidos = [
       partido(1, 3, 1, 2),
       partido(1, 4, 4, 1),
@@ -330,14 +328,14 @@ test.describe("bloquesEmpatados", () => {
     expect(bloquesEmpatados(tabla)).toEqual([]);
   });
 
-  test("detecta un bloque cuando puntos, diferencia y sets coinciden", () => {
+  test("detecta un bloque cuando puntos, diferencia y matches ganados coinciden", () => {
     const participantes = [
       participante(1, "A"),
       participante(2, "B"),
       participante(3, "C"),
       participante(4, "D"),
     ];
-    // A y B: cada una gana 3-0 y pierde 0-3 -> mismos puntos, dif y sets.
+    // A y B: cada una gana 3-0 y pierde 0-3 -> mismos puntos, dif y matches.
     const partidos = [
       partido(1, 3, 1, 0),
       partido(1, 4, 4, 0),

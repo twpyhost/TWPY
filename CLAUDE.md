@@ -110,8 +110,8 @@ Auto-resolution on import is **strictly by `challonge_id`, never by name** (`src
 The Liga group stage is run on this site (not Challonge) and is **independent of the annual ranking** — it never touches `ranking_snapshots`, `puntajes_config` or the Challonge importer. Only the final bracket phase runs on Challonge and feeds the ranking through the normal tournament flow.
 
 - Each `liga_partidos` row is one **first-to-3 set**. The admin loads the winner **and the score** (3-0 / 3-1 / 3-2); `matches_a`/`matches_b` hold the per-side match count, kept coherent with `ganador_id` by a check constraint.
-- **PTS = matches won**, not sets won. A player can outrank someone with more set wins — that's intended, which is why the `G` (sets won) column stays visible.
-- Standings order: `puntos` → match difference → sets won → `orden_desempate` (manual, admin-set) → name. Only rows identical on the first three are flagged `empatado`, and a group can't be closed while any remain unresolved.
+- **PTS = FT (sets) won** — 1 point per set won, so `PTS` mirrors the `G` column. The per-match score is not points; it is the tiebreak data, which is why `MATCHES` and `DIF` stay visible.
+- Standings order: `puntos` (FT won) → match difference (`mg - mp`) → matches won (`mg`) → `orden_desempate` (manual, admin-set) → name. Only rows identical on the first three are flagged `empatado`, and a group can't be closed while any remain unresolved.
 - `sembrarLiga` is idempotent and **never** writes `ganador_id`/`matches_a`/`matches_b`/`cargado_*` — re-seeding the fixture can't wipe loaded results.
 
 ### Auto-registration on import
