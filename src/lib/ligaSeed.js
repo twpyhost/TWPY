@@ -7,9 +7,9 @@
 // Idempotente: upsert por slug / (liga_id, numero) / (grupo_id, nombre) /
 // (grupo_id, participante_a_id, participante_b_id). NUNCA borra resultados
 // ya cargados -- los upserts de liga_partidos no tocan ganador_id,
-// cargado_at ni cargado_by; los de liga_grupos no tocan cerrado ni
-// cupos_clasificados; los de liga_participantes no tocan player_id ni
-// orden_desempate.
+// matches_a, matches_b, cargado_at ni cargado_by; los de liga_grupos no
+// tocan cerrado ni cupos_clasificados; los de liga_participantes no tocan
+// player_id ni orden_desempate.
 
 function reventar(error, contexto) {
   if (error) {

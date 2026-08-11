@@ -66,8 +66,16 @@ export default function CalendarioLiga({ fechas, grupos }) {
                           >
                             {partido.nombreA}
                           </span>
-                          <span className="flex items-center justify-center whitespace-nowrap font-display text-[10px] tracking-[0.08em] text-white/30">
-                            {partido.ganadorId == null ? "PENDIENTE" : "VS"}
+                          <span
+                            className={`flex items-center justify-center whitespace-nowrap font-display tracking-[0.08em] ${
+                              partido.ganadorId == null
+                                ? "text-[10px] text-white/30"
+                                : "text-xs text-white/70"
+                            }`}
+                          >
+                            {partido.ganadorId == null
+                              ? "PENDIENTE"
+                              : `${partido.matchesA} – ${partido.matchesB}`}
                           </span>
                           <span
                             className={`truncate text-left ${

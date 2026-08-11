@@ -67,7 +67,49 @@ test.describe("sembrarLiga", () => {
     }
   });
 
-  test("re-correrlo no borra un ganador ya cargado", async () => {
+  test("re-correrlo no borra un resultado ya cargado (ganador ni marcador)", async () => {
+    const primeraCorrida = await sembrarLiga(supabase, fixture);
+    ligaId = primeraCorrida.ligaId;
+
+    const { data: unPartido } = await supabase
+      .from("liga_partidos")
+      .select("id, participante_a_id, participante_b_id")
+      .eq(
+        "grupo_id",
+        (
+          await supabase
+            .from("liga_grupos")
+            .select("id")
+            .eq("liga_id", ligaId)
+            .eq("numero", 1)
+            .single()
+        ).data.id,
+      )
+      .limit(1)
+      .single();
+
+    // A gana 3-1: el marcador tiene que sobrevivir al re-seed igual que el
+    // ganador (los upserts de liga_partidos no tocan ninguna de las tres).
+    await supabase
+      .from("liga_partidos")
+      .update({ ganador_id: unPartido.participante_a_id, matches_a: 3, matches_b: 1 })
+      .eq("id", unPartido.id);
+
+    const segundaCorrida = await sembrarLiga(supabase, fixture);
+    expect(segundaCorrida.totalPartidos).toBe(105);
+    expect(segundaCorrida.totalParticipantes).toBe(35);
+
+    const { data: partidoTrasReseed } = await supabase
+      .from("liga_partidos")
+      .select("ganador_id, matches_a, matches_b")
+      .eq("id", unPartido.id)
+      .single();
+    expect(partidoTrasReseed.ganador_id).toBe(unPartido.participante_a_id);
+    expect(partidoTrasReseed.matches_a).toBe(3);
+    expect(partidoTrasReseed.matches_b).toBe(1);
+  });
+
+  test("la constraint rechaza un marcador que no es first-to-3", async () => {
     const primeraCorrida = await sembrarLiga(supabase, fixture);
     ligaId = primeraCorrida.ligaId;
 
@@ -88,20 +130,18 @@ test.describe("sembrarLiga", () => {
       .limit(1)
       .single();
 
-    await supabase
+    // 3-3 no es un resultado valido de un first-to-3.
+    const { error: errorMarcador } = await supabase
       .from("liga_partidos")
-      .update({ ganador_id: unPartido.participante_a_id })
+      .update({ ganador_id: unPartido.participante_a_id, matches_a: 3, matches_b: 3 })
       .eq("id", unPartido.id);
+    expect(errorMarcador).not.toBeNull();
 
-    const segundaCorrida = await sembrarLiga(supabase, fixture);
-    expect(segundaCorrida.totalPartidos).toBe(105);
-    expect(segundaCorrida.totalParticipantes).toBe(35);
-
-    const { data: partidoTrasReseed } = await supabase
+    // Ganador sin marcador tampoco: las tres columnas van juntas.
+    const { error: errorSinMarcador } = await supabase
       .from("liga_partidos")
-      .select("ganador_id")
-      .eq("id", unPartido.id)
-      .single();
-    expect(partidoTrasReseed.ganador_id).toBe(unPartido.participante_a_id);
+      .update({ ganador_id: unPartido.participante_a_id, matches_a: null, matches_b: null })
+      .eq("id", unPartido.id);
+    expect(errorSinMarcador).not.toBeNull();
   });
 });

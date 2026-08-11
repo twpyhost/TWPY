@@ -2,6 +2,14 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
+// Carga (o borra) el resultado de un partido de la fase de grupos.
+//
+// Body: { ganadorId: number | null, matchesPerdedor: 0 | 1 | 2 }
+//
+// El partido es un first-to-3: el cliente manda quien gano y cuantos matches
+// le saco el perdedor; el servidor deriva matches_a/matches_b poniendo 3 del
+// lado del ganador. ganadorId: null borra el resultado completo (marcador y
+// auditoria incluidos) e ignora matchesPerdedor.
 export async function PUT(req, { params }) {
   try {
     const auth = await requireAdmin();
@@ -13,7 +21,17 @@ export async function PUT(req, { params }) {
       return Response.json({ error: "Id de partido invalido" }, { status: 400 });
     }
 
-    const { ganadorId } = await req.json();
+    const { ganadorId, matchesPerdedor } = await req.json();
+
+    if (
+      ganadorId != null &&
+      !(Number.isInteger(matchesPerdedor) && matchesPerdedor >= 0 && matchesPerdedor <= 2)
+    ) {
+      return Response.json(
+        { error: "Los matches del perdedor deben ser 0, 1 o 2" },
+        { status: 400 },
+      );
+    }
 
     const supabase = getSupabaseAdmin();
 
@@ -48,10 +66,14 @@ export async function PUT(req, { params }) {
       return Response.json({ error: "El grupo esta cerrado" }, { status: 409 });
     }
 
+    const ganadorEsA = ganadorId === partido.participante_a_id;
+
     const { error: updateError } = await supabase
       .from("liga_partidos")
       .update({
         ganador_id: ganadorId ?? null,
+        matches_a: ganadorId == null ? null : ganadorEsA ? 3 : matchesPerdedor,
+        matches_b: ganadorId == null ? null : ganadorEsA ? matchesPerdedor : 3,
         cargado_at: ganadorId ? new Date().toISOString() : null,
         cargado_by: ganadorId ? user.id : null,
       })

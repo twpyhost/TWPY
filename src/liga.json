@@ -372,7 +372,9 @@
       "participante_a_id": 15,
       "participante_b_id": 16,
       "orden": 1,
-      "ganador_id": 15
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 23,
@@ -381,7 +383,9 @@
       "participante_a_id": 17,
       "participante_b_id": 18,
       "orden": 2,
-      "ganador_id": 17
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 24,
@@ -390,7 +394,9 @@
       "participante_a_id": 19,
       "participante_b_id": 20,
       "orden": 3,
-      "ganador_id": 19
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 25,
@@ -399,7 +405,9 @@
       "participante_a_id": 16,
       "participante_b_id": 17,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 26,
@@ -408,7 +416,9 @@
       "participante_a_id": 18,
       "participante_b_id": 19,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 27,
@@ -417,7 +427,9 @@
       "participante_a_id": 20,
       "participante_b_id": 21,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 28,
@@ -426,7 +438,9 @@
       "participante_a_id": 15,
       "participante_b_id": 17,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 29,
@@ -435,7 +449,9 @@
       "participante_a_id": 18,
       "participante_b_id": 20,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 30,
@@ -444,7 +460,9 @@
       "participante_a_id": 19,
       "participante_b_id": 21,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 31,
@@ -453,7 +471,9 @@
       "participante_a_id": 15,
       "participante_b_id": 20,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 32,
@@ -462,7 +482,9 @@
       "participante_a_id": 16,
       "participante_b_id": 19,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 33,
@@ -471,7 +493,9 @@
       "participante_a_id": 18,
       "participante_b_id": 21,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 34,
@@ -480,7 +504,9 @@
       "participante_a_id": 15,
       "participante_b_id": 19,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 35,
@@ -489,7 +515,9 @@
       "participante_a_id": 16,
       "participante_b_id": 20,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 36,
@@ -498,7 +526,9 @@
       "participante_a_id": 17,
       "participante_b_id": 21,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 37,
@@ -507,7 +537,9 @@
       "participante_a_id": 15,
       "participante_b_id": 18,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 38,
@@ -516,7 +548,9 @@
       "participante_a_id": 16,
       "participante_b_id": 21,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 39,
@@ -525,7 +559,9 @@
       "participante_a_id": 17,
       "participante_b_id": 20,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 40,
@@ -534,7 +570,9 @@
       "participante_a_id": 15,
       "participante_b_id": 21,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 41,
@@ -543,7 +581,9 @@
       "participante_a_id": 16,
       "participante_b_id": 18,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 42,
@@ -552,7 +592,9 @@
       "participante_a_id": 17,
       "participante_b_id": 19,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 51,
@@ -561,7 +603,9 @@
       "participante_a_id": 44,
       "participante_b_id": 45,
       "orden": 1,
-      "ganador_id": 44
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 52,
@@ -570,7 +614,9 @@
       "participante_a_id": 46,
       "participante_b_id": 47,
       "orden": 2,
-      "ganador_id": 46
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 53,
@@ -579,7 +625,9 @@
       "participante_a_id": 48,
       "participante_b_id": 49,
       "orden": 3,
-      "ganador_id": 48
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 54,
@@ -588,7 +636,9 @@
       "participante_a_id": 45,
       "participante_b_id": 46,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 55,
@@ -597,7 +647,9 @@
       "participante_a_id": 47,
       "participante_b_id": 48,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 56,
@@ -606,7 +658,9 @@
       "participante_a_id": 49,
       "participante_b_id": 50,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 57,
@@ -615,7 +669,9 @@
       "participante_a_id": 44,
       "participante_b_id": 46,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 58,
@@ -624,7 +680,9 @@
       "participante_a_id": 47,
       "participante_b_id": 49,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 59,
@@ -633,7 +691,9 @@
       "participante_a_id": 48,
       "participante_b_id": 50,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 60,
@@ -642,7 +702,9 @@
       "participante_a_id": 44,
       "participante_b_id": 47,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 61,
@@ -651,7 +713,9 @@
       "participante_a_id": 45,
       "participante_b_id": 48,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 62,
@@ -660,7 +724,9 @@
       "participante_a_id": 46,
       "participante_b_id": 50,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 63,
@@ -669,7 +735,9 @@
       "participante_a_id": 44,
       "participante_b_id": 48,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 64,
@@ -678,7 +746,9 @@
       "participante_a_id": 45,
       "participante_b_id": 49,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 65,
@@ -687,7 +757,9 @@
       "participante_a_id": 47,
       "participante_b_id": 50,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 66,
@@ -696,7 +768,9 @@
       "participante_a_id": 44,
       "participante_b_id": 49,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 67,
@@ -705,7 +779,9 @@
       "participante_a_id": 45,
       "participante_b_id": 50,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 68,
@@ -714,7 +790,9 @@
       "participante_a_id": 46,
       "participante_b_id": 48,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 69,
@@ -723,7 +801,9 @@
       "participante_a_id": 44,
       "participante_b_id": 50,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 70,
@@ -732,7 +812,9 @@
       "participante_a_id": 45,
       "participante_b_id": 47,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 71,
@@ -741,7 +823,9 @@
       "participante_a_id": 46,
       "participante_b_id": 49,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 80,
@@ -750,7 +834,9 @@
       "participante_a_id": 73,
       "participante_b_id": 74,
       "orden": 1,
-      "ganador_id": 73
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 81,
@@ -759,7 +845,9 @@
       "participante_a_id": 75,
       "participante_b_id": 76,
       "orden": 2,
-      "ganador_id": 75
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 82,
@@ -768,7 +856,9 @@
       "participante_a_id": 77,
       "participante_b_id": 78,
       "orden": 3,
-      "ganador_id": 77
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 83,
@@ -777,7 +867,9 @@
       "participante_a_id": 74,
       "participante_b_id": 75,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 84,
@@ -786,7 +878,9 @@
       "participante_a_id": 76,
       "participante_b_id": 77,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 85,
@@ -795,7 +889,9 @@
       "participante_a_id": 78,
       "participante_b_id": 79,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 86,
@@ -804,7 +900,9 @@
       "participante_a_id": 73,
       "participante_b_id": 75,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 87,
@@ -813,7 +911,9 @@
       "participante_a_id": 76,
       "participante_b_id": 78,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 88,
@@ -822,7 +922,9 @@
       "participante_a_id": 77,
       "participante_b_id": 79,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 89,
@@ -831,7 +933,9 @@
       "participante_a_id": 73,
       "participante_b_id": 76,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 90,
@@ -840,7 +944,9 @@
       "participante_a_id": 74,
       "participante_b_id": 77,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 91,
@@ -849,7 +955,9 @@
       "participante_a_id": 75,
       "participante_b_id": 79,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 92,
@@ -858,7 +966,9 @@
       "participante_a_id": 73,
       "participante_b_id": 77,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 93,
@@ -867,7 +977,9 @@
       "participante_a_id": 74,
       "participante_b_id": 78,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 94,
@@ -876,7 +988,9 @@
       "participante_a_id": 76,
       "participante_b_id": 79,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 95,
@@ -885,7 +999,9 @@
       "participante_a_id": 73,
       "participante_b_id": 78,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 96,
@@ -894,7 +1010,9 @@
       "participante_a_id": 74,
       "participante_b_id": 79,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 97,
@@ -903,7 +1021,9 @@
       "participante_a_id": 75,
       "participante_b_id": 77,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 98,
@@ -912,7 +1032,9 @@
       "participante_a_id": 73,
       "participante_b_id": 79,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 99,
@@ -921,7 +1043,9 @@
       "participante_a_id": 74,
       "participante_b_id": 76,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 100,
@@ -930,7 +1054,9 @@
       "participante_a_id": 75,
       "participante_b_id": 78,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 109,
@@ -939,7 +1065,9 @@
       "participante_a_id": 102,
       "participante_b_id": 103,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 110,
@@ -948,7 +1076,9 @@
       "participante_a_id": 104,
       "participante_b_id": 105,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 111,
@@ -957,7 +1087,9 @@
       "participante_a_id": 106,
       "participante_b_id": 107,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 112,
@@ -966,7 +1098,9 @@
       "participante_a_id": 103,
       "participante_b_id": 104,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 113,
@@ -975,7 +1109,9 @@
       "participante_a_id": 105,
       "participante_b_id": 106,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 114,
@@ -984,7 +1120,9 @@
       "participante_a_id": 107,
       "participante_b_id": 108,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 115,
@@ -993,7 +1131,9 @@
       "participante_a_id": 102,
       "participante_b_id": 104,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 116,
@@ -1002,7 +1142,9 @@
       "participante_a_id": 105,
       "participante_b_id": 107,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 117,
@@ -1011,7 +1153,9 @@
       "participante_a_id": 106,
       "participante_b_id": 108,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 118,
@@ -1020,7 +1164,9 @@
       "participante_a_id": 102,
       "participante_b_id": 105,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 119,
@@ -1029,7 +1175,9 @@
       "participante_a_id": 103,
       "participante_b_id": 106,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 120,
@@ -1038,7 +1186,9 @@
       "participante_a_id": 104,
       "participante_b_id": 108,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 121,
@@ -1047,7 +1197,9 @@
       "participante_a_id": 102,
       "participante_b_id": 106,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 122,
@@ -1056,7 +1208,9 @@
       "participante_a_id": 103,
       "participante_b_id": 107,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 123,
@@ -1065,7 +1219,9 @@
       "participante_a_id": 105,
       "participante_b_id": 108,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 124,
@@ -1074,7 +1230,9 @@
       "participante_a_id": 102,
       "participante_b_id": 107,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 125,
@@ -1083,7 +1241,9 @@
       "participante_a_id": 103,
       "participante_b_id": 108,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 126,
@@ -1092,7 +1252,9 @@
       "participante_a_id": 104,
       "participante_b_id": 106,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 127,
@@ -1101,7 +1263,9 @@
       "participante_a_id": 102,
       "participante_b_id": 108,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 128,
@@ -1110,7 +1274,9 @@
       "participante_a_id": 103,
       "participante_b_id": 105,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 129,
@@ -1119,7 +1285,9 @@
       "participante_a_id": 104,
       "participante_b_id": 107,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 138,
@@ -1128,7 +1296,9 @@
       "participante_a_id": 131,
       "participante_b_id": 132,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 139,
@@ -1137,7 +1307,9 @@
       "participante_a_id": 133,
       "participante_b_id": 134,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 140,
@@ -1146,7 +1318,9 @@
       "participante_a_id": 135,
       "participante_b_id": 136,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 141,
@@ -1155,7 +1329,9 @@
       "participante_a_id": 132,
       "participante_b_id": 133,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 142,
@@ -1164,7 +1340,9 @@
       "participante_a_id": 134,
       "participante_b_id": 135,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 143,
@@ -1173,7 +1351,9 @@
       "participante_a_id": 136,
       "participante_b_id": 137,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 144,
@@ -1182,7 +1362,9 @@
       "participante_a_id": 131,
       "participante_b_id": 133,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 145,
@@ -1191,7 +1373,9 @@
       "participante_a_id": 134,
       "participante_b_id": 136,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 146,
@@ -1200,7 +1384,9 @@
       "participante_a_id": 135,
       "participante_b_id": 137,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 147,
@@ -1209,7 +1395,9 @@
       "participante_a_id": 131,
       "participante_b_id": 134,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 148,
@@ -1218,7 +1406,9 @@
       "participante_a_id": 132,
       "participante_b_id": 135,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 149,
@@ -1227,7 +1417,9 @@
       "participante_a_id": 133,
       "participante_b_id": 137,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 150,
@@ -1236,7 +1428,9 @@
       "participante_a_id": 131,
       "participante_b_id": 135,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 151,
@@ -1245,7 +1439,9 @@
       "participante_a_id": 132,
       "participante_b_id": 136,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 152,
@@ -1254,7 +1450,9 @@
       "participante_a_id": 134,
       "participante_b_id": 137,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 153,
@@ -1263,7 +1461,9 @@
       "participante_a_id": 131,
       "participante_b_id": 136,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 154,
@@ -1272,7 +1472,9 @@
       "participante_a_id": 132,
       "participante_b_id": 137,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 155,
@@ -1281,7 +1483,9 @@
       "participante_a_id": 133,
       "participante_b_id": 135,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 156,
@@ -1290,7 +1494,9 @@
       "participante_a_id": 131,
       "participante_b_id": 137,
       "orden": 1,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 157,
@@ -1299,7 +1505,9 @@
       "participante_a_id": 132,
       "participante_b_id": 134,
       "orden": 2,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     },
     {
       "id": 158,
@@ -1308,7 +1516,9 @@
       "participante_a_id": 133,
       "participante_b_id": 136,
       "orden": 3,
-      "ganador_id": null
+      "ganador_id": null,
+      "matches_a": null,
+      "matches_b": null
     }
   ]
 }

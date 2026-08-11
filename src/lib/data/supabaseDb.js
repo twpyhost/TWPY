@@ -257,7 +257,9 @@ const getLiga = async (slug) => {
 
   const { data: partidos, error: partidosError } = await supabase
     .from("liga_partidos")
-    .select("id, grupo_id, fecha_id, participante_a_id, participante_b_id, orden, ganador_id")
+    .select(
+      "id, grupo_id, fecha_id, participante_a_id, participante_b_id, orden, ganador_id, matches_a, matches_b",
+    )
     .in("grupo_id", grupoIds);
 
   if (partidosError) {

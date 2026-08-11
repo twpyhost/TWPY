@@ -1,4 +1,5 @@
 import RibbonTag from "@/components/ui/RibbonTag";
+import { formatearDif } from "@/lib/ligaTabla";
 
 // Nota: el diseno del handoff linkea el nombre del jugador a su perfil
 // (/competidores/[id]) cuando hay player_id, pero esa pagina de detalle
@@ -33,7 +34,7 @@ function TablaGrupo({ grupo }) {
         )}
       </div>
       <div className="overflow-x-auto border border-white/10 bg-dark-gray-3-700">
-        <table className="w-full min-w-[380px] border-collapse">
+        <table className="w-full min-w-[520px] border-collapse">
           <thead>
             <tr className="bg-black">
               <Th>#</Th>
@@ -41,6 +42,8 @@ function TablaGrupo({ grupo }) {
               <Th align="right">PJ</Th>
               <Th align="right">G</Th>
               <Th align="right">P</Th>
+              <Th align="right">MATCHES</Th>
+              <Th align="right">DIF</Th>
               <Th align="right">PTS</Th>
             </tr>
           </thead>
@@ -66,6 +69,12 @@ function TablaGrupo({ grupo }) {
                 </td>
                 <td className="px-3 py-2.5 text-right font-body text-sm text-white/70">
                   {fila.p}
+                </td>
+                <td className="px-3 py-2.5 text-right font-body text-sm text-white/70">
+                  {fila.mg}-{fila.mp}
+                </td>
+                <td className="px-3 py-2.5 text-right font-body text-sm text-white/70">
+                  {formatearDif(fila.dif)}
                 </td>
                 <td className="px-3 py-2.5 text-right font-display text-base text-white">
                   {fila.puntos}

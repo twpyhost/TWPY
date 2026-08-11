@@ -19,6 +19,33 @@ test.describe("TS-LIGA | Liga publica", () => {
     supabase = getServiceClient();
     const resumen = await sembrarLiga(supabase, fixture);
     ligaId = resumen.ligaId;
+
+    // Un unico resultado cargado, en el Grupo 2, para poder verificar que el
+    // calendario muestra el marcador (TC-LIGA-004). Se escribe ANTES de la
+    // primera visita a /liga porque la pagina cachea con revalidate=60. El
+    // Grupo 1 queda intacto: TC-LIGA-002 y TC-LIGA-003 dependen de que siga
+    // sin resultados.
+    const { data: grupo2 } = await supabase
+      .from("liga_grupos")
+      .select("id")
+      .eq("liga_id", ligaId)
+      .eq("numero", 2)
+      .single();
+    const { data: primerPartido } = await supabase
+      .from("liga_partidos")
+      .select("id, participante_a_id")
+      .eq("grupo_id", grupo2.id)
+      .order("id", { ascending: true })
+      .limit(1)
+      .single();
+    await supabase
+      .from("liga_partidos")
+      .update({
+        ganador_id: primerPartido.participante_a_id,
+        matches_a: 3,
+        matches_b: 1,
+      })
+      .eq("id", primerPartido.id);
   });
 
   test.afterAll(async () => {
@@ -85,5 +112,23 @@ test.describe("TS-LIGA | Liga publica", () => {
     await page.goto("/liga");
 
     await expect(page.getByText("Descansa: Joawquer")).toBeVisible();
+  });
+
+  /**
+   * TC-LIGA-004 | El calendario muestra el marcador del set
+   * Descripcion: una pelea con resultado cargado muestra el marcador
+   *   first-to-3 orientado A-B en vez de "VS"; las pendientes siguen
+   *   mostrando "PENDIENTE".
+   * Pasos:
+   *   1. Ir a /liga  (el setup dejo la primera pelea del Grupo 2 en 3-1)
+   * Resultado esperado: se ve "3 – 1" en el calendario y sigue habiendo
+   *   peleas "PENDIENTE".
+   * Tecnica: caso feliz | Prioridad: alta
+   */
+  test("TC-LIGA-004 | el calendario muestra el marcador del set", async ({ page }) => {
+    await page.goto("/liga");
+
+    await expect(page.getByText("3 – 1", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText("PENDIENTE", { exact: true }).first()).toBeVisible();
   });
 });

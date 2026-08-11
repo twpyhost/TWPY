@@ -1,6 +1,7 @@
 // Suite: admin de liga (TS-LIGA-ADMIN)
-// Nivel: sistema / e2e. Cobertura: cargar un ganador desde el detalle del
-// grupo y el bloqueo de escritura cuando el grupo esta cerrado.
+// Nivel: sistema / e2e. Cobertura: cargar un resultado (ganador + marcador
+// first-to-3) desde el detalle del grupo y el bloqueo de escritura cuando el
+// grupo esta cerrado.
 // Datos: siembra su propia liga (fixture real) bajo un slug exclusivo del
 // test -- las rutas admin operan sobre la liga mas reciente
 // (obtenerLigaActual), asi que esta se vuelve automaticamente "la" liga del
@@ -29,28 +30,53 @@ test.describe("TS-LIGA-ADMIN | Admin de liga", () => {
   });
 
   /**
-   * TC-LIGA-ADMIN-001 | Cargar un ganador actualiza la tabla en vivo
-   * Descripcion: click en el nombre de un participante en una pelea de la
-   *   fecha 1 lo carga como ganador y la tabla en vivo del grupo lo refleja
-   *   de inmediato (1 punto, primera posicion).
+   * TC-LIGA-ADMIN-001 | Cargar un resultado actualiza la tabla en vivo
+   * Descripcion: elegir el ganador de una pelea de la fecha 1 y despues su
+   *   marcador (3-1) carga el resultado, y la tabla en vivo lo refleja de
+   *   inmediato con los matches ganados como puntaje.
    * Pasos:
    *   1. Ir a /admin/liga/grupo/1
    *   2. Click en "Wario" en la primera pelea de la Fecha 1
-   * Resultado esperado: la fila de "Wario" en la tabla en vivo muestra
-   *   PTS=1 y queda en la posicion 1.
+   *   3. Click en "3-1" en esa misma pelea
+   * Resultado esperado: la fila de "Wario" queda en la posicion 1 con
+   *   MATCHES 3-1, DIF +2 y PTS 3.
    * Tecnica: caso feliz | Prioridad: alta
    */
-  test("TC-LIGA-ADMIN-001 | cargar un ganador actualiza la tabla", async ({ page }) => {
+  test("TC-LIGA-ADMIN-001 | cargar un resultado actualiza la tabla", async ({ page }) => {
     await page.goto("/admin/liga/grupo/1");
 
     // La Fecha 1 es siempre el primer bloque de fechas del grupo (orden
     // ascendente) -- su primera pelea es "Wario vs Rox" (ver el fixture),
     // asi que el primer boton "Wario" en el DOM es el de esa pelea.
     await page.getByRole("button", { name: "Wario", exact: true }).first().click();
+    await page.getByRole("button", { name: "3-1", exact: true }).first().click();
 
     const filaWario = page.getByRole("row", { name: /^1 Wario/ });
     await expect(filaWario).toBeVisible();
-    await expect(filaWario.getByRole("cell", { name: "1" }).first()).toBeVisible();
+    await expect(filaWario.getByRole("cell", { name: "3-1", exact: true })).toBeVisible();
+    await expect(filaWario.getByRole("cell", { name: "+2", exact: true })).toBeVisible();
+  });
+
+  /**
+   * TC-LIGA-ADMIN-003 | Los botones de marcador no se habilitan sin ganador
+   * Descripcion: mientras no se eligio quien gano la pelea, los tres botones
+   *   de marcador (3-0 / 3-1 / 3-2) estan deshabilitados -- no se puede
+   *   guardar un marcador sin ganador.
+   * Pasos:
+   *   1. Ir a /admin/liga/grupo/3 (grupo sin resultados cargados)
+   * Resultado esperado: el primer boton "3-0" esta deshabilitado; despues de
+   *   elegir un ganador, se habilita.
+   * Tecnica: particion de equivalencia / estado invalido | Prioridad: media
+   */
+  test("TC-LIGA-ADMIN-003 | el marcador requiere elegir ganador primero", async ({ page }) => {
+    await page.goto("/admin/liga/grupo/3");
+
+    const primerMarcador = page.getByRole("button", { name: "3-0", exact: true }).first();
+    await expect(primerMarcador).toBeDisabled();
+
+    // La primera pelea de la Fecha 1 del grupo 3 es "Hosco vs Danns".
+    await page.getByRole("button", { name: "Hosco", exact: true }).first().click();
+    await expect(primerMarcador).toBeEnabled();
   });
 
   /**
@@ -101,5 +127,7 @@ test.describe("TS-LIGA-ADMIN | Admin de liga", () => {
 
     const primerBotonDePelea = page.getByRole("button", { name: "Damian", exact: true }).first();
     await expect(primerBotonDePelea).toBeDisabled();
+    const primerBotonDeMarcador = page.getByRole("button", { name: "3-0", exact: true }).first();
+    await expect(primerBotonDeMarcador).toBeDisabled();
   });
 });

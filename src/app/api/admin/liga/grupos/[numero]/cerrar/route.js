@@ -39,7 +39,7 @@ export async function PUT(req, { params }) {
 
       const { data: partidos, error: partidosError } = await supabase
         .from("liga_partidos")
-        .select("participante_a_id, participante_b_id, ganador_id")
+        .select("participante_a_id, participante_b_id, ganador_id, matches_a, matches_b")
         .eq("grupo_id", grupo.id);
       if (partidosError) throw partidosError;
 

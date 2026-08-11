@@ -39,7 +39,7 @@ export async function GET() {
       ? await supabase
           .from("liga_partidos")
           .select(
-            "id, grupo_id, fecha_id, participante_a_id, participante_b_id, orden, ganador_id",
+            "id, grupo_id, fecha_id, participante_a_id, participante_b_id, orden, ganador_id, matches_a, matches_b",
           )
           .in("grupo_id", grupoIds)
       : { data: [], error: null };

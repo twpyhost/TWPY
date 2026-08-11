@@ -9,7 +9,7 @@ import RibbonTag from "@/components/ui/RibbonTag";
 import StatusChip from "@/components/ui/StatusChip";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
-import { bloquesPorPuntos, estadoParaPosicion } from "@/lib/ligaTabla";
+import { bloquesEmpatados, estadoParaPosicion, formatearDif } from "@/lib/ligaTabla";
 
 // Identifica un bloque de forma estable entre renders, por el conjunto de
 // participantes que lo componen -- no por su posicion en la tabla -- para
@@ -31,6 +31,10 @@ export default function GrupoDetalle({ numero }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [guardandoPartidoId, setGuardandoPartidoId] = useState(null);
+  // partidoId -> participanteId elegido como ganador pero todavia sin
+  // marcador. Solo vive en el cliente: nada se guarda hasta que el admin
+  // elige 3-0 / 3-1 / 3-2.
+  const [ganadorPendiente, setGanadorPendiente] = useState({});
   const [ordenDraft, setOrdenDraft] = useState({});
   const [bloquesGuardando, setBloquesGuardando] = useState(new Set());
   const [destacados, setDestacados] = useState(new Set());
@@ -79,7 +83,7 @@ export default function GrupoDetalle({ numero }) {
     return mapa;
   }, [grupo]);
 
-  const bloques = useMemo(() => (grupo ? bloquesPorPuntos(grupo.tabla) : []), [grupo]);
+  const bloques = useMemo(() => (grupo ? bloquesEmpatados(grupo.tabla) : []), [grupo]);
 
   const filasVisibles = useMemo(() => {
     if (!grupo) return [];
@@ -97,21 +101,47 @@ export default function GrupoDetalle({ numero }) {
 
   const hayEmpatesPendientes = grupo?.tabla.some((f) => f.empatado) ?? false;
 
-  const cargarGanador = async (partidoId, ganadorId) => {
+  const olvidarPendiente = (partidoId) =>
+    setGanadorPendiente((prev) => {
+      if (!(partidoId in prev)) return prev;
+      const siguiente = { ...prev };
+      delete siguiente[partidoId];
+      return siguiente;
+    });
+
+  const guardarResultado = async (partidoId, ganadorId, matchesPerdedor) => {
     setGuardandoPartidoId(partidoId);
     try {
       const response = await fetch(`/api/admin/liga/partidos/${partidoId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ganadorId }),
+        body: JSON.stringify({ ganadorId, matchesPerdedor }),
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "No se pudo actualizar el partido");
+      olvidarPendiente(partidoId);
       await cargar({ silent: true });
     } catch (error) {
       toast.error(error.message);
     } finally {
       setGuardandoPartidoId(null);
+    }
+  };
+
+  // Click en un nombre: si no es el ganador que se esta mostrando, pasa a ser
+  // el ganador pendiente y se habilitan los botones de marcador. Si ya lo era,
+  // borra el resultado guardado (el "deshacer" de siempre) o cancela la
+  // eleccion pendiente cuando todavia no se guardo nada.
+  const elegirGanador = (partido, participanteId) => {
+    const elegidoActual = ganadorPendiente[partido.id] ?? partido.ganadorId;
+    if (elegidoActual !== participanteId) {
+      setGanadorPendiente((prev) => ({ ...prev, [partido.id]: participanteId }));
+      return;
+    }
+    if (partido.ganadorId === participanteId) {
+      guardarResultado(partido.id, null, null);
+    } else {
+      olvidarPendiente(partido.id);
     }
   };
 
@@ -298,7 +328,7 @@ export default function GrupoDetalle({ numero }) {
           <div className="flex flex-col gap-3">
             <RibbonTag className="w-fit">TABLA EN VIVO</RibbonTag>
             <div className="overflow-x-auto border border-white/10 bg-dark-gray-3-700">
-              <table className="w-full min-w-[420px] border-collapse">
+              <table className="w-full min-w-[560px] border-collapse">
                 <thead>
                   <tr className="bg-black">
                     <Th>#</Th>
@@ -306,6 +336,8 @@ export default function GrupoDetalle({ numero }) {
                     <Th align="right">PJ</Th>
                     <Th align="right">G</Th>
                     <Th align="right">P</Th>
+                    <Th align="right">MATCHES</Th>
+                    <Th align="right">DIF</Th>
                     <Th align="right">PTS</Th>
                     <Th align="right">Desempate</Th>
                   </tr>
@@ -349,6 +381,12 @@ export default function GrupoDetalle({ numero }) {
                         </td>
                         <td className="px-3 py-2.5 text-right font-body text-sm text-white/70">
                           {fila.p}
+                        </td>
+                        <td className="px-3 py-2.5 text-right font-body text-sm text-white/70">
+                          {fila.mg}-{fila.mp}
+                        </td>
+                        <td className="px-3 py-2.5 text-right font-body text-sm text-white/70">
+                          {formatearDif(fila.dif)}
                         </td>
                         <td className="px-3 py-2.5 text-right font-display text-base text-white">
                           {fila.puntos}
@@ -456,23 +494,15 @@ export default function GrupoDetalle({ numero }) {
                     </div>
                     <div className="flex flex-col gap-2">
                       {partidos.map((partido) => (
-                        <div key={partido.id} className="flex items-center gap-2">
-                          <BotonGanador
-                            partido={partido}
-                            lado="a"
-                            loading={guardandoPartidoId === partido.id}
-                            disabled={grupo.cerrado}
-                            onClick={cargarGanador}
-                          />
-                          <span className="font-display text-xs text-white/40">VS</span>
-                          <BotonGanador
-                            partido={partido}
-                            lado="b"
-                            loading={guardandoPartidoId === partido.id}
-                            disabled={grupo.cerrado}
-                            onClick={cargarGanador}
-                          />
-                        </div>
+                        <FilaPartido
+                          key={partido.id}
+                          partido={partido}
+                          pendienteId={ganadorPendiente[partido.id] ?? null}
+                          loading={guardandoPartidoId === partido.id}
+                          disabled={grupo.cerrado}
+                          onElegirGanador={elegirGanador}
+                          onGuardarMarcador={guardarResultado}
+                        />
                       ))}
                     </div>
                   </div>
@@ -514,22 +544,103 @@ function Th({ children, align }) {
   );
 }
 
-function BotonGanador({ partido, lado, loading, disabled, onClick }) {
-  const esGanador =
-    (lado === "a" && partido.ganadorId === partido.participanteAId) ||
-    (lado === "b" && partido.ganadorId === partido.participanteBId);
-  const hayGanador = partido.ganadorId != null;
+// Un partido de la fase de grupos es un first-to-3: se elige el ganador con
+// el boton de su nombre y despues el marcador (3-0 / 3-1 / 3-2), que es lo
+// que dispara el guardado. Mientras no haya ganador elegido los botones de
+// marcador estan deshabilitados; volver a clickear al ganador ya cargado
+// borra el resultado.
+function FilaPartido({
+  partido,
+  pendienteId,
+  loading,
+  disabled,
+  onElegirGanador,
+  onGuardarMarcador,
+}) {
+  const ganadorElegidoId = pendienteId ?? partido.ganadorId;
+  const hayCambioPendiente = pendienteId != null && pendienteId !== partido.ganadorId;
+
+  // Matches que le saco el perdedor en el resultado ya guardado -- se usa
+  // para marcar cual de los tres botones esta activo. Si el admin eligio otro
+  // ganador todavia sin guardar, no hay marcador activo.
+  const matchesPerdedorGuardado =
+    partido.ganadorId == null || hayCambioPendiente
+      ? null
+      : partido.ganadorId === partido.participanteAId
+        ? partido.matchesB
+        : partido.matchesA;
+
+  return (
+    <div className="flex flex-col gap-1.5 border-b border-white/[.06] pb-2 last:border-b-0 last:pb-0">
+      <div className="flex items-center gap-2">
+        <BotonGanador
+          partido={partido}
+          lado="a"
+          ganadorElegidoId={ganadorElegidoId}
+          pendiente={hayCambioPendiente}
+          loading={loading}
+          disabled={disabled}
+          onClick={onElegirGanador}
+        />
+        <span className="font-display text-xs text-white/40">VS</span>
+        <BotonGanador
+          partido={partido}
+          lado="b"
+          ganadorElegidoId={ganadorElegidoId}
+          pendiente={hayCambioPendiente}
+          loading={loading}
+          disabled={disabled}
+          onClick={onElegirGanador}
+        />
+      </div>
+      <div className="flex items-center justify-center gap-1.5">
+        {[0, 1, 2].map((matches) => {
+          const activo = matchesPerdedorGuardado === matches;
+          return (
+            <button
+              key={matches}
+              type="button"
+              disabled={loading || disabled || ganadorElegidoId == null}
+              onClick={() => onGuardarMarcador(partido.id, ganadorElegidoId, matches)}
+              className={`h-7 w-14 border font-display text-xs tracking-[0.06em] transition-colors duration-200 disabled:opacity-30 ${
+                activo
+                  ? "border-success/50 bg-success/15 text-success"
+                  : "border-white/15 bg-white/[.04] text-white/70 hover:border-primary-500/50 hover:bg-primary-500/10"
+              }`}
+            >
+              3-{matches}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function BotonGanador({
+  partido,
+  lado,
+  ganadorElegidoId,
+  pendiente,
+  loading,
+  disabled,
+  onClick,
+}) {
   const participanteId = lado === "a" ? partido.participanteAId : partido.participanteBId;
   const nombre = lado === "a" ? partido.nombreA : partido.nombreB;
+  const esGanador = ganadorElegidoId === participanteId;
+  const hayGanador = ganadorElegidoId != null;
 
   return (
     <button
       type="button"
       disabled={loading || disabled}
-      onClick={() => onClick(partido.id, esGanador ? null : participanteId)}
+      onClick={() => onClick(partido, participanteId)}
       className={`h-10 flex-1 border px-3 font-body text-sm font-bold transition-colors duration-200 disabled:opacity-40 ${
         esGanador
-          ? "border-success/50 bg-success/15 text-success"
+          ? pendiente
+            ? "border-primary-500/60 bg-primary-500/15 text-white"
+            : "border-success/50 bg-success/15 text-success"
           : hayGanador
             ? "border-white/10 bg-white/[.02] text-white/35"
             : "border-white/15 bg-white/[.04] text-white hover:border-primary-500/50 hover:bg-primary-500/10"
