@@ -1,0 +1,1314 @@
+{
+  "liga": {
+    "id": 1,
+    "slug": "liga-invitacional-2026",
+    "nombre": "Liga Invitacional · Tekken Warriors Paraguay",
+    "temporada": 2026,
+    "estado": "en_curso"
+  },
+  "fechas": [
+    {
+      "id": 2,
+      "numero": 1,
+      "fecha": "2026-08-09",
+      "hora": "17:00"
+    },
+    {
+      "id": 3,
+      "numero": 2,
+      "fecha": "2026-08-16",
+      "hora": "17:00"
+    },
+    {
+      "id": 4,
+      "numero": 3,
+      "fecha": "2026-08-23",
+      "hora": "17:00"
+    },
+    {
+      "id": 5,
+      "numero": 4,
+      "fecha": "2026-08-30",
+      "hora": "17:00"
+    },
+    {
+      "id": 6,
+      "numero": 5,
+      "fecha": "2026-09-06",
+      "hora": "17:00"
+    },
+    {
+      "id": 7,
+      "numero": 6,
+      "fecha": "2026-09-13",
+      "hora": "17:00"
+    },
+    {
+      "id": 8,
+      "numero": 7,
+      "fecha": "2026-09-20",
+      "hora": "17:00"
+    },
+    {
+      "id": 9,
+      "numero": 8,
+      "fecha": "2026-09-27",
+      "hora": "17:00"
+    },
+    {
+      "id": 10,
+      "numero": 9,
+      "fecha": "2026-10-04",
+      "hora": "17:00"
+    },
+    {
+      "id": 11,
+      "numero": 10,
+      "fecha": "2026-10-11",
+      "hora": "17:00"
+    },
+    {
+      "id": 12,
+      "numero": 11,
+      "fecha": "2026-10-18",
+      "hora": "17:00"
+    },
+    {
+      "id": 13,
+      "numero": 12,
+      "fecha": "2026-10-25",
+      "hora": "17:00"
+    }
+  ],
+  "grupos": [
+    {
+      "id": 14,
+      "numero": 1,
+      "nombre": "Grupo 1",
+      "cupos_clasificados": 5,
+      "cerrado": false
+    },
+    {
+      "id": 43,
+      "numero": 2,
+      "nombre": "Grupo 2",
+      "cupos_clasificados": 5,
+      "cerrado": false
+    },
+    {
+      "id": 72,
+      "numero": 3,
+      "nombre": "Grupo 3",
+      "cupos_clasificados": 5,
+      "cerrado": false
+    },
+    {
+      "id": 101,
+      "numero": 4,
+      "nombre": "Grupo 4",
+      "cupos_clasificados": 5,
+      "cerrado": false
+    },
+    {
+      "id": 130,
+      "numero": 5,
+      "nombre": "Grupo 5",
+      "cupos_clasificados": 5,
+      "cerrado": false
+    }
+  ],
+  "participantes": [
+    {
+      "id": 15,
+      "grupo_id": 14,
+      "nombre": "Wario",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 16,
+      "grupo_id": 14,
+      "nombre": "Rox",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 17,
+      "grupo_id": 14,
+      "nombre": "Saiken",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 18,
+      "grupo_id": 14,
+      "nombre": "Slammers",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 19,
+      "grupo_id": 14,
+      "nombre": "Jarri",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 20,
+      "grupo_id": 14,
+      "nombre": "ADN21",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 21,
+      "grupo_id": 14,
+      "nombre": "Joawquer",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 44,
+      "grupo_id": 43,
+      "nombre": "Damian",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 45,
+      "grupo_id": 43,
+      "nombre": "Kurosu",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 46,
+      "grupo_id": 43,
+      "nombre": "Yuya",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 47,
+      "grupo_id": 43,
+      "nombre": "Fate",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 48,
+      "grupo_id": 43,
+      "nombre": "Overlord",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 49,
+      "grupo_id": 43,
+      "nombre": "Gotenks",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 50,
+      "grupo_id": 43,
+      "nombre": "Pavel",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 73,
+      "grupo_id": 72,
+      "nombre": "Hosco",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 74,
+      "grupo_id": 72,
+      "nombre": "Danns",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 75,
+      "grupo_id": 72,
+      "nombre": "Dijeorama",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 76,
+      "grupo_id": 72,
+      "nombre": "Tsuki",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 77,
+      "grupo_id": 72,
+      "nombre": "Ayrlex",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 78,
+      "grupo_id": 72,
+      "nombre": "RIM",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 79,
+      "grupo_id": 72,
+      "nombre": "Roxer",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 102,
+      "grupo_id": 101,
+      "nombre": "Rushador Cuidadoso",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 103,
+      "grupo_id": 101,
+      "nombre": "Lightgear",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 104,
+      "grupo_id": 101,
+      "nombre": "Gonza",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 105,
+      "grupo_id": 101,
+      "nombre": "Lagann",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 106,
+      "grupo_id": 101,
+      "nombre": "Aagony",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 107,
+      "grupo_id": 101,
+      "nombre": "The Last Outlaw",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 108,
+      "grupo_id": 101,
+      "nombre": "Pat",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 131,
+      "grupo_id": 130,
+      "nombre": "Colo",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 132,
+      "grupo_id": 130,
+      "nombre": "SSnake",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 133,
+      "grupo_id": 130,
+      "nombre": "Trunks",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 134,
+      "grupo_id": 130,
+      "nombre": "Bearpy",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 135,
+      "grupo_id": 130,
+      "nombre": "Okocom",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 136,
+      "grupo_id": 130,
+      "nombre": "Mahito la Mujel",
+      "player_id": null,
+      "orden_desempate": null
+    },
+    {
+      "id": 137,
+      "grupo_id": 130,
+      "nombre": "Milder",
+      "player_id": null,
+      "orden_desempate": null
+    }
+  ],
+  "partidos": [
+    {
+      "id": 22,
+      "grupo_id": 14,
+      "fecha_id": 2,
+      "participante_a_id": 15,
+      "participante_b_id": 16,
+      "orden": 1,
+      "ganador_id": 15
+    },
+    {
+      "id": 23,
+      "grupo_id": 14,
+      "fecha_id": 2,
+      "participante_a_id": 17,
+      "participante_b_id": 18,
+      "orden": 2,
+      "ganador_id": 17
+    },
+    {
+      "id": 24,
+      "grupo_id": 14,
+      "fecha_id": 2,
+      "participante_a_id": 19,
+      "participante_b_id": 20,
+      "orden": 3,
+      "ganador_id": 19
+    },
+    {
+      "id": 25,
+      "grupo_id": 14,
+      "fecha_id": 3,
+      "participante_a_id": 16,
+      "participante_b_id": 17,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 26,
+      "grupo_id": 14,
+      "fecha_id": 3,
+      "participante_a_id": 18,
+      "participante_b_id": 19,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 27,
+      "grupo_id": 14,
+      "fecha_id": 3,
+      "participante_a_id": 20,
+      "participante_b_id": 21,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 28,
+      "grupo_id": 14,
+      "fecha_id": 5,
+      "participante_a_id": 15,
+      "participante_b_id": 17,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 29,
+      "grupo_id": 14,
+      "fecha_id": 5,
+      "participante_a_id": 18,
+      "participante_b_id": 20,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 30,
+      "grupo_id": 14,
+      "fecha_id": 5,
+      "participante_a_id": 19,
+      "participante_b_id": 21,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 31,
+      "grupo_id": 14,
+      "fecha_id": 7,
+      "participante_a_id": 15,
+      "participante_b_id": 20,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 32,
+      "grupo_id": 14,
+      "fecha_id": 7,
+      "participante_a_id": 16,
+      "participante_b_id": 19,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 33,
+      "grupo_id": 14,
+      "fecha_id": 7,
+      "participante_a_id": 18,
+      "participante_b_id": 21,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 34,
+      "grupo_id": 14,
+      "fecha_id": 8,
+      "participante_a_id": 15,
+      "participante_b_id": 19,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 35,
+      "grupo_id": 14,
+      "fecha_id": 8,
+      "participante_a_id": 16,
+      "participante_b_id": 20,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 36,
+      "grupo_id": 14,
+      "fecha_id": 8,
+      "participante_a_id": 17,
+      "participante_b_id": 21,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 37,
+      "grupo_id": 14,
+      "fecha_id": 9,
+      "participante_a_id": 15,
+      "participante_b_id": 18,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 38,
+      "grupo_id": 14,
+      "fecha_id": 9,
+      "participante_a_id": 16,
+      "participante_b_id": 21,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 39,
+      "grupo_id": 14,
+      "fecha_id": 9,
+      "participante_a_id": 17,
+      "participante_b_id": 20,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 40,
+      "grupo_id": 14,
+      "fecha_id": 10,
+      "participante_a_id": 15,
+      "participante_b_id": 21,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 41,
+      "grupo_id": 14,
+      "fecha_id": 10,
+      "participante_a_id": 16,
+      "participante_b_id": 18,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 42,
+      "grupo_id": 14,
+      "fecha_id": 10,
+      "participante_a_id": 17,
+      "participante_b_id": 19,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 51,
+      "grupo_id": 43,
+      "fecha_id": 2,
+      "participante_a_id": 44,
+      "participante_b_id": 45,
+      "orden": 1,
+      "ganador_id": 44
+    },
+    {
+      "id": 52,
+      "grupo_id": 43,
+      "fecha_id": 2,
+      "participante_a_id": 46,
+      "participante_b_id": 47,
+      "orden": 2,
+      "ganador_id": 46
+    },
+    {
+      "id": 53,
+      "grupo_id": 43,
+      "fecha_id": 2,
+      "participante_a_id": 48,
+      "participante_b_id": 49,
+      "orden": 3,
+      "ganador_id": 48
+    },
+    {
+      "id": 54,
+      "grupo_id": 43,
+      "fecha_id": 4,
+      "participante_a_id": 45,
+      "participante_b_id": 46,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 55,
+      "grupo_id": 43,
+      "fecha_id": 4,
+      "participante_a_id": 47,
+      "participante_b_id": 48,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 56,
+      "grupo_id": 43,
+      "fecha_id": 4,
+      "participante_a_id": 49,
+      "participante_b_id": 50,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 57,
+      "grupo_id": 43,
+      "fecha_id": 5,
+      "participante_a_id": 44,
+      "participante_b_id": 46,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 58,
+      "grupo_id": 43,
+      "fecha_id": 5,
+      "participante_a_id": 47,
+      "participante_b_id": 49,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 59,
+      "grupo_id": 43,
+      "fecha_id": 5,
+      "participante_a_id": 48,
+      "participante_b_id": 50,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 60,
+      "grupo_id": 43,
+      "fecha_id": 7,
+      "participante_a_id": 44,
+      "participante_b_id": 47,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 61,
+      "grupo_id": 43,
+      "fecha_id": 7,
+      "participante_a_id": 45,
+      "participante_b_id": 48,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 62,
+      "grupo_id": 43,
+      "fecha_id": 7,
+      "participante_a_id": 46,
+      "participante_b_id": 50,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 63,
+      "grupo_id": 43,
+      "fecha_id": 9,
+      "participante_a_id": 44,
+      "participante_b_id": 48,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 64,
+      "grupo_id": 43,
+      "fecha_id": 9,
+      "participante_a_id": 45,
+      "participante_b_id": 49,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 65,
+      "grupo_id": 43,
+      "fecha_id": 9,
+      "participante_a_id": 47,
+      "participante_b_id": 50,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 66,
+      "grupo_id": 43,
+      "fecha_id": 11,
+      "participante_a_id": 44,
+      "participante_b_id": 49,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 67,
+      "grupo_id": 43,
+      "fecha_id": 11,
+      "participante_a_id": 45,
+      "participante_b_id": 50,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 68,
+      "grupo_id": 43,
+      "fecha_id": 11,
+      "participante_a_id": 46,
+      "participante_b_id": 48,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 69,
+      "grupo_id": 43,
+      "fecha_id": 12,
+      "participante_a_id": 44,
+      "participante_b_id": 50,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 70,
+      "grupo_id": 43,
+      "fecha_id": 12,
+      "participante_a_id": 45,
+      "participante_b_id": 47,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 71,
+      "grupo_id": 43,
+      "fecha_id": 12,
+      "participante_a_id": 46,
+      "participante_b_id": 49,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 80,
+      "grupo_id": 72,
+      "fecha_id": 2,
+      "participante_a_id": 73,
+      "participante_b_id": 74,
+      "orden": 1,
+      "ganador_id": 73
+    },
+    {
+      "id": 81,
+      "grupo_id": 72,
+      "fecha_id": 2,
+      "participante_a_id": 75,
+      "participante_b_id": 76,
+      "orden": 2,
+      "ganador_id": 75
+    },
+    {
+      "id": 82,
+      "grupo_id": 72,
+      "fecha_id": 2,
+      "participante_a_id": 77,
+      "participante_b_id": 78,
+      "orden": 3,
+      "ganador_id": 77
+    },
+    {
+      "id": 83,
+      "grupo_id": 72,
+      "fecha_id": 4,
+      "participante_a_id": 74,
+      "participante_b_id": 75,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 84,
+      "grupo_id": 72,
+      "fecha_id": 4,
+      "participante_a_id": 76,
+      "participante_b_id": 77,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 85,
+      "grupo_id": 72,
+      "fecha_id": 4,
+      "participante_a_id": 78,
+      "participante_b_id": 79,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 86,
+      "grupo_id": 72,
+      "fecha_id": 6,
+      "participante_a_id": 73,
+      "participante_b_id": 75,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 87,
+      "grupo_id": 72,
+      "fecha_id": 6,
+      "participante_a_id": 76,
+      "participante_b_id": 78,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 88,
+      "grupo_id": 72,
+      "fecha_id": 6,
+      "participante_a_id": 77,
+      "participante_b_id": 79,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 89,
+      "grupo_id": 72,
+      "fecha_id": 7,
+      "participante_a_id": 73,
+      "participante_b_id": 76,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 90,
+      "grupo_id": 72,
+      "fecha_id": 7,
+      "participante_a_id": 74,
+      "participante_b_id": 77,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 91,
+      "grupo_id": 72,
+      "fecha_id": 7,
+      "participante_a_id": 75,
+      "participante_b_id": 79,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 92,
+      "grupo_id": 72,
+      "fecha_id": 9,
+      "participante_a_id": 73,
+      "participante_b_id": 77,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 93,
+      "grupo_id": 72,
+      "fecha_id": 9,
+      "participante_a_id": 74,
+      "participante_b_id": 78,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 94,
+      "grupo_id": 72,
+      "fecha_id": 9,
+      "participante_a_id": 76,
+      "participante_b_id": 79,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 95,
+      "grupo_id": 72,
+      "fecha_id": 11,
+      "participante_a_id": 73,
+      "participante_b_id": 78,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 96,
+      "grupo_id": 72,
+      "fecha_id": 11,
+      "participante_a_id": 74,
+      "participante_b_id": 79,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 97,
+      "grupo_id": 72,
+      "fecha_id": 11,
+      "participante_a_id": 75,
+      "participante_b_id": 77,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 98,
+      "grupo_id": 72,
+      "fecha_id": 12,
+      "participante_a_id": 73,
+      "participante_b_id": 79,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 99,
+      "grupo_id": 72,
+      "fecha_id": 12,
+      "participante_a_id": 74,
+      "participante_b_id": 76,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 100,
+      "grupo_id": 72,
+      "fecha_id": 12,
+      "participante_a_id": 75,
+      "participante_b_id": 78,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 109,
+      "grupo_id": 101,
+      "fecha_id": 3,
+      "participante_a_id": 102,
+      "participante_b_id": 103,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 110,
+      "grupo_id": 101,
+      "fecha_id": 3,
+      "participante_a_id": 104,
+      "participante_b_id": 105,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 111,
+      "grupo_id": 101,
+      "fecha_id": 3,
+      "participante_a_id": 106,
+      "participante_b_id": 107,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 112,
+      "grupo_id": 101,
+      "fecha_id": 4,
+      "participante_a_id": 103,
+      "participante_b_id": 104,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 113,
+      "grupo_id": 101,
+      "fecha_id": 4,
+      "participante_a_id": 105,
+      "participante_b_id": 106,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 114,
+      "grupo_id": 101,
+      "fecha_id": 4,
+      "participante_a_id": 107,
+      "participante_b_id": 108,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 115,
+      "grupo_id": 101,
+      "fecha_id": 6,
+      "participante_a_id": 102,
+      "participante_b_id": 104,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 116,
+      "grupo_id": 101,
+      "fecha_id": 6,
+      "participante_a_id": 105,
+      "participante_b_id": 107,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 117,
+      "grupo_id": 101,
+      "fecha_id": 6,
+      "participante_a_id": 106,
+      "participante_b_id": 108,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 118,
+      "grupo_id": 101,
+      "fecha_id": 8,
+      "participante_a_id": 102,
+      "participante_b_id": 105,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 119,
+      "grupo_id": 101,
+      "fecha_id": 8,
+      "participante_a_id": 103,
+      "participante_b_id": 106,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 120,
+      "grupo_id": 101,
+      "fecha_id": 8,
+      "participante_a_id": 104,
+      "participante_b_id": 108,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 121,
+      "grupo_id": 101,
+      "fecha_id": 10,
+      "participante_a_id": 102,
+      "participante_b_id": 106,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 122,
+      "grupo_id": 101,
+      "fecha_id": 10,
+      "participante_a_id": 103,
+      "participante_b_id": 107,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 123,
+      "grupo_id": 101,
+      "fecha_id": 10,
+      "participante_a_id": 105,
+      "participante_b_id": 108,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 124,
+      "grupo_id": 101,
+      "fecha_id": 11,
+      "participante_a_id": 102,
+      "participante_b_id": 107,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 125,
+      "grupo_id": 101,
+      "fecha_id": 11,
+      "participante_a_id": 103,
+      "participante_b_id": 108,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 126,
+      "grupo_id": 101,
+      "fecha_id": 11,
+      "participante_a_id": 104,
+      "participante_b_id": 106,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 127,
+      "grupo_id": 101,
+      "fecha_id": 13,
+      "participante_a_id": 102,
+      "participante_b_id": 108,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 128,
+      "grupo_id": 101,
+      "fecha_id": 13,
+      "participante_a_id": 103,
+      "participante_b_id": 105,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 129,
+      "grupo_id": 101,
+      "fecha_id": 13,
+      "participante_a_id": 104,
+      "participante_b_id": 107,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 138,
+      "grupo_id": 130,
+      "fecha_id": 3,
+      "participante_a_id": 131,
+      "participante_b_id": 132,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 139,
+      "grupo_id": 130,
+      "fecha_id": 3,
+      "participante_a_id": 133,
+      "participante_b_id": 134,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 140,
+      "grupo_id": 130,
+      "fecha_id": 3,
+      "participante_a_id": 135,
+      "participante_b_id": 136,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 141,
+      "grupo_id": 130,
+      "fecha_id": 5,
+      "participante_a_id": 132,
+      "participante_b_id": 133,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 142,
+      "grupo_id": 130,
+      "fecha_id": 5,
+      "participante_a_id": 134,
+      "participante_b_id": 135,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 143,
+      "grupo_id": 130,
+      "fecha_id": 5,
+      "participante_a_id": 136,
+      "participante_b_id": 137,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 144,
+      "grupo_id": 130,
+      "fecha_id": 6,
+      "participante_a_id": 131,
+      "participante_b_id": 133,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 145,
+      "grupo_id": 130,
+      "fecha_id": 6,
+      "participante_a_id": 134,
+      "participante_b_id": 136,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 146,
+      "grupo_id": 130,
+      "fecha_id": 6,
+      "participante_a_id": 135,
+      "participante_b_id": 137,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 147,
+      "grupo_id": 130,
+      "fecha_id": 8,
+      "participante_a_id": 131,
+      "participante_b_id": 134,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 148,
+      "grupo_id": 130,
+      "fecha_id": 8,
+      "participante_a_id": 132,
+      "participante_b_id": 135,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 149,
+      "grupo_id": 130,
+      "fecha_id": 8,
+      "participante_a_id": 133,
+      "participante_b_id": 137,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 150,
+      "grupo_id": 130,
+      "fecha_id": 10,
+      "participante_a_id": 131,
+      "participante_b_id": 135,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 151,
+      "grupo_id": 130,
+      "fecha_id": 10,
+      "participante_a_id": 132,
+      "participante_b_id": 136,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 152,
+      "grupo_id": 130,
+      "fecha_id": 10,
+      "participante_a_id": 134,
+      "participante_b_id": 137,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 153,
+      "grupo_id": 130,
+      "fecha_id": 12,
+      "participante_a_id": 131,
+      "participante_b_id": 136,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 154,
+      "grupo_id": 130,
+      "fecha_id": 12,
+      "participante_a_id": 132,
+      "participante_b_id": 137,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 155,
+      "grupo_id": 130,
+      "fecha_id": 12,
+      "participante_a_id": 133,
+      "participante_b_id": 135,
+      "orden": 3,
+      "ganador_id": null
+    },
+    {
+      "id": 156,
+      "grupo_id": 130,
+      "fecha_id": 13,
+      "participante_a_id": 131,
+      "participante_b_id": 137,
+      "orden": 1,
+      "ganador_id": null
+    },
+    {
+      "id": 157,
+      "grupo_id": 130,
+      "fecha_id": 13,
+      "participante_a_id": 132,
+      "participante_b_id": 134,
+      "orden": 2,
+      "ganador_id": null
+    },
+    {
+      "id": 158,
+      "grupo_id": 130,
+      "fecha_id": 13,
+      "participante_a_id": 133,
+      "participante_b_id": 136,
+      "orden": 3,
+      "ganador_id": null
+    }
+  ]
+}

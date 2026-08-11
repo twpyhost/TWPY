@@ -97,6 +97,10 @@ export async function POST(req) {
     revalidatePath("/ranking");
     revalidatePath("/competidores");
     revalidatePath("/torneos");
+    // Deshacer un vincular/crear_jugador vuelve a dejar el participante sin
+    // player_id -- el badge de "Pendientes" del sidebar admin (calculado en
+    // src/app/admin/layout.js) tiene que reflejarlo sin esperar un reload.
+    revalidatePath("/admin", "layout");
 
     return Response.json({ message: "Accion deshecha" }, { status: 200 });
   } catch (error) {

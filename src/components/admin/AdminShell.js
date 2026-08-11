@@ -65,6 +65,25 @@ const NAV_ITEMS = [
     ),
   },
   {
+    href: "/admin/liga",
+    label: "Liga",
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      >
+        <path d="M4 4h6v6H4z" />
+        <path d="M14 4h6v6h-6z" />
+        <path d="M4 14h6v6H4z" />
+        <path d="M14 14h6v6h-6z" />
+      </svg>
+    ),
+  },
+  {
     href: "/admin/rankings",
     label: "Rankings",
     icon: (
@@ -119,9 +138,15 @@ function SupabaseStatusPill({ ok }) {
   );
 }
 
+const BADGE_COUNTS = {
+  "/admin/identidades": "pendingCount",
+  "/admin/liga": "ligaPendingCount",
+};
+
 export default function AdminShell({
   children,
   pendingCount = 0,
+  ligaPendingCount = 0,
   userEmail = "",
   supabaseOk = null,
 }) {
@@ -186,6 +211,8 @@ export default function AdminShell({
         <nav className="flex flex-col gap-0.5 py-3">
           {NAV_ITEMS.map((item) => {
             const active = pathname?.startsWith(item.href);
+            const badgeProp = BADGE_COUNTS[item.href];
+            const badgeCount = badgeProp === "ligaPendingCount" ? ligaPendingCount : pendingCount;
             return (
               <Link
                 key={item.href}
@@ -199,9 +226,9 @@ export default function AdminShell({
               >
                 {item.icon}
                 <span className="flex-1">{item.label}</span>
-                {item.href === "/admin/identidades" && pendingCount > 0 && (
+                {badgeProp && badgeCount > 0 && (
                   <span className="bg-primary-500 px-2 py-0.5 font-body text-[11px] font-bold text-white">
-                    {pendingCount}
+                    {badgeCount}
                   </span>
                 )}
               </Link>

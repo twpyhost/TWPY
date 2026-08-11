@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
@@ -13,6 +14,7 @@ import FusionarJugadores from "./FusionarJugadores";
 import LogActividad from "./LogActividad";
 
 export default function Identidades() {
+  const router = useRouter();
   const [resumen, setResumen] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -28,6 +30,16 @@ export default function Identidades() {
       setLoading(false);
     }
   }, [query]);
+
+  // Solo para las acciones que pueden mover el conteo de "Pendientes": el
+  // badge del sidebar admin (src/app/admin/layout.js) se calcula del lado
+  // del server, revalidatePath en la ruta de API no alcanza para que un
+  // layout ya montado lo vuelva a pedir. No se usa en la carga inicial ni
+  // en la paginacion -- ahi seria un refresh de sobra en cada click.
+  const cargarYRefrescarSidebar = useCallback(async () => {
+    await cargarResumen();
+    router.refresh();
+  }, [cargarResumen, router]);
 
   useEffect(() => {
     cargarResumen();
@@ -62,7 +74,10 @@ export default function Identidades() {
               <p className="font-body text-sm text-white/50">Cargando...</p>
             ) : (
               <div className="flex flex-col gap-3">
-                <ColaParticipantes cola={resumen?.cola ?? []} onResuelto={cargarResumen} />
+                <ColaParticipantes
+                  cola={resumen?.cola ?? []}
+                  onResuelto={cargarYRefrescarSidebar}
+                />
                 <Paginacion
                   pagina={pagina}
                   totalPaginas={totalPaginasCola}
@@ -86,7 +101,7 @@ export default function Identidades() {
             {loading ? (
               <p className="font-body text-sm text-white/50">Cargando...</p>
             ) : (
-              <LogActividad log={resumen?.log ?? []} onCambio={cargarResumen} />
+              <LogActividad log={resumen?.log ?? []} onCambio={cargarYRefrescarSidebar} />
             )}
           </Bloque>
         </div>

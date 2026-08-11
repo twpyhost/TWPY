@@ -7,7 +7,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 export default async function sitemap() {
   const torneos = await getTorneos();
 
-  const estaticas = ["", "/torneos", "/ranking", "/competidores", "/reglamento"].map((path) => ({
+  const estaticas = ["", "/torneos", "/ranking", "/liga", "/competidores", "/reglamento"].map((path) => ({
     url: `${SITE_URL}${path}`,
     lastModified: new Date(),
   }));

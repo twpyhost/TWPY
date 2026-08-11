@@ -1,0 +1,198 @@
+import { test, expect } from "@playwright/test";
+
+import { calcularTabla, bloquesPorPuntos, estadoParaPosicion } from "../../src/lib/ligaTabla.js";
+
+function participante(id, nombre, ordenDesempate = null, playerId = null) {
+  return { id, nombre, player_id: playerId, orden_desempate: ordenDesempate };
+}
+
+function partido(a, b, ganador = null) {
+  return { participante_a_id: a, participante_b_id: b, ganador_id: ganador };
+}
+
+test.describe("calcularTabla", () => {
+  test("1 punto por victoria, 0 por derrota", () => {
+    const participantes = [participante(1, "A"), participante(2, "B")];
+    const partidos = [partido(1, 2, 1)];
+
+    const tabla = calcularTabla(participantes, partidos);
+    const a = tabla.find((f) => f.participanteId === 1);
+    const b = tabla.find((f) => f.participanteId === 2);
+
+    expect(a.puntos).toBe(1);
+    expect(a.g).toBe(1);
+    expect(a.p).toBe(0);
+    expect(b.puntos).toBe(0);
+    expect(b.g).toBe(0);
+    expect(b.p).toBe(1);
+  });
+
+  test("pj cuenta solo partidos con ganador_id no nulo (ignora pendientes)", () => {
+    const participantes = [participante(1, "A"), participante(2, "B"), participante(3, "C")];
+    const partidos = [partido(1, 2, 1), partido(1, 3, null)];
+
+    const tabla = calcularTabla(participantes, partidos);
+    const a = tabla.find((f) => f.participanteId === 1);
+    const c = tabla.find((f) => f.participanteId === 3);
+
+    expect(a.pj).toBe(1);
+    expect(c.pj).toBe(0);
+  });
+
+  test("ordena por puntos descendente", () => {
+    const participantes = [participante(1, "A"), participante(2, "B"), participante(3, "C")];
+    const partidos = [partido(1, 2, 1), partido(1, 3, 1), partido(2, 3, 2)];
+
+    const tabla = calcularTabla(participantes, partidos);
+
+    expect(tabla.map((f) => f.nombre)).toEqual(["A", "B", "C"]);
+    expect(tabla[0].puntos).toBe(2);
+    expect(tabla[1].puntos).toBe(1);
+    expect(tabla[2].puntos).toBe(0);
+  });
+
+  test("orden_desempate rompe el empate (asc, los null van al final)", () => {
+    const participantes = [
+      participante(1, "A", 2),
+      participante(2, "B", 1),
+      participante(3, "C", null),
+    ];
+    // Los 3 quedan en 0 puntos -- sin resultados cargados.
+    const tabla = calcularTabla(participantes, []);
+
+    expect(tabla.map((f) => f.nombre)).toEqual(["B", "A", "C"]);
+  });
+
+  test("sin orden_desempate, el empate se resuelve por nombre (determinista)", () => {
+    const participantes = [participante(1, "Zeta"), participante(2, "Alfa")];
+    const tabla = calcularTabla(participantes, []);
+
+    expect(tabla.map((f) => f.nombre)).toEqual(["Alfa", "Zeta"]);
+  });
+
+  test("empatado se marca cuando el bloque comparte puntos y falta desempate", () => {
+    const participantes = [participante(1, "A"), participante(2, "B"), participante(3, "C")];
+    // A gana, B y C quedan en 0 puntos, empatados entre si.
+    const partidos = [partido(1, 2, 1)];
+
+    const tabla = calcularTabla(participantes, partidos);
+
+    expect(tabla.find((f) => f.nombre === "A").empatado).toBe(false);
+    expect(tabla.find((f) => f.nombre === "B").empatado).toBe(true);
+    expect(tabla.find((f) => f.nombre === "C").empatado).toBe(true);
+  });
+
+  test("empatado se apaga en todo el bloque una vez que todos tienen orden_desempate", () => {
+    const participantes = [
+      participante(1, "A", null),
+      participante(2, "B", 1),
+      participante(3, "C", 2),
+    ];
+    const tabla = calcularTabla(participantes, []);
+
+    // A todavia no tiene orden_desempate -> el bloque completo sigue sin resolver.
+    expect(tabla.every((f) => f.empatado)).toBe(true);
+
+    const participantesResueltos = [
+      participante(1, "A", 3),
+      participante(2, "B", 1),
+      participante(3, "C", 2),
+    ];
+    const tablaResuelta = calcularTabla(participantesResueltos, []);
+    expect(tablaResuelta.every((f) => !f.empatado)).toBe(true);
+  });
+
+  test("empatado sigue true si dos sub-bloques resueltos por separado colisionan al fusionarse", () => {
+    // Simula dos empates de a 2 resueltos independientemente (cada uno con
+    // orden_desempate 1 y 2), que luego -- por nuevos resultados -- terminan
+    // en el mismo bloque de puntos. Todos tienen orden_desempate no nulo,
+    // pero los valores se repiten: el bloque fusionado NO esta realmente
+    // resuelto y el sort caeria a alfabetico sin que nadie lo haya elegido.
+    const participantes = [
+      participante(1, "A", 1),
+      participante(2, "B", 2),
+      participante(3, "C", 1),
+      participante(4, "D", 2),
+    ];
+    // Los 4 quedan en 0 puntos -- un unico bloque de tamano 4.
+    const tabla = calcularTabla(participantes, []);
+
+    expect(tabla.every((f) => f.empatado)).toBe(true);
+  });
+
+  test("top 5 clasificado y ultimos 2 eliminado en un grupo de 7", () => {
+    const participantes = Array.from({ length: 7 }, (_, i) =>
+      participante(i + 1, `P${i + 1}`),
+    );
+    const tabla = calcularTabla(participantes, [], { cuposClasificados: 5 });
+
+    expect(tabla.slice(0, 5).every((f) => f.estado === "clasificado")).toBe(true);
+    expect(tabla.slice(5).every((f) => f.estado === "eliminado")).toBe(true);
+  });
+
+  test("orden estable con tabla vacia", () => {
+    expect(calcularTabla([], [])).toEqual([]);
+  });
+});
+
+test.describe("estadoParaPosicion", () => {
+  test("clasificado dentro de los cupos", () => {
+    expect(estadoParaPosicion(1, 10, 5)).toBe("clasificado");
+    expect(estadoParaPosicion(5, 10, 5)).toBe("clasificado");
+  });
+
+  test("eliminado en los ultimos 2 puestos", () => {
+    expect(estadoParaPosicion(9, 10, 5)).toBe("eliminado");
+    expect(estadoParaPosicion(10, 10, 5)).toBe("eliminado");
+  });
+
+  test("neutral entre los cupos clasificados y los ultimos 2", () => {
+    expect(estadoParaPosicion(6, 10, 5)).toBe("neutral");
+    expect(estadoParaPosicion(8, 10, 5)).toBe("neutral");
+  });
+
+  test("clasificado tiene prioridad si los cupos se superponen con el corte de eliminado", () => {
+    // Grupo chico: total 2, cuposClasificados 5 -- todos entrarian por cupos
+    // y por corte de eliminado a la vez; clasificado gana.
+    expect(estadoParaPosicion(1, 2, 5)).toBe("clasificado");
+  });
+});
+
+test.describe("bloquesPorPuntos", () => {
+  test("agrupa un bloque de 2 aunque ya tenga orden_desempate asignado", () => {
+    const participantes = [participante(1, "A", 1), participante(2, "B", 2)];
+    const tabla = calcularTabla(participantes, []); // ambos en 0 puntos, ya resuelto
+
+    expect(bloquesPorPuntos(tabla)).toEqual([{ inicio: 0, fin: 2 }]);
+  });
+
+  test("detecta varios bloques a distinto puntaje y deja afuera a quien no comparte puntos", () => {
+    const participantes = [
+      participante(1, "A"),
+      participante(2, "B"),
+      participante(3, "C"),
+      participante(4, "D"),
+    ];
+    // A le gana a C y D (2 puntos, sola en su puntaje).
+    // C y D le ganan a B (1 punto cada una, empatadas entre si).
+    // B pierde ambas (0 puntos, sola en su puntaje).
+    const partidos = [
+      partido(1, 3, 1),
+      partido(1, 4, 1),
+      partido(2, 3, 3),
+      partido(2, 4, 4),
+    ];
+    const tabla = calcularTabla(participantes, partidos);
+
+    expect(tabla.map((f) => f.nombre)).toEqual(["A", "C", "D", "B"]);
+    expect(bloquesPorPuntos(tabla)).toEqual([{ inicio: 1, fin: 3 }]);
+  });
+
+  test("no devuelve bloques si nadie comparte puntaje", () => {
+    const participantes = [participante(1, "A"), participante(2, "B"), participante(3, "C")];
+    const partidos = [partido(1, 2, 1), partido(1, 3, 1), partido(2, 3, 2)];
+    const tabla = calcularTabla(participantes, partidos);
+
+    expect(bloquesPorPuntos(tabla)).toEqual([]);
+  });
+});

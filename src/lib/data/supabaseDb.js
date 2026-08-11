@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 import { getMovimiento } from "./movimiento";
+import { armarLiga } from "@/lib/ligaData";
 
 let client = null;
 
@@ -204,6 +205,68 @@ const getFiltroAno = async () => {
   return [...new Set(data.map((torneo) => String(torneo.temporada)))];
 };
 
+const getLiga = async (slug) => {
+  const supabase = getClient();
+
+  const { data: liga, error: ligaError } = await supabase
+    .from("ligas")
+    .select("id, slug, nombre, temporada, estado")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (ligaError) {
+    throw new Error(`Error al obtener la liga: ${ligaError.message}`);
+  }
+  if (!liga) {
+    return null;
+  }
+
+  const { data: fechas, error: fechasError } = await supabase
+    .from("liga_fechas")
+    .select("id, numero, fecha, hora")
+    .eq("liga_id", liga.id);
+
+  if (fechasError) {
+    throw new Error(`Error al obtener las fechas de la liga: ${fechasError.message}`);
+  }
+
+  const { data: grupos, error: gruposError } = await supabase
+    .from("liga_grupos")
+    .select("id, numero, nombre, cupos_clasificados, cerrado")
+    .eq("liga_id", liga.id);
+
+  if (gruposError) {
+    throw new Error(`Error al obtener los grupos de la liga: ${gruposError.message}`);
+  }
+
+  const grupoIds = grupos.map((g) => g.id);
+  if (grupoIds.length === 0) {
+    return armarLiga({ liga, fechas, grupos, participantes: [], partidos: [] });
+  }
+
+  const { data: participantes, error: participantesError } = await supabase
+    .from("liga_participantes")
+    .select("id, grupo_id, nombre, player_id, orden_desempate")
+    .in("grupo_id", grupoIds);
+
+  if (participantesError) {
+    throw new Error(
+      `Error al obtener los participantes de la liga: ${participantesError.message}`,
+    );
+  }
+
+  const { data: partidos, error: partidosError } = await supabase
+    .from("liga_partidos")
+    .select("id, grupo_id, fecha_id, participante_a_id, participante_b_id, orden, ganador_id")
+    .in("grupo_id", grupoIds);
+
+  if (partidosError) {
+    throw new Error(`Error al obtener los partidos de la liga: ${partidosError.message}`);
+  }
+
+  return armarLiga({ liga, fechas, grupos, participantes, partidos });
+};
+
 export {
   getTorneos,
   getRankings,
@@ -211,4 +274,5 @@ export {
   getFiltroAno,
   getTorneoResultados,
   getRankingsCount,
+  getLiga,
 };

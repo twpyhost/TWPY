@@ -13,7 +13,8 @@
     "test:e2e": "playwright test --project=e2e",
     "test:ui": "playwright test --ui",
     "seed:prueba": "node --env-file=.env.local scripts/seed-datos-prueba.js",
-    "seed:purgar": "node --env-file=.env.local scripts/purgar-datos-prueba.js"
+    "seed:purgar": "node --env-file=.env.local scripts/purgar-datos-prueba.js",
+    "seed:liga": "node --env-file=.env.local scripts/seed-liga.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",
