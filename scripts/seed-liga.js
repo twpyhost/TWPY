@@ -8,7 +8,10 @@
 
 import { getSupabaseAdmin } from "../src/lib/supabaseAdmin.js";
 import { sembrarLiga } from "../src/lib/ligaSeed.js";
+import { exigirSupabaseLocal } from "./entorno.js";
 import fixture from "./data/liga-2026-fixture.json" with { type: "json" };
+
+exigirSupabaseLocal({ accion: "seed-liga" });
 
 const resumen = await sembrarLiga(getSupabaseAdmin(), fixture);
 

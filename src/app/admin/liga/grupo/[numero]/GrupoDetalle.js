@@ -438,6 +438,12 @@ export default function GrupoDetalle({ numero }) {
                 <span className="font-display text-sm tracking-[0.08em] text-white/60">
                   DESEMPATES PENDIENTES
                 </span>
+                {grupo.cerrado && (
+                  <p className="m-0 font-body text-xs text-warning">
+                    El grupo está cerrado: reabrilo para confirmar cambios, o descartá el
+                    borrador.
+                  </p>
+                )}
                 {bloquesPendientes.map((bloque) => {
                   const nombres = filasVisibles
                     .slice(bloque.inicio, bloque.fin)
@@ -455,10 +461,20 @@ export default function GrupoDetalle({ numero }) {
                         Puestos {bloque.inicio + 1}–{bloque.fin}: {nombres}
                       </span>
                       <div className="inline-flex gap-1">
+                        {/* Confirmar escribe en la base: se bloquea con el
+                            grupo cerrado, igual que las flechas. Descartar solo
+                            borra el borrador local, asi que sigue habilitado --
+                            si no, un borrador viejo dejaria el panel pegado
+                            hasta recargar la pagina. */}
                         <button
                           type="button"
-                          disabled={guardando}
+                          disabled={guardando || grupo.cerrado}
                           onClick={() => confirmarBloque(bloque)}
+                          title={
+                            grupo.cerrado
+                              ? "El grupo está cerrado: reabrilo para cambiar el desempate"
+                              : undefined
+                          }
                           className="border border-success/40 bg-success/10 px-3 py-1.5 text-xs font-bold text-success disabled:opacity-40"
                         >
                           Confirmar

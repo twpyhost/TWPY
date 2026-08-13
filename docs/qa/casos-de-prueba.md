@@ -28,12 +28,13 @@ son ejecuciones, que es lo que reporta Playwright.
 | TS-ADM | Panel (lectura) | `tests/e2e/admin/lectura.spec.js` | 12 |
 | TS-PAG | Paginación del panel | `tests/e2e/admin/paginacion.spec.js` | 21 |
 | TS-ROL | Separación de roles del panel | `tests/e2e/rol-liga/rolLiga.spec.js` | 19 |
+| TS-LIGA | Liga pública | `tests/e2e/publico/liga.spec.js` | 5 |
 
 A eso se suman los casos de `tests/unit/` + `tests/integration/` que corren en
 el project `unit`. El total exacto de una corrida sale de `npx playwright test
---list` (hoy: 194). El índice de arriba **no** incluye todavía las suites de
-liga (`tests/e2e/admin/liga.spec.js`, `ligaDesempate.spec.js`,
-`tests/e2e/publico/liga.spec.js`), que se agregaron sin pasar por acá.
+--list`. El índice de arriba todavía **no** incluye las suites de liga del
+panel (`tests/e2e/admin/liga.spec.js`, `ligaDesempate.spec.js`), que se
+agregaron sin pasar por acá.
 
 ---
 
@@ -267,6 +268,20 @@ Cubierto por TC-ADM-007.
 | TC-REG-001 | La página carga con sus seis secciones | cobertura | media |
 | TC-REG-002 | Los subtítulos entran con la animación fadeUp | estado visual | media |
 | TC-REG-003 | El índice lateral apunta a cada sección | cobertura | baja |
+
+### TS-LIGA — Liga pública
+
+`/liga` abre en la pestaña GRUPOS; el calendario vive en la pestaña
+CALENDARIO (mismo DOM, oculto con `hidden`), así que los casos que lo tocan
+cambian de pestaña primero.
+
+| Id | Título | Técnica | Prioridad |
+|---|---|---|---|
+| TC-LIGA-001 | Muestra los 5 grupos y, en la otra pestaña, las 12 fechas | caso feliz | alta |
+| TC-LIGA-002 | La zona de eliminación resalta las últimas 2 posiciones | valor límite | alta |
+| TC-LIGA-003 | El calendario deriva quién descansa por fecha | dato derivado | media |
+| TC-LIGA-004 | El calendario muestra el marcador del set | caso feliz | alta |
+| TC-LIGA-005 | Las pestañas alternan Grupos y Calendario | transición de estados | alta |
 
 ### TS-AUTH — Gate de acceso
 

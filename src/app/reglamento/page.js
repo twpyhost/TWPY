@@ -1,6 +1,5 @@
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
-import Button from "@/components/ui/Button";
 import { fadeDelay } from "@/lib/fadeDelay";
 
 const QUICK_FACTS = [
@@ -236,9 +235,6 @@ export default function ReglamentoPage() {
                   </a>
                 ))}
               </div>
-              <Button href="#" className="mt-2.5 self-start px-6 py-2.5 text-[17px] tracking-[0.18em]">
-                DISCORD <span>&rarr;</span>
-              </Button>
             </aside>
 
             <div className="flex min-w-0 flex-1 flex-col gap-10">

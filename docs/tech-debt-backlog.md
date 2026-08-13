@@ -168,7 +168,11 @@ group with unresolved ties).
    (mirroring the one added to `PUT /cerrar` in Task 2 of the plan above),
    and disable Confirmar/Descartar in the UI when `grupo.cerrado` is true,
    same as the arrows already do.
-   **Status**: Open
+   **Status**: Done (2026-08-12). `PUT /desempate` responde 409 con el grupo
+   cerrado y Confirmar se deshabilita en la UI. Descartar quedó habilitado a
+   propósito: solo borra el borrador local, y deshabilitarlo dejaría el panel
+   de "desempates pendientes" pegado hasta recargar. Regresión cubierta por
+   `TC-LIGA-DESEMPATE-006`.
 
 2. **What**: `claveBloque(grupo.tabla, bloque)` recomputed up to 5x per row
    that has arrows/Confirmar/Descartar visible.
@@ -233,7 +237,16 @@ block is moved with ↑/↓.
    a warning (or refuse to start) if `NEXT_PUBLIC_SUPABASE_URL` doesn't look
    like a local URL (e.g., `127.0.0.1` or `localhost`), so a stray `npm run
    dev` can't silently talk to prod.
-   **Status**: Open
+   **Status**: Done (2026-08-12). Dos partes: (a) `.env.local` pasó a apuntar
+   al stack local y las credenciales remotas se mudaron a `.env.prod.local`
+   (que no se carga solo), así que `npm run seed:*` tampoco escribe en prod por
+   accidente; (b) `scripts/guard-dev-env.mjs` corre antes de `next dev` y no
+   deja arrancar si `NEXT_PUBLIC_SUPABASE_URL` no es local. `npm run dev:prod`
+   es la puerta explícita: carga `.env.prod.local`, advierte y levanta el
+   server el mismo (spawn con las variables inyectadas — verificado contra
+   `loadEnvConfig` de `@next/env`: lo que ya está en `process.env` le gana a
+   los archivos `.env`). Playwright no se ve afectado (invoca `npx next dev`
+   directo con `NODE_ENV=test`).
 
 2. **What**: `claveBloque(grupo.tabla, bloque)` and `hayCambiosPendientes(bloque)`
    are recomputed twice per pending block on every render.
@@ -291,7 +304,8 @@ block is moved with ↑/↓.
    **Proposed fix**: Add a `cerrado` check to the `PUT /desempate` route, and
    disable the panel's Confirmar/Descartar (not just the arrows) when
    `grupo.cerrado` is true.
-   **Status**: Open
+   **Status**: Done (2026-08-12) — ver el ítem equivalente en la sección
+   `2026-08-06 — Desempate manual (admin) rediseño` para el detalle.
 
 6. **What**: `destacarFilas` doesn't re-trigger a fresh flash if a row is
    moved again while its highlight is still active (within the 500ms window)

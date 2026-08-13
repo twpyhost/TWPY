@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "node scripts/guard-dev-env.mjs && next dev --turbopack",
+    "dev:prod": "node scripts/guard-dev-env.mjs --permitir-prod",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -12,9 +13,14 @@
     "test:unit": "playwright test --project=unit",
     "test:e2e": "playwright test --project=e2e",
     "test:ui": "playwright test --ui",
-    "seed:prueba": "node --env-file=.env.local scripts/seed-datos-prueba.js",
-    "seed:purgar": "node --env-file=.env.local scripts/purgar-datos-prueba.js",
-    "seed:liga": "node --env-file=.env.local scripts/seed-liga.js"
+    "seed:torneos": "node --env-file=.env.local scripts/seed-datos-prueba.js",
+    "purgar:torneos": "node --env-file=.env.local scripts/purgar-datos-prueba.js",
+    "seed:liga": "node --env-file=.env.local scripts/seed-liga.js",
+    "purgar:liga": "node --env-file=.env.local scripts/purgar-liga.js",
+    "seed:admin": "node --env-file=.env.local scripts/seed-admin.js",
+    "purgar:admin": "node --env-file=.env.local scripts/purgar-admin.js",
+    "seed:todo": "npm run seed:torneos && npm run seed:liga && npm run seed:admin",
+    "purgar:todo": "npm run purgar:torneos && npm run purgar:liga && npm run purgar:admin"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",

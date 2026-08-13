@@ -1,6 +1,6 @@
 // Suite: liga publica (TS-LIGA)
 // Nivel: sistema / e2e. Cobertura: /liga sin login -- 5 tablas de grupo,
-// zona de eliminacion y calendario.
+// zona de eliminacion, calendario y el cambio entre ambas pestanas.
 // Datos: siembra su propia liga (fixture real, ver scripts/data/) bajo el
 // slug "liga-invitacional-2026" -- el mismo que src/app/liga/page.js lee de
 // forma fija (sin selector de liga en la UI, ver el plan). Corre en el
@@ -10,6 +10,13 @@ import { test, expect } from "@playwright/test";
 import { getServiceClient } from "../../testSupabase.js";
 import { sembrarLiga } from "../../../src/lib/ligaSeed.js";
 import fixture from "../../../scripts/data/liga-2026-fixture.json" with { type: "json" };
+
+// /liga abre en la pestana GRUPOS: el calendario esta en el DOM pero oculto
+// (atributo `hidden`), asi que hay que cambiar de pestana antes de aseverar
+// sobre el.
+async function irAlCalendario(page) {
+  await page.getByRole("tab", { name: "CALENDARIO" }).click();
+}
 
 test.describe("TS-LIGA | Liga publica", () => {
   let supabase;
@@ -55,12 +62,14 @@ test.describe("TS-LIGA | Liga publica", () => {
 
   /**
    * TC-LIGA-001 | Muestra los 5 grupos y el calendario sin login
-   * Descripcion: un visitante anonimo ve las 5 tablas de posiciones y las
-   *   12 fechas del calendario.
+   * Descripcion: un visitante anonimo ve las 5 tablas de posiciones en la
+   *   pestana inicial y, al cambiar a CALENDARIO, las 12 fechas.
    * Pasos:
    *   1. Ir a /liga
-   * Resultado esperado: los 5 encabezados de grupo y las 12 fechas estan
-   *   visibles.
+   *   2. Verificar los 5 encabezados de grupo (pestana GRUPOS, la inicial)
+   *   3. Cambiar a la pestana CALENDARIO
+   * Resultado esperado: los 5 encabezados de grupo estan visibles al entrar y
+   *   las 12 fechas lo estan tras cambiar de pestana.
    * Tecnica: caso feliz | Prioridad: alta
    */
   test("TC-LIGA-001 | muestra los 5 grupos y las 12 fechas sin login", async ({ page }) => {
@@ -71,6 +80,8 @@ test.describe("TS-LIGA | Liga publica", () => {
     for (let numero = 1; numero <= 5; numero += 1) {
       await expect(page.getByText(`Grupo ${numero}`, { exact: true })).toBeVisible();
     }
+
+    await irAlCalendario(page);
 
     for (let numero = 1; numero <= 12; numero += 1) {
       await expect(page.getByText(`FECHA ${numero}`, { exact: true })).toBeVisible();
@@ -104,12 +115,14 @@ test.describe("TS-LIGA | Liga publica", () => {
    *   del grupo que no aparece en ninguna pelea de esa fecha.
    * Pasos:
    *   1. Ir a /liga
+   *   2. Cambiar a la pestana CALENDARIO
    * Resultado esperado: la Fecha 1 muestra "Descansa: Joawquer" (el unico
    *   participante del Grupo 1 que no juega esa fecha, ver el fixture).
    * Tecnica: caso feliz sobre un dato derivado | Prioridad: media
    */
   test("TC-LIGA-003 | el calendario muestra quien descansa", async ({ page }) => {
     await page.goto("/liga");
+    await irAlCalendario(page);
 
     await expect(page.getByText("Descansa: Joawquer")).toBeVisible();
   });
@@ -121,14 +134,52 @@ test.describe("TS-LIGA | Liga publica", () => {
    *   mostrando "PENDIENTE".
    * Pasos:
    *   1. Ir a /liga  (el setup dejo la primera pelea del Grupo 2 en 3-1)
+   *   2. Cambiar a la pestana CALENDARIO
    * Resultado esperado: se ve "3 – 1" en el calendario y sigue habiendo
    *   peleas "PENDIENTE".
    * Tecnica: caso feliz | Prioridad: alta
    */
   test("TC-LIGA-004 | el calendario muestra el marcador del set", async ({ page }) => {
     await page.goto("/liga");
+    await irAlCalendario(page);
 
     await expect(page.getByText("3 – 1", { exact: true }).first()).toBeVisible();
     await expect(page.getByText("PENDIENTE", { exact: true }).first()).toBeVisible();
+  });
+
+  /**
+   * TC-LIGA-005 | Las pestanas alternan Grupos y Calendario
+   * Descripcion: /liga abre en GRUPOS y las dos vistas son mutuamente
+   *   excluyentes -- al elegir una, la otra deja de estar visible. Cubre
+   *   tambien la vuelta a GRUPOS, no solo la ida.
+   * Pasos:
+   *   1. Ir a /liga
+   *   2. Cambiar a CALENDARIO
+   *   3. Volver a GRUPOS
+   * Resultado esperado: al entrar, GRUPOS esta seleccionada y no se ve
+   *   "FECHA 1"; en CALENDARIO se ve "FECHA 1" y no "Grupo 1"; al volver se
+   *   invierte de nuevo.
+   * Tecnica: transicion de estados | Prioridad: alta
+   */
+  test("TC-LIGA-005 | las pestanas alternan entre grupos y calendario", async ({ page }) => {
+    await page.goto("/liga");
+
+    const tabGrupos = page.getByRole("tab", { name: "GRUPOS" });
+    const tabCalendario = page.getByRole("tab", { name: "CALENDARIO" });
+
+    // Estado inicial: GRUPOS seleccionada, el calendario oculto.
+    await expect(tabGrupos).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByText("Grupo 1", { exact: true })).toBeVisible();
+    await expect(page.getByText("FECHA 1", { exact: true })).toBeHidden();
+
+    await tabCalendario.click();
+    await expect(tabCalendario).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByText("FECHA 1", { exact: true })).toBeVisible();
+    await expect(page.getByText("Grupo 1", { exact: true })).toBeHidden();
+
+    await tabGrupos.click();
+    await expect(tabGrupos).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByText("Grupo 1", { exact: true })).toBeVisible();
+    await expect(page.getByText("FECHA 1", { exact: true })).toBeHidden();
   });
 });

@@ -1,4 +1,3 @@
-import RibbonTag from "@/components/ui/RibbonTag";
 import { formatearDif } from "@/lib/ligaTabla";
 
 // Nota: el diseno del handoff linkea el nombre del jugador a su perfil
@@ -6,18 +5,15 @@ import { formatearDif } from "@/lib/ligaTabla";
 // todavia no existe en el sitio (competidores/ es solo un board, sin
 // rutas dinamicas) -- se muestra el nombre en texto plano para no armar
 // un link roto; conectarlo cuando exista /competidores/[id].
+// La seccion, el ancho maximo y el encabezado los pone LigaTabs: este
+// componente es el contenido del panel "GRUPOS".
 export default function TablasGrupos({ grupos }) {
   return (
-    <section className="bg-black px-5 pb-16 pt-10 sm:px-8 lg:px-14">
-      <div className="mx-auto flex max-w-[1240px] flex-col gap-10">
-        <RibbonTag className="w-fit">TABLAS DE POSICIONES</RibbonTag>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {grupos.map((grupo) => (
-            <TablaGrupo key={grupo.id} grupo={grupo} />
-          ))}
-        </div>
-      </div>
-    </section>
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+      {grupos.map((grupo) => (
+        <TablaGrupo key={grupo.id} grupo={grupo} />
+      ))}
+    </div>
   );
 }
 

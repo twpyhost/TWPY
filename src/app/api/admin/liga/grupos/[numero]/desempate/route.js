@@ -29,6 +29,13 @@ export async function PUT(req, { params }) {
       return Response.json({ error: "Grupo no encontrado" }, { status: 404 });
     }
 
+    // Un grupo cerrado esta congelado: mismo limite que ya aplica PUT
+    // /partidos/[id]. Sin esto, un borrador de desempate abierto antes del
+    // cierre podia reescribir orden_desempate despues.
+    if (grupo.cerrado) {
+      return Response.json({ error: "El grupo esta cerrado" }, { status: 409 });
+    }
+
     const { data: participantes, error: participantesError } = await supabase
       .from("liga_participantes")
       .select("id")
