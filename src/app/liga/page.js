@@ -1,6 +1,7 @@
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 import AnimatedCount from "@/components/ui/AnimatedCount";
+import LigaTabs from "./LigaTabs";
 import TablasGrupos from "./TablasGrupos";
 import CalendarioLiga from "./CalendarioLiga";
 
@@ -63,8 +64,10 @@ export default async function LigaPage() {
         </div>
       </HeroSection>
 
-      <TablasGrupos grupos={liga.grupos} />
-      <CalendarioLiga fechas={liga.fechas} grupos={liga.grupos} />
+      <LigaTabs
+        grupos={<TablasGrupos grupos={liga.grupos} />}
+        calendario={<CalendarioLiga fechas={liga.fechas} grupos={liga.grupos} />}
+      />
     </>
   );
 }

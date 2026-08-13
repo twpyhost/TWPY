@@ -34,8 +34,54 @@ Estudiar la posibilidad de comprar dominios usando cnc.py (o hostinger si no se 
 - Descargar este repositorio
 - Ejecutar `npm install` en linea de comando dentro de la carpeta descargada
 - Copiar `.env.example` a `.env.local` y completar las credenciales (ver comentarios en el archivo)
+- Levantar el stack local de Supabase: `npx supabase start`
 - Ejecutar `npm run dev`
 - Abrir en el navegador http://localhost:3000/
+
+### Local vs producción (importante)
+
+Hay dos archivos de entorno y cada uno tiene un rol fijo:
+
+| Archivo | Apunta a | Quién lo usa |
+| --- | --- | --- |
+| `.env.local` | stack local (`npx supabase start`) | `npm run dev`, `npm run seed:*`, todo lo cotidiano |
+| `.env.prod.local` | proyecto remoto (producción) | `npm run dev:prod` y los scripts de ops, a mano |
+
+`npm run dev` **no arranca** si `NEXT_PUBLIC_SUPABASE_URL` no es local
+(`scripts/guard-dev-env.mjs`): así un arranque distraído no toca producción.
+Para desarrollar contra el remoto a propósito está `npm run dev:prod`, que
+carga `.env.prod.local` e imprime una advertencia antes de levantar el server.
+
+Los scripts que sí deben tocar producción se apuntan a mano:
+
+```bash
+node --env-file=.env.prod.local scripts/importar-torneos-reales.js
+```
+
+Los tests no dependen de nada de esto: Playwright levanta su propio `next dev`
+con `NODE_ENV=test` (Next ignora `.env.local`) apuntando siempre al stack local.
+
+### Datos de prueba locales (seed / purga)
+
+Todo par `seed:` / `purgar:` es re-ejecutable y trabaja solo contra el stack
+local: si `NEXT_PUBLIC_SUPABASE_URL` no es local, el script se frena
+(`scripts/entorno.js`; se salta con `--permitir-prod`).
+
+| Comando | Qué siembra | Cómo se deshace |
+| --- | --- | --- |
+| `npm run seed:torneos` | 7 torneos (banda `800001–800099`), 37 players con cuentas/alias, participantes, `ranking_snapshots` recalculados y eventos de identidad/sistema | `npm run purgar:torneos` |
+| `npm run seed:liga` | la Liga Invitacional del fixture `scripts/data/liga-2026-fixture.json` (12 fechas, 5 grupos, 105 partidos) | `npm run purgar:liga` |
+| `npm run seed:admin` | un usuario por rol de panel: `admin@twpy.local` / `liga@twpy.local` | `npm run purgar:admin` |
+| `npm run seed:todo` | los tres de arriba | `npm run purgar:todo` |
+
+- `seed:liga` es idempotente y **nunca pisa resultados ya cargados**;
+  `purgar:liga` sí borra la liga entera (cascada). Acepta `--slug=` para otra
+  liga y `--e2e` para barrer las `liga-e2e-*` que deje una corrida abortada.
+- `seed:admin` resetea la password si el usuario ya existe. Acepta
+  `--rol=admin|liga` y, con un rol elegido, `--email=` / `--password=`.
+  Las credenciales por defecto se imprimen al final del comando.
+- Los usuarios de la suite e2e (`@twpy.test`) son otros: los crea y borra
+  Playwright, `purgar:admin` no los toca.
 
 ## Fuente de datos (mock vs Supabase)
 

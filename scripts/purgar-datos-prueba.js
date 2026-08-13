@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 import { getSupabaseAdmin } from "../src/lib/supabaseAdmin.js";
+import { exigirSupabaseLocal } from "./entorno.js";
 import { BANDA_TORNEOS } from "./datos-prueba.js";
 
 const RAIZ = path.dirname(fileURLToPath(import.meta.url));
@@ -97,6 +98,7 @@ const ejecutadoDirecto =
   fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
 
 if (ejecutadoDirecto) {
+  exigirSupabaseLocal({ accion: "purgar-datos-prueba" });
   console.log("Purgando datos de prueba...");
   await purgar(getSupabaseAdmin());
   console.log("Listo.");

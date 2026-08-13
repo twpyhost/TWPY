@@ -80,10 +80,16 @@ export default function Navbar() {
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Menú"
+          aria-expanded={isOpen}
           className="relative flex h-11 w-11 items-center justify-center border border-white/[.14] bg-white/[.06] text-white min-[880px]:hidden"
         >
+          {/* Las tres barras comparten la misma base -- incluido
+              `-translate-y-1/2`. Sin esa compensacion, `top` ubica el borde
+              superior de la barra y no su centro, asi que los 6px de arriba y
+              de abajo no dan el mismo espaciado visual (la barra mide 2px) y
+              la X termina 1px por debajo del centro del boton. */}
           <span
-            className={`absolute left-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-white transition-all duration-300 ${
+            className={`absolute left-1/2 h-0.5 w-5 -translate-x-1/2 -translate-y-1/2 rounded bg-white transition-all duration-300 ${
               isOpen ? "top-1/2 rotate-45" : "top-[calc(50%-6px)] rotate-0"
             }`}
           />
@@ -93,7 +99,7 @@ export default function Navbar() {
             }`}
           />
           <span
-            className={`absolute left-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-white transition-all duration-300 ${
+            className={`absolute left-1/2 h-0.5 w-5 -translate-x-1/2 -translate-y-1/2 rounded bg-white transition-all duration-300 ${
               isOpen ? "top-1/2 -rotate-45" : "top-[calc(50%+6px)] rotate-0"
             }`}
           />

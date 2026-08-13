@@ -11,6 +11,7 @@ import { writeFile } from "node:fs/promises";
 
 import { getSupabaseAdmin } from "../src/lib/supabaseAdmin.js";
 import { recalcularSnapshots } from "../src/lib/rankings.js";
+import { exigirSupabaseLocal } from "./entorno.js";
 import { purgar, MANIFIESTO } from "./purgar-datos-prueba.js";
 import {
   TORNEOS,
@@ -61,6 +62,7 @@ function armarStandings(candidatos, cantidad, random) {
 }
 
 async function main() {
+  exigirSupabaseLocal({ accion: "seed-datos-prueba" });
   const supabase = getSupabaseAdmin();
 
   console.log("1/7 Purgando datos de prueba previos...");
@@ -309,7 +311,7 @@ async function main() {
     `\nListo: ${TORNEOS.length} torneos, ${idsPlayers.length} players, ` +
       `${filasRaw.length} participantes (${SIN_VINCULAR.length} sin vincular).`,
   );
-  console.log("Para deshacer: npm run seed:purgar");
+  console.log("Para deshacer: npm run purgar:torneos");
 }
 
 await main();

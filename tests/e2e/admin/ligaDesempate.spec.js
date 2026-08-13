@@ -183,4 +183,58 @@ test.describe("TS-LIGA-DESEMPATE | Desempate manual en la fase de grupos", () =>
 
     await expect(page.getByText("DESEMPATES PENDIENTES")).not.toBeVisible();
   });
+
+  /**
+   * TC-LIGA-DESEMPATE-006 | Un grupo cerrado rechaza cambios de desempate
+   * Descripcion: cerrar un grupo lo congela. La UI ya deshabilita las flechas
+   *   y el boton Confirmar, pero el limite real es la API: un borrador de
+   *   reordenamiento abierto ANTES del cierre no debe poder guardarse despues
+   *   (mismo invariante que TC-LIGA-ADMIN-002 verifica para los marcadores).
+   * Pasos:
+   *   1. Resolver el desempate del grupo 5 y cerrarlo directo en la base.
+   *   2. PUT /api/admin/liga/grupos/5/desempate con el orden invertido.
+   * Resultado esperado: 409, y orden_desempate en la base queda intacto.
+   * Tecnica: caso negativo sobre una restriccion de negocio | Prioridad: alta
+   */
+  test("TC-LIGA-DESEMPATE-006 | un grupo cerrado rechaza guardar el desempate", async ({
+    page,
+  }) => {
+    const { data: grupo5 } = await supabase
+      .from("liga_grupos")
+      .select("id")
+      .eq("liga_id", ligaId)
+      .eq("numero", 5)
+      .single();
+    const { data: participantes } = await supabase
+      .from("liga_participantes")
+      .select("id")
+      .eq("grupo_id", grupo5.id)
+      .order("id", { ascending: true });
+
+    for (let i = 0; i < participantes.length; i += 1) {
+      await supabase
+        .from("liga_participantes")
+        .update({ orden_desempate: i + 1 })
+        .eq("id", participantes[i].id);
+    }
+    await supabase.from("liga_grupos").update({ cerrado: true }).eq("id", grupo5.id);
+
+    const ordenInvertido = participantes.map((p) => p.id).reverse();
+    const response = await page.request.put("/api/admin/liga/grupos/5/desempate", {
+      data: { orden: ordenInvertido },
+    });
+
+    expect(response.status()).toBe(409);
+    const body = await response.json();
+    expect(body.error).toMatch(/cerrado/i);
+
+    const { data: despues } = await supabase
+      .from("liga_participantes")
+      .select("id, orden_desempate")
+      .eq("grupo_id", grupo5.id)
+      .order("id", { ascending: true });
+    expect(despues.map((p) => p.orden_desempate)).toEqual(
+      participantes.map((_, i) => i + 1),
+    );
+  });
 });

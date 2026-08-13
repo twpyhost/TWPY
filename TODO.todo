@@ -6,8 +6,13 @@ v1.1
      se le da el rol admin al auth.users nuevo que crea Discord (no comparte UUID con la cuenta email/password).
      Pendiente de que lo configures vos en Supabase.
 - Añadir links de las redes sociales
-  -> El footer ya tiene los 4 íconos (Discord/Instagram/X/Facebook) con href="#". Falta que me pases las
-     URLs reales para cablearlas (y si querés sumar TikTok/YouTube/Twitch hay que dibujar el SVG, no existe en el repo).
+  -> Los 4 íconos (Discord/Instagram/X/Facebook) apuntaban a href="#" y no hacían nada, así que se
+     QUITARON a propósito hasta tener las URLs reales. Cuando me las pases hay que reponer dos cosas:
+       1. El bloque "Síguenos:" del footer (src/components/footer.js) con los 4 SVG — están en el
+          historial de git, commit anterior a este cambio, no hay que redibujarlos.
+       2. El botón "DISCORD →" de la barra lateral del reglamento (src/app/reglamento/page.js), que
+          también estaba en href="#" y se borró junto con su import de Button.
+     Si querés sumar TikTok/YouTube/Twitch hay que dibujar el SVG, no existe en el repo.
 
 HECHO
 - [HECHO] Arreglar subtitulos en página de reglamento que no se animan al cargar igual que con los demás elementos
