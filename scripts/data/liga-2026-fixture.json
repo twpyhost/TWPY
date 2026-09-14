@@ -30,37 +30,37 @@
     },
     {
       "numero": 6,
-      "fecha": "2026-09-13",
-      "hora": "17:00"
-    },
-    {
-      "numero": 7,
       "fecha": "2026-09-20",
       "hora": "17:00"
     },
     {
-      "numero": 8,
+      "numero": 7,
       "fecha": "2026-09-27",
       "hora": "17:00"
     },
     {
-      "numero": 9,
+      "numero": 8,
       "fecha": "2026-10-04",
       "hora": "17:00"
     },
     {
-      "numero": 10,
+      "numero": 9,
       "fecha": "2026-10-11",
       "hora": "17:00"
     },
     {
-      "numero": 11,
+      "numero": 10,
       "fecha": "2026-10-18",
       "hora": "17:00"
     },
     {
-      "numero": 12,
+      "numero": 11,
       "fecha": "2026-10-25",
+      "hora": "17:00"
+    },
+    {
+      "numero": 12,
+      "fecha": "2026-11-01",
       "hora": "17:00"
     }
   ],
@@ -73,8 +73,8 @@
         "Saiken",
         "Slammers",
         "Jarri",
-        "ADN21",
-        "Joawquer"
+        "Hiero",
+        "Joaqwer"
       ],
       "partidos": [
         {
@@ -93,7 +93,7 @@
           "fecha": 1,
           "orden": 3,
           "a": "Jarri",
-          "b": "ADN21"
+          "b": "Hiero"
         },
         {
           "fecha": 2,
@@ -110,8 +110,8 @@
         {
           "fecha": 2,
           "orden": 3,
-          "a": "ADN21",
-          "b": "Joawquer"
+          "a": "Hiero",
+          "b": "Joaqwer"
         },
         {
           "fecha": 4,
@@ -123,19 +123,19 @@
           "fecha": 4,
           "orden": 2,
           "a": "Slammers",
-          "b": "ADN21"
+          "b": "Hiero"
         },
         {
           "fecha": 4,
           "orden": 3,
           "a": "Jarri",
-          "b": "Joawquer"
+          "b": "Joaqwer"
         },
         {
           "fecha": 6,
           "orden": 1,
           "a": "Wario",
-          "b": "ADN21"
+          "b": "Hiero"
         },
         {
           "fecha": 6,
@@ -147,7 +147,7 @@
           "fecha": 6,
           "orden": 3,
           "a": "Slammers",
-          "b": "Joawquer"
+          "b": "Joaqwer"
         },
         {
           "fecha": 7,
@@ -159,13 +159,13 @@
           "fecha": 7,
           "orden": 2,
           "a": "Rox",
-          "b": "ADN21"
+          "b": "Hiero"
         },
         {
           "fecha": 7,
           "orden": 3,
           "a": "Saiken",
-          "b": "Joawquer"
+          "b": "Joaqwer"
         },
         {
           "fecha": 8,
@@ -177,19 +177,19 @@
           "fecha": 8,
           "orden": 2,
           "a": "Rox",
-          "b": "Joawquer"
+          "b": "Joaqwer"
         },
         {
           "fecha": 8,
           "orden": 3,
           "a": "Saiken",
-          "b": "ADN21"
+          "b": "Hiero"
         },
         {
           "fecha": 9,
           "orden": 1,
           "a": "Wario",
-          "b": "Joawquer"
+          "b": "Joaqwer"
         },
         {
           "fecha": 9,
