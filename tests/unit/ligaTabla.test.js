@@ -85,6 +85,24 @@ test.describe("calcularTabla", () => {
     expect(c.pj).toBe(0);
   });
 
+  test("un partido sancionado cuenta como jugado sin victoria ni derrota", () => {
+    const participantes = [participante(1, "A"), participante(2, "B")];
+    const partidos = [
+      {
+        participante_a_id: 1,
+        participante_b_id: 2,
+        ganador_id: null,
+        matches_a: 0,
+        matches_b: 0,
+        resultado_tipo: "sancionado",
+      },
+    ];
+
+    const tabla = calcularTabla(participantes, partidos);
+    expect(tabla[0]).toMatchObject({ pj: 1, g: 0, p: 0, mg: 0, mp: 0, dif: 0, puntos: 0 });
+    expect(tabla[1]).toMatchObject({ pj: 1, g: 0, p: 0, mg: 0, mp: 0, dif: 0, puntos: 0 });
+  });
+
   test("un partido viejo con ganador y sin marcador suma el punto pero no los matches", () => {
     // Datos previos a la migracion 0013 -- no deberian existir, pero el
     // calculo no tiene que romperse si aparece uno.

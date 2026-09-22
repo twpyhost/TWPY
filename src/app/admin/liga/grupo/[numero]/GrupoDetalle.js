@@ -109,13 +109,18 @@ export default function GrupoDetalle({ numero }) {
       return siguiente;
     });
 
-  const guardarResultado = async (partidoId, ganadorId, matchesPerdedor) => {
+  const guardarResultado = async (
+    partidoId,
+    ganadorId,
+    matchesPerdedor,
+    sancionado = false,
+  ) => {
     setGuardandoPartidoId(partidoId);
     try {
       const response = await fetch(`/api/admin/liga/partidos/${partidoId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ganadorId, matchesPerdedor }),
+        body: JSON.stringify({ ganadorId, matchesPerdedor, sancionado }),
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "No se pudo actualizar el partido");
@@ -518,6 +523,9 @@ export default function GrupoDetalle({ numero }) {
                           disabled={grupo.cerrado}
                           onElegirGanador={elegirGanador}
                           onGuardarMarcador={guardarResultado}
+                          onGuardarSancion={(partidoId, sancionar) =>
+                            guardarResultado(partidoId, null, null, sancionar)
+                          }
                         />
                       ))}
                     </div>
@@ -572,9 +580,11 @@ function FilaPartido({
   disabled,
   onElegirGanador,
   onGuardarMarcador,
+  onGuardarSancion,
 }) {
   const ganadorElegidoId = pendienteId ?? partido.ganadorId;
   const hayCambioPendiente = pendienteId != null && pendienteId !== partido.ganadorId;
+  const sancionado = partido.resultadoTipo === "sancionado";
 
   // Matches que le saco el perdedor en el resultado ya guardado -- se usa
   // para marcar cual de los tres botones esta activo. Si el admin eligio otro
@@ -628,6 +638,20 @@ function FilaPartido({
             </button>
           );
         })}
+        <button
+          type="button"
+          disabled={loading || disabled}
+          onClick={() =>
+            onGuardarSancion(partido.id, sancionado ? false : true)
+          }
+          className={`h-7 border px-2 font-body text-[10px] font-bold tracking-[0.04em] transition-colors duration-200 disabled:opacity-30 ${
+            sancionado
+              ? "border-warning/50 bg-warning/15 text-warning"
+              : "border-warning/30 bg-warning/[.04] text-warning/70 hover:bg-warning/10"
+          }`}
+        >
+          {sancionado ? "QUITAR SANCIÓN" : "SANCIONAR 0-0"}
+        </button>
       </div>
     </div>
   );

@@ -40,7 +40,7 @@ export async function GET(_req, { params }) {
     const { data: partidos, error: partidosError } = await supabase
       .from("liga_partidos")
       .select(
-        "id, grupo_id, fecha_id, participante_a_id, participante_b_id, orden, ganador_id, matches_a, matches_b",
+        "id, grupo_id, fecha_id, participante_a_id, participante_b_id, orden, ganador_id, matches_a, matches_b, resultado_tipo",
       )
       .eq("grupo_id", grupoRow.id);
     if (partidosError) throw partidosError;

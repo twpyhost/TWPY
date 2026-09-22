@@ -8,7 +8,7 @@ import { calcularTabla } from "./ligaTabla";
 // rows.fechas:        [{ id, numero, fecha, hora }]
 // rows.grupos:        [{ id, numero, nombre, cupos_clasificados, cerrado }]
 // rows.participantes: [{ id, grupo_id, nombre, player_id, orden_desempate }]
-// rows.partidos:      [{ id, grupo_id, fecha_id, participante_a_id, participante_b_id, orden, ganador_id, matches_a, matches_b }]
+// rows.partidos:      [{ id, grupo_id, fecha_id, participante_a_id, participante_b_id, orden, ganador_id, matches_a, matches_b, resultado_tipo }]
 export function armarLiga({ liga, fechas, grupos, participantes, partidos }) {
   const fechaPorId = new Map(fechas.map((f) => [f.id, f]));
 
@@ -54,6 +54,7 @@ export function armarGrupo({ grupo, participantes, partidos, fechaPorId }) {
         participanteBId: partido.participante_b_id,
         nombreB: nombrePorParticipanteId.get(partido.participante_b_id) ?? null,
         ganadorId: partido.ganador_id,
+        resultadoTipo: partido.resultado_tipo ?? "pendiente",
         ganadorNombre: partido.ganador_id
           ? (nombrePorParticipanteId.get(partido.ganador_id) ?? null)
           : null,

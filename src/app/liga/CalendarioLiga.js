@@ -70,12 +70,16 @@ export default function CalendarioLiga({ fechas, grupos }) {
                       </span>
                       <span
                         className={`flex items-center justify-center whitespace-nowrap font-display tracking-[0.08em] ${
-                          partido.ganadorId == null
+                          partido.resultadoTipo === "sancionado"
+                            ? "text-[10px] text-warning"
+                            : partido.ganadorId == null
                             ? "text-[10px] text-white/30"
                             : "text-xs text-white/70"
                         }`}
                       >
-                        {partido.ganadorId == null
+                        {partido.resultadoTipo === "sancionado"
+                          ? "SANCIONADO · 0-0"
+                          : partido.ganadorId == null
                           ? "PENDIENTE"
                           : `${partido.matchesA} – ${partido.matchesB}`}
                       </span>

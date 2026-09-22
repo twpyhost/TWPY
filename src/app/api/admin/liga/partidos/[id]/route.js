@@ -4,12 +4,12 @@ import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
 // Carga (o borra) el resultado de un partido de la fase de grupos.
 //
-// Body: { ganadorId: number | null, matchesPerdedor: 0 | 1 | 2 }
+// Body: { ganadorId: number | null, matchesPerdedor: 0 | 1 | 2, sancionado?: boolean }
 //
 // El partido es un first-to-3: el cliente manda quien gano y cuantos matches
 // le saco el perdedor; el servidor deriva matches_a/matches_b poniendo 3 del
-// lado del ganador. ganadorId: null borra el resultado completo (marcador y
-// auditoria incluidos) e ignora matchesPerdedor.
+// lado del ganador. ganadorId: null borra el resultado completo, salvo que
+// sancionado sea true, en cuyo caso guarda un 0-0 cerrado sin ganador.
 export async function PUT(req, { params }) {
   try {
     const auth = await requireLiga();
@@ -21,9 +21,21 @@ export async function PUT(req, { params }) {
       return Response.json({ error: "Id de partido invalido" }, { status: 400 });
     }
 
-    const { ganadorId, matchesPerdedor } = await req.json();
+    const { ganadorId, matchesPerdedor, sancionado = false } = await req.json();
+
+    if (typeof sancionado !== "boolean") {
+      return Response.json({ error: "sancionado debe ser booleano" }, { status: 400 });
+    }
+
+    if (sancionado && ganadorId != null) {
+      return Response.json(
+        { error: "Un resultado sancionado no puede tener ganador" },
+        { status: 400 },
+      );
+    }
 
     if (
+      !sancionado &&
       ganadorId != null &&
       !(Number.isInteger(matchesPerdedor) && matchesPerdedor >= 0 && matchesPerdedor <= 2)
     ) {
@@ -46,6 +58,7 @@ export async function PUT(req, { params }) {
     }
 
     if (
+      !sancionado &&
       ganadorId != null &&
       ganadorId !== partido.participante_a_id &&
       ganadorId !== partido.participante_b_id
@@ -66,16 +79,15 @@ export async function PUT(req, { params }) {
       return Response.json({ error: "El grupo esta cerrado" }, { status: 409 });
     }
 
-    const ganadorEsA = ganadorId === partido.participante_a_id;
-
     const { error: updateError } = await supabase
       .from("liga_partidos")
       .update({
+        resultado_tipo: sancionado ? "sancionado" : ganadorId == null ? "pendiente" : "jugado",
         ganador_id: ganadorId ?? null,
-        matches_a: ganadorId == null ? null : ganadorEsA ? 3 : matchesPerdedor,
-        matches_b: ganadorId == null ? null : ganadorEsA ? matchesPerdedor : 3,
-        cargado_at: ganadorId ? new Date().toISOString() : null,
-        cargado_by: ganadorId ? user.id : null,
+        matches_a: sancionado ? 0 : ganadorId == null ? null : ganadorId === partido.participante_a_id ? 3 : matchesPerdedor,
+        matches_b: sancionado ? 0 : ganadorId == null ? null : ganadorId === partido.participante_a_id ? matchesPerdedor : 3,
+        cargado_at: sancionado || ganadorId ? new Date().toISOString() : null,
+        cargado_by: sancionado || ganadorId ? user.id : null,
       })
       .eq("id", id);
     if (updateError) throw updateError;

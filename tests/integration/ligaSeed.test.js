@@ -89,10 +89,15 @@ test.describe("sembrarLiga", () => {
       .single();
 
     // A gana 3-1: el marcador tiene que sobrevivir al re-seed igual que el
-    // ganador (los upserts de liga_partidos no tocan ninguna de las tres).
+    // ganador (los upserts de liga_partidos no tocan las columnas de resultado).
     await supabase
       .from("liga_partidos")
-      .update({ ganador_id: unPartido.participante_a_id, matches_a: 3, matches_b: 1 })
+      .update({
+        resultado_tipo: "jugado",
+        ganador_id: unPartido.participante_a_id,
+        matches_a: 3,
+        matches_b: 1,
+      })
       .eq("id", unPartido.id);
 
     const segundaCorrida = await sembrarLiga(supabase, fixture);
@@ -143,5 +148,41 @@ test.describe("sembrarLiga", () => {
       .update({ ganador_id: unPartido.participante_a_id, matches_a: null, matches_b: null })
       .eq("id", unPartido.id);
     expect(errorSinMarcador).not.toBeNull();
+  });
+
+  test("acepta una pelea sancionada 0-0 sin ganador", async () => {
+    const primeraCorrida = await sembrarLiga(supabase, fixture);
+    ligaId = primeraCorrida.ligaId;
+
+    const { data: grupo } = await supabase
+      .from("liga_grupos")
+      .select("id")
+      .eq("liga_id", ligaId)
+      .eq("numero", 1)
+      .single();
+    const { data: partido } = await supabase
+      .from("liga_partidos")
+      .select("id")
+      .eq("grupo_id", grupo.id)
+      .limit(1)
+      .single();
+
+    const { error } = await supabase
+      .from("liga_partidos")
+      .update({ resultado_tipo: "sancionado", ganador_id: null, matches_a: 0, matches_b: 0 })
+      .eq("id", partido.id);
+    expect(error).toBeNull();
+
+    const { data: resultado } = await supabase
+      .from("liga_partidos")
+      .select("resultado_tipo, ganador_id, matches_a, matches_b")
+      .eq("id", partido.id)
+      .single();
+    expect(resultado).toEqual({
+      resultado_tipo: "sancionado",
+      ganador_id: null,
+      matches_a: 0,
+      matches_b: 0,
+    });
   });
 });

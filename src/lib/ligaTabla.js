@@ -10,7 +10,7 @@
 //
 // participantes: [{ id, nombre, player_id, orden_desempate }]
 // partidos:      [{ participante_a_id, participante_b_id, ganador_id,
-//                   matches_a, matches_b }]
+//                   matches_a, matches_b, resultado_tipo }]
 // opciones:      { cuposClasificados = 5 }
 
 // Corte de clasificado/eliminado segun la posicion en la tabla. Extraida
@@ -44,6 +44,13 @@ export function calcularTabla(participantes, partidos, opciones = {}) {
   );
 
   for (const partido of partidos) {
+    if (partido.resultado_tipo === "sancionado") {
+      const participanteA = stats.get(partido.participante_a_id);
+      const participanteB = stats.get(partido.participante_b_id);
+      if (participanteA) participanteA.pj += 1;
+      if (participanteB) participanteB.pj += 1;
+      continue;
+    }
     if (partido.ganador_id == null) continue;
 
     const ganadorEsA = partido.ganador_id === partido.participante_a_id;
