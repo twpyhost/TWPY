@@ -362,15 +362,13 @@ export default function GrupoDetalle({ numero }) {
                     return (
                       <tr
                         key={fila.participanteId}
-                        className={`border-b border-white/[.06] transition-colors duration-500 ${
-                          destacados.has(fila.participanteId)
+                        className={`border-b border-white/[.06] transition-colors duration-500 ${destacados.has(fila.participanteId)
                             ? "bg-primary-500/20"
                             : fila.empatado
                               ? "bg-warning/[.06]"
                               : ""
-                        } ${estado === "clasificado" ? "border-l-2 border-l-success" : ""} ${
-                          estado === "eliminado" ? "border-l-2 border-l-error" : ""
-                        }`}
+                          } ${estado === "clasificado" ? "border-l-2 border-l-success" : ""} ${estado === "eliminado" ? "border-l-2 border-l-error" : ""
+                          }`}
                       >
                         <td className="px-3 py-2.5 font-display text-lg text-white/70">
                           {posicion}
@@ -559,9 +557,8 @@ export default function GrupoDetalle({ numero }) {
 function Th({ children, align }) {
   return (
     <th
-      className={`px-3 py-2.5 font-display text-[13px] font-normal tracking-[0.08em] text-white/50 ${
-        align === "right" ? "text-right" : "text-left"
-      }`}
+      className={`px-3 py-2.5 font-display text-[13px] font-normal tracking-[0.08em] text-white/50 ${align === "right" ? "text-right" : "text-left"
+        }`}
     >
       {children}
     </th>
@@ -628,11 +625,10 @@ function FilaPartido({
               type="button"
               disabled={loading || disabled || ganadorElegidoId == null}
               onClick={() => onGuardarMarcador(partido.id, ganadorElegidoId, matches)}
-              className={`h-7 w-14 border font-display text-xs tracking-[0.06em] transition-colors duration-200 disabled:opacity-30 ${
-                activo
+              className={`h-7 w-14 border font-display text-xs tracking-[0.06em] transition-colors duration-200 disabled:opacity-30 ${activo
                   ? "border-success/50 bg-success/15 text-success"
                   : "border-white/15 bg-white/[.04] text-white/70 hover:border-primary-500/50 hover:bg-primary-500/10"
-              }`}
+                }`}
             >
               3-{matches}
             </button>
@@ -644,11 +640,10 @@ function FilaPartido({
           onClick={() =>
             onGuardarSancion(partido.id, sancionado ? false : true)
           }
-          className={`h-7 border px-2 font-body text-[10px] font-bold tracking-[0.04em] transition-colors duration-200 disabled:opacity-30 ${
-            sancionado
+          className={`h-7 border px-2 font-body text-[10px] font-bold tracking-[0.04em] transition-colors duration-200 disabled:opacity-30 ${sancionado
               ? "border-warning/50 bg-warning/15 text-warning"
               : "border-warning/30 bg-warning/[.04] text-warning/70 hover:bg-warning/10"
-          }`}
+            }`}
         >
           {sancionado ? "QUITAR SANCIÓN" : "SANCIONAR 0-0"}
         </button>
@@ -676,15 +671,14 @@ function BotonGanador({
       type="button"
       disabled={loading || disabled}
       onClick={() => onClick(partido, participanteId)}
-      className={`h-10 flex-1 border px-3 font-body text-sm font-bold transition-colors duration-200 disabled:opacity-40 ${
-        esGanador
+      className={`h-10 flex-1 border px-3 font-body text-sm font-bold transition-colors duration-200 disabled:opacity-40 ${esGanador
           ? pendiente
             ? "border-primary-500/60 bg-primary-500/15 text-white"
             : "border-success/50 bg-success/15 text-success"
           : hayGanador
             ? "border-white/10 bg-white/[.02] text-white/35"
             : "border-white/15 bg-white/[.04] text-white hover:border-primary-500/50 hover:bg-primary-500/10"
-      }`}
+        }`}
     >
       {nombre}
     </button>

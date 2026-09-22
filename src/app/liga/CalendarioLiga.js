@@ -60,35 +60,32 @@ export default function CalendarioLiga({ fechas, grupos }) {
                   {bloque.partidos.map((partido) => (
                     <Fragment key={partido.id}>
                       <span
-                        className={`truncate text-right ${
-                          partido.ganadorId === partido.participanteAId
+                        className={`truncate text-right ${partido.ganadorId === partido.participanteAId
                             ? "font-bold text-success"
                             : "text-white/70"
-                        }`}
+                          }`}
                       >
                         {partido.nombreA}
                       </span>
                       <span
-                        className={`flex items-center justify-center whitespace-nowrap font-display tracking-[0.08em] ${
-                          partido.resultadoTipo === "sancionado"
+                        className={`flex items-center justify-center whitespace-nowrap font-display tracking-[0.08em] ${partido.resultadoTipo === "sancionado"
                             ? "text-[10px] text-warning"
                             : partido.ganadorId == null
-                            ? "text-[10px] text-white/30"
-                            : "text-xs text-white/70"
-                        }`}
+                              ? "text-[10px] text-white/30"
+                              : "text-xs text-white/70"
+                          }`}
                       >
                         {partido.resultadoTipo === "sancionado"
                           ? "SANCIONADO · 0-0"
                           : partido.ganadorId == null
-                          ? "PENDIENTE"
-                          : `${partido.matchesA} – ${partido.matchesB}`}
+                            ? "PENDIENTE"
+                            : `${partido.matchesA} – ${partido.matchesB}`}
                       </span>
                       <span
-                        className={`truncate text-left ${
-                          partido.ganadorId === partido.participanteBId
+                        className={`truncate text-left ${partido.ganadorId === partido.participanteBId
                             ? "font-bold text-success"
                             : "text-white/70"
-                        }`}
+                          }`}
                       >
                         {partido.nombreB}
                       </span>
