@@ -22,7 +22,6 @@ Fixtures exclusivamente locales y limpieza por IDs/FK; no se invoca EWGF.
 El runbook y las limitaciones de publicación están en
 `docs/releases/2026-10-16-public-player-profiles.md`.
 
-
 Complemento del [plan de pruebas](plan-de-pruebas.md). Acá está el diseño: qué
 se prueba, con qué técnica y por qué esos valores y no otros.
 
@@ -31,8 +30,9 @@ título, descripción, precondiciones, pasos y resultado esperado. Este document
 es el índice y el registro del diseño; el spec es la fuente de verdad de la
 ejecución.
 
-**Total: 81 casos ejecutables en 8 suites** (48 en el project `e2e`, 33 en
-`e2e-admin`). Varios casos son parametrizados: una definición genera N
+**Total: 117 casos e2e ejecutables en 12 suites** (57 en el project `e2e`,
+43 en `e2e-admin`, 17 en `e2e-liga`; relevamiento del 2026-10-16).
+Varios casos son parametrizados: una definición genera N
 ejecuciones, una por clase de equivalencia o valor límite. Los números de abajo
 son ejecuciones, que es lo que reporta Playwright.
 
@@ -44,20 +44,21 @@ son ejecuciones, que es lo que reporta Playwright.
 |---|---|---|---|
 | TS-NAV | Navegación pública | `tests/e2e/publico/navegacion.spec.js` | 7 |
 | TS-RANK | Ranking | `tests/e2e/publico/ranking.spec.js` | 11 |
-| TS-TOR | Torneos y resultados | `tests/e2e/publico/torneos.spec.js` | 9 |
+| TS-TOR | Torneos y resultados | `tests/e2e/publico/torneos.spec.js` | 11 |
 | TS-COMP | Competidores | `tests/e2e/publico/competidores.spec.js` | 4 |
 | TS-REG | Reglamento | `tests/e2e/publico/reglamento.spec.js` | 3 |
 | TS-AUTH | Gate de acceso | `tests/e2e/publico/auth-gate.spec.js` | 14 |
 | TS-ADM | Panel (lectura) | `tests/e2e/admin/lectura.spec.js` | 12 |
 | TS-PAG | Paginación del panel | `tests/e2e/admin/paginacion.spec.js` | 21 |
-| TS-ROL | Separación de roles del panel | `tests/e2e/rol-liga/rolLiga.spec.js` | 19 |
-| TS-LIGA | Liga pública | `tests/e2e/publico/liga.spec.js` | 5 |
+| TS-ROL | Separación de roles del panel | `tests/e2e/rol-liga/rolLiga.spec.js` | 17 |
+| TS-LIGA | Liga pública | `tests/e2e/publico/liga.spec.js` | 7 |
+| TS-LIGA-ADMIN | Resultados de Liga | `tests/e2e/admin/liga.spec.js` | 4 |
+| TS-LIGA-DESEMPATE | Desempates de Liga | `tests/e2e/admin/ligaDesempate.spec.js` | 6 |
 
 A eso se suman los casos de `tests/unit/` + `tests/integration/` que corren en
 el project `unit`. El total exacto de una corrida sale de `npx playwright test
---list`. El índice de arriba todavía **no** incluye las suites de liga del
-panel (`tests/e2e/admin/liga.spec.js`, `ligaDesempate.spec.js`), que se
-agregaron sin pasar por acá.
+--list`. La corrida completa incluye además 82 pruebas unitarias/de integración
+y 4 tareas de preparación/limpieza (203 ejecuciones al 2026-10-16).
 
 ---
 
@@ -303,8 +304,46 @@ cambian de pestaña primero.
 | TC-LIGA-001 | Muestra los 5 grupos y, en la otra pestaña, las 12 fechas | caso feliz | alta |
 | TC-LIGA-002 | La zona de eliminación resalta las últimas 2 posiciones | valor límite | alta |
 | TC-LIGA-003 | El calendario deriva quién descansa por fecha | dato derivado | media |
-| TC-LIGA-004 | El calendario muestra el marcador del set | caso feliz | alta |
+| TC-LIGA-004 | El calendario muestra marcadores orientados A-B con victoria de cualquiera de los lados | caso feliz | alta |
 | TC-LIGA-005 | Las pestañas alternan Grupos y Calendario | transición de estados | alta |
+| TC-LIGA-006 | Una sanción muestra 0-0 y suma PJ para ambos sin victorias, derrotas, matches ni puntos | estados de resultado | alta |
+| TC-LIGA-007 | El contador de peleas jugadas incluye las sancionadas | regresión | alta |
+
+El setup deja dos partidos `jugado` (3-1 y 2-3) y uno `sancionado`
+(0-0, sin ganador) en el Grupo 2. El Grupo 1 queda pendiente para los casos
+de eliminación y descanso de Joaqwer. Las consultas y escrituras del setup
+propagan errores de Supabase; cada update debe devolver exactamente una fila.
+
+### TS-LIGA-ADMIN — Resultados de Liga
+
+| Id | Título | Técnica | Prioridad |
+|---|---|---|---|
+| TC-LIGA-ADMIN-001 | Cargar un marcador actualiza la tabla | caso feliz | alta |
+| TC-LIGA-ADMIN-002 | Un grupo cerrado no acepta cambios | transición de estados | alta |
+| TC-LIGA-ADMIN-003 | El marcador requiere elegir ganador | estado inválido | media |
+| TC-LIGA-ADMIN-004 | Jugado → sancionado → pendiente → jugado con otro ganador, con persistencia y progreso del grupo | modelo de estados | alta |
+
+La integración también verifica que resembrar conserve el tipo, ganador y
+marcador de partidos jugados (victorias de A y B) y sancionados. Los casos
+de marcador inválido usan `resultado_tipo: "jugado"` para probar la
+restricción first-to-3 y comprueban el error de constraint específico.
+También rechaza `jugado` sin ganador y sanciones con uno o ambos matches nulos
+(regresiones del CHECK endurecido en `20261016171620_liga_resultados_completos.sql`).
+
+### TS-LIGA-DESEMPATE — Desempates de Liga
+
+| Id | Título | Técnica | Prioridad |
+|---|---|---|---|
+| TC-LIGA-DESEMPATE-001 | La API rechaza cerrar un grupo con empates sin resolver | estado inválido | alta |
+| TC-LIGA-DESEMPATE-002 | Las flechas siguen visibles en un bloque ya resuelto | regresión | alta |
+| TC-LIGA-DESEMPATE-003 | Recargar descarta el borrador; confirmar persiste el nuevo orden tras recargar | persistencia / transición de estados | alta |
+| TC-LIGA-DESEMPATE-004 | Cerrar grupo se habilita después de resolver los empates | transición de estados | alta |
+| TC-LIGA-DESEMPATE-005 | Se puede confirmar el orden actual sin mover filas desde el panel separado | caso feliz | alta |
+| TC-LIGA-DESEMPATE-006 | La API rechaza cambiar el desempate de un grupo cerrado y conserva el orden | estado inválido | alta |
+
+Cada suite de Liga siembra una liga propia en Supabase local y la elimina al
+terminar. Se ejecutan con un solo worker porque las rutas eligen la liga más
+reciente, incluso cuando cada fixture tiene un slug distinto.
 
 ### TS-AUTH — Gate de acceso
 
@@ -372,6 +411,8 @@ Corre con la sesión del rol `liga` (project `e2e-liga`), no con la del admin.
 | Rankings: tendencia ▲/▼ por torneo | `CLAUDE.md` | TC-ADM-008 (datos sembrados con posiciones rotadas) |
 | El panel es la única parte con auth | `CLAUDE.md` | TS-AUTH completa |
 | El rol `liga` solo opera la fase de grupos | `CLAUDE.md`, migración 0014 | TS-ROL completa |
+| Las sanciones 0-0 cuentan como jugadas sin otorgar puntos y pueden quitarse | migración 0015 | TC-LIGA-006, TC-LIGA-007, TC-LIGA-ADMIN-004 |
+| El desempate solo persiste al confirmar y el grupo cerrado rechaza cambios | specs de desempate del 2026-08-06 | TC-LIGA-DESEMPATE-003, TC-LIGA-DESEMPATE-006 |
 | Las páginas públicas no requieren login | `CLAUDE.md` | TS-NAV, TS-RANK, TS-TOR, TS-COMP, TS-REG |
 | La vista pública de resultados es legible por anónimos (RLS) | migración 0006 | TC-TOR-003 |
 | Dos cuentas organizadoras (A / B) trazables | `CLAUDE.md` | TC-PAG-009 |
@@ -383,6 +424,7 @@ Corre con la sesión del rol `liga` (project `e2e-liga`), no con la del admin.
 | `?page=` fuera de rango hacía que la API devolviera **500**: PostgREST responde 416 `PGRST103` cuando el offset supera el total de filas | **Corregido** — `consultarPagina()` en `src/lib/paginacion.js` lo detecta y devuelve página vacía con el total real | TC-PAG-001, TC-PAG-008 |
 | El servidor de pruebas hablaba con el Supabase de **producción** porque `.env.local` pisaba las variables inyectadas | **Corregido** — `NODE_ENV=test` + `reuseExistingServer: false` | toda la suite |
 | El login con email estaba deshabilitado en el stack local, así que el panel no se podía testear | **Corregido** — `[auth.email] enable_signup = true` en `supabase/config.toml` | TS-ADM, TS-PAG |
+| Los contadores público y de progreso del panel excluían las sancionadas porque solo contaban filas con ganador | **Corregido** — incluyen `resultadoTipo === "sancionado"` | TC-LIGA-007, TC-LIGA-ADMIN-004 |
 | `/torneo-resultado/<id inexistente>` muestra el 404 pero responde **HTTP 200** (soft 404, malo para SEO) | **Abierto** — anotado en `TODO.todo`; el caso verifica el contenido, no el status | TC-TOR-005 |
 
 ### Huecos conocidos

@@ -18,6 +18,7 @@ function partido(a, b, ganador = null, matchesPerdedor = 0) {
     return {
       participante_a_id: a,
       participante_b_id: b,
+      resultado_tipo: "pendiente",
       ganador_id: null,
       matches_a: null,
       matches_b: null,
@@ -27,6 +28,7 @@ function partido(a, b, ganador = null, matchesPerdedor = 0) {
   return {
     participante_a_id: a,
     participante_b_id: b,
+    resultado_tipo: "jugado",
     ganador_id: ganador,
     matches_a: ganadorEsA ? 3 : matchesPerdedor,
     matches_b: ganadorEsA ? matchesPerdedor : 3,
@@ -73,7 +75,7 @@ test.describe("calcularTabla", () => {
     expect(a.puntos).toBe(2);
   });
 
-  test("pj cuenta solo partidos con ganador_id no nulo (ignora pendientes)", () => {
+  test("un partido pendiente no suma PJ", () => {
     const participantes = [participante(1, "A"), participante(2, "B"), participante(3, "C")];
     const partidos = [partido(1, 2, 1, 0), partido(1, 3, null)];
 

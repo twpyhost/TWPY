@@ -10,9 +10,10 @@
 > `puntos = g`). Los matches se siguen cargando y mostrando, pero pasaron a ser
 > desempate: `puntos` → diferencia de matches → matches ganados (`mg`) →
 > `orden_desempate` → nombre. Todo lo demás de este spec (carga del marcador,
-> constraint, columnas, bloques de empate) sigue vigente; lo que dice "PTS =
-> matches ganados" más abajo es el estado anterior. Los resultados ya cargados
-> no se tocaron: solo cambió el cálculo, retroactivamente.
+> columnas y bloques de empate) sigue vigente. El cuerpo se alineó con esta
+> decisión el 2026-10-16. Los resultados ya cargados no se tocaron: solo cambió
+> el cálculo, retroactivamente. La migración 0015 agregó luego las sanciones 0-0
+> descritas abajo.
 
 ---
 
@@ -34,8 +35,8 @@ Ese modelo probó dos problemas en uso real:
    hasta que el admin lo ordena a mano.
 
 Cada pelea de la liga es un **first-to-3**. Ahora se carga **cuántos matches
-ganó cada participante** dentro del set, y ese dato alimenta tanto el puntaje
-como el desempate.
+ganó cada participante** dentro del set. El ganador suma un punto; el marcador
+aporta los criterios automáticos de desempate.
 
 ---
 
@@ -44,23 +45,22 @@ como el desempate.
 | Tema | Decisión |
 |---|---|
 | Qué carga el admin | Ganador **+ marcador**: 3-0, 3-1 o 3-2 |
-| Puntos (PTS) | **Matches ganados**, sumados en todo el grupo (no victorias) |
-| Desempate | **Automático** por diferencia de matches y sets ganados; el orden manual del admin queda como último recurso |
+| Puntos (PTS) | **FT (sets) ganados**, un punto por victoria; PTS coincide con G |
+| Desempate | **Automático** por diferencia de matches y matches ganados; el orden manual del admin queda como último recurso antes del nombre |
 | Formato | Solo first-to-3. Otros formatos (FT2, FT5, walkover) quedan fuera |
 | Ranking anual | Sin cambios: la liga sigue siendo independiente de `ranking_snapshots` / `puntajes_config` / el importador de Challonge |
 
-### Consecuencia aceptada de PTS = matches ganados (revertida, ver actualización arriba)
+### Ejemplo del criterio vigente
 
-Un jugador puede quedar **arriba de otro que ganó más sets**. Ejemplo:
+La cantidad de sets ganados tiene prioridad sobre la cantidad de matches:
 
-- **A**: gana 4 sets 3-0 y pierde 2 sets 2-3 → 16 pts con **4 victorias**
-- **B**: gana 5 sets 3-2 y pierde 1 set 0-3 → 15 pts con **5 victorias**
+- **A**: gana 4 sets 3-0 y pierde 2 sets 2-3 → **4 puntos**, 16 matches ganados.
+- **B**: gana 5 sets 3-2 y pierde 1 set 0-3 → **5 puntos**, 15 matches ganados.
 
-A queda primero. Es el comportamiento buscado (premia la dominancia, no solo
-la cantidad de sets), pero por eso la columna **G (sets ganados) se mantiene
-visible** en las dos tablas: el dato que produce la inversión queda a la
-vista. Volver al criterio clásico es una línea en `calcularTabla`
-(`puntos = g` en vez de `puntos = mg`).
+B queda primero por tener más victorias. La propuesta original de puntuar por
+matches habría dejado a A primero; se descartó el 2026-08-11. Las columnas
+MATCHES y DIF siguen visibles para explicar los desempates entre jugadores
+con la misma cantidad de victorias.
 
 ---
 
@@ -79,10 +79,23 @@ pendiente), o el marcador es un first-to-3 válido (el mayor es exactamente 3,
 el menor entre 0 y 2) **y** `ganador_id` apunta al lado que llegó a 3. No hay
 forma de guardar un ganador sin marcador ni un 3-3.
 
-Los resultados cargados con el sistema viejo (sin marcador) se **limpian** en
-la migración: con PTS = matches ganados aportarían 0 puntos y falsearían la
-tabla. Se descartó rellenarlos con 3-0 porque inventa datos; son pocos (fecha
-1) y el admin los vuelve a cargar.
+Los resultados cargados con el sistema viejo (sin marcador) se **limpiaron**
+en la migración 0013: faltaban los datos necesarios para el nuevo desempate.
+Se descartó rellenarlos con 3-0 porque inventa datos; eran pocos (fecha 1) y
+el admin debía volver a cargarlos.
+
+La migración `0015_liga_resultado_sancionado.sql` reemplaza esa constraint por
+`liga_partidos_resultado_coherente` y agrega `resultado_tipo`:
+
+- `pendiente`: ganador y matches nulos.
+- `jugado`: ganador y marcador first-to-3 coherentes.
+- `sancionado`: sin ganador, marcador 0-0. Suma PJ para ambos y cuenta en el
+  progreso de la liga y el grupo, sin G, P, matches ni puntos.
+
+La migración `20261016171620_liga_resultados_completos.sql` refuerza los campos
+obligatorios de cada estado: un `jugado` exige ganador y una sanción exige
+ambas cifras no nulas. Así el CHECK rechaza estados incompletos incluso cuando
+la comparación con NULL habría dado un resultado desconocido.
 
 `ligaSeed` sigue sin tocar las columnas de resultado en sus upserts, así que
 re-sembrar el fixture nunca borra un marcador cargado.
@@ -97,9 +110,9 @@ agrega `Desempate`). `MATCHES` es `mg-mp` (ganados-perdidos) y `DIF` es
 
 **Orden**, en `calcularTabla`:
 
-1. `puntos` (matches ganados) desc
+1. `puntos` (FT ganados) desc
 2. `dif` desc
-3. `g` (sets ganados) desc
+3. `mg` (matches ganados) desc
 4. `orden_desempate` asc, nulls al final
 5. `nombre` asc — determinista, evita que la tabla salte entre renders
 
@@ -140,14 +153,15 @@ fila de tres botones de marcador:
 Contrato del endpoint (`PUT /api/admin/liga/partidos/[id]`):
 
 ```
-{ ganadorId: number | null, matchesPerdedor: 0 | 1 | 2 }
+{ ganadorId: number | null, matchesPerdedor: 0 | 1 | 2 | null, sancionado?: boolean }
 ```
 
 El servidor deriva `matches_a`/`matches_b` poniendo 3 del lado del ganador —
 el cliente nunca manda las dos cifras, así que no puede construir un marcador
 incoherente. `ganadorId: null` limpia marcador y auditoría e ignora
-`matchesPerdedor`. Se mantienen el 409 con el grupo cerrado y el
-`revalidatePath("/liga")`.
+`matchesPerdedor`. Con `sancionado: true` y sin ganador guarda un 0-0; quitar
+la sanción vuelve a pendiente y limpia la auditoría. Se mantienen el 409 con
+el grupo cerrado y el `revalidatePath("/liga")`.
 
 ---
 

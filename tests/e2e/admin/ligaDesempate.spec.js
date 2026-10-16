@@ -97,10 +97,12 @@ test.describe("TS-LIGA-DESEMPATE | Desempate manual en la fase de grupos", () =>
    *      estan en 0 puntos, un solo bloque empatado con todo el grupo).
    *   2. Click en "Bajar" en la primera fila -- el nombre que estaba primero
    *      pasa a la segunda fila.
-   *   3. Click en "Confirmar".
-   *   4. Recargar la pagina.
-   * Resultado esperado: el toast "Desempate guardado" aparece tras el paso
-   *   3, y despues de recargar la fila que se movio sigue en la posicion 2.
+   *   3. Recargar sin confirmar: vuelve el orden original.
+   *   4. Volver a bajar la primera fila y hacer click en "Confirmar".
+   *   5. Recargar la pagina.
+   * Resultado esperado: el borrador no se guarda al mover; el toast
+   *   "Desempate guardado" aparece al confirmar y, despues de recargar,
+   *   la fila que se movio sigue en la posicion 2.
    * Tecnica: caso feliz de punta a punta | Prioridad: alta
    */
   test("TC-LIGA-DESEMPATE-003 | confirmar un desempate lo persiste", async ({ page }) => {
@@ -110,6 +112,15 @@ test.describe("TS-LIGA-DESEMPATE | Desempate manual en la fase de grupos", () =>
     const nombreMovido = await primeraFilaAntes.getByRole("cell").nth(1).innerText();
 
     await primeraFilaAntes.getByRole("button", { name: "Bajar" }).click();
+    await expect(page.getByRole("row").nth(2).getByRole("cell").nth(1)).toHaveText(
+      nombreMovido,
+    );
+    await page.reload();
+    await expect(page.getByRole("row").nth(1).getByRole("cell").nth(1)).toHaveText(
+      nombreMovido,
+    );
+
+    await page.getByRole("row").nth(1).getByRole("button", { name: "Bajar" }).click();
     await page.getByRole("button", { name: "Confirmar" }).click();
     await expect(page.getByText("Desempate guardado")).toBeVisible();
 

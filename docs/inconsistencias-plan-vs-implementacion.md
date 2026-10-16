@@ -24,7 +24,7 @@ contradicen un invariante declarado por escrito.
 
 ## A. Documentación que contradice al código
 
-### [ ] A1 — El spec de marcador por set describe un puntaje que ya no existe
+### [x] A1 — El spec de marcador por set describe un puntaje que ya no existe
 
 - **Dice el plan:** el cuerpo de
   `docs/superpowers/specs/2026-08-11-liga-marcador-por-set-design.md` explica que
@@ -39,6 +39,9 @@ contradicen un invariante declarado por escrito.
 - **Recomendación:** **actualizar el doc.** Reescribir las secciones de puntaje
   y desempate del cuerpo para que digan lo que hace el código, dejando la nota
   histórica como registro del cambio.
+- **Resuelto (2026-10-16):** cuerpo y ejemplo alineados con PTS = FT ganados,
+  desempate por DIF → matches ganados → orden manual → nombre. También se
+  documentaron los estados de sanción que agregó la migración 0015.
 
 ### [ ] A2 — `CLAUDE.md` lista una sección "Contenido" del panel que no existe
 
@@ -80,7 +83,7 @@ contradicen un invariante declarado por escrito.
   existiera `tests/`". Es el ítem más discutible de la lista y no cuesta nada
   dejarlo como está.
 
-### [ ] A5 — El catálogo de QA no cubre las suites de liga del panel
+### [x] A5 — El catálogo de QA no cubre las suites de liga del panel
 
 - **Dice el plan:** `docs/qa/casos-de-prueba.md` es el catálogo completo de
   casos.
@@ -90,6 +93,9 @@ contradicen un invariante declarado por escrito.
   2026-08-12, junto con el cambio a pestañas de `/liga`.
 - **Recomendación:** **implementar lo planeado** — documentar las dos suites de
   liga del panel en el catálogo, que es barato y cierra la nota pendiente.
+- **Resuelto (2026-10-16):** el índice y el catálogo incluyen TS-LIGA-ADMIN y
+  TS-LIGA-DESEMPATE. Plan de pruebas actualizado con la excepción de escrituras
+  locales de Liga, un solo worker y cantidades actuales (203 ejecuciones).
 
 ---
 
@@ -226,4 +232,5 @@ acá porque no son cosméticos: rompen algo que la documentación afirma.
 
 Si hay que priorizar una sola cosa de todo el documento: **D1**, porque es el
 único que permite corromper datos ya cerrados. — *Cerrado: D1 y D2 se
-implementaron el 2026-08-12; queda pendiente decidir A1–A5, B1–B3 y C1–C3.*
+implementaron el 2026-08-12; A1 y A5 se cerraron el 2026-10-16. Queda pendiente
+decidir A2–A4, B1–B3 y C1–C3.*
