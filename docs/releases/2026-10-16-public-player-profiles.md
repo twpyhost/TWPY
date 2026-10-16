@@ -63,23 +63,69 @@ manual, como indica el panel. No se implementó paginación para historiales que
 algún día superen las 1.000 filas del límite actual de la API; no se detectó un
 jugador afectado en el alcance actual.
 
+## Auditoría de release — 2026-10-16
+
+El acceso MCP está autenticado y el CLI puede leer producción. La revisión
+actual repitió `npm test` (**223/223**), lint y build correctamente. El chequeo
+remoto encontró **0 resultados incompletos** de Liga; los conteos eran 77
+jugadores, 18 torneos, 307 resultados raw y 546 snapshots.
+
+Se encontró un bloqueo real en los backups: el workflow
+[38977300405](https://github.com/twpyhost/TWPY/actions/runs/38977300405)
+reportó éxito aunque su gzip descomprime a cero bytes. No existe el secret
+`SUPABASE_DB_URL`; `pg_dump` falló y el pipeline sin `pipefail` ocultó el error.
+No tratar los artifacts anteriores como backups válidos sin inspeccionarlos.
+
+El workflow corregido exige la conexión, detiene el dump fallido o vacío,
+valida gzip y registra éxito solo después de subir el artifact. Una prueba
+aislada reprodujo los tres falsos positivos y confirmó su rechazo tras el
+fix; un dump válido sigue aceptándose. Se solicitó configurar el secret en
+GitHub Actions con la conexión Session pooler de producción, puerto 5432,
+sin compartir credenciales en el chat.
+
+Mientras tanto se obtuvo un backup real con el CLI autenticado (`db dump`
+de esquema público y datos por separado). Se restauró en la base local
+temporal `twpy_phase1_release_20261016`; coincidieron todos los conteos y
+pasaron ambas migraciones pendientes y el fixture transaccional de
+perfiles/ACL. No se reseteó la base de desarrollo. Los archivos privados y
+logs están en el directorio ignorado `.superpowers/sdd/2026-10-16-community-growth-roadmap/`.
+
+El historial remoto usa timestamps para algunas migraciones cuyos nombres
+locales son `0005`–`0014`. Un `db push` directo se niega correctamente.
+Se preparó un directorio aislado de despliegue con `migration fetch` del
+historial real y solo las dos migraciones nuevas copiadas sin cambios. Su
+`db push --dry-run` lista exactamente:
+
+1. `20261016171620_liga_resultados_completos.sql`
+2. `20261016212742_public_player_profiles.sql`
+
+No marcar versiones históricas como revertidas ni renombrar los archivos
+aplicados para forzar el push. Para reproducir, crear otro workdir de
+Supabase, enlazar `hjpgsklqlellatijahbg`, hacer `migration fetch` y copiar
+únicamente los dos archivos pendientes antes del dry run. Las versiones y
+el SQL remoto quedan intactos.
+
+Los cambios previos de Liga y sus pruebas/documentación se conservaron en
+un commit separado (`e5135f5`), para que el árbol publicado corresponda a la
+suite validada. El fix del backup está en `7e5352a`. El checkout original
+permanece intacto.
+
 ## Publicación pendiente
 
 El roadmap requiere **publicar y verificar una fase antes de iniciar la
 siguiente**. La implementación de las fases 2–7 permanece pendiente de este
 gate; no se marcaron como publicadas.
 
-1. Confirmar el proyecto de producción y obtener acceso de Supabase. El
-   proyecto configurado en `.env.prod.local` es `hjpgsklqlellatijahbg`; el
-   conector rechazó tanto su lectura como la consulta de migraciones. No se
-   pudo comprobar el estado remoto ni se aplicó SQL remoto.
-2. Revisar y conservar los cambios previos de Liga. Comprobar que no haya
-   resultados incompletos antes de aplicar su migración pendiente
-   `20261016171620_liga_resultados_completos.sql`, según el registro anterior.
-3. Obtener y verificar el backup remoto. Revisar el historial real antes de
-   aplicar **solo las migraciones pendientes**, en orden; la nueva de perfiles
-   es `20261016212742_public_player_profiles.sql`. No ejecutar un reset remoto
-   ni reemplazar migraciones históricas.
+1. Configurar `SUPABASE_DB_URL` en GitHub Actions y ejecutar el workflow
+   corregido desde la rama del release. Descargar, descomprimir y restaurar
+   su artifact antes de considerar resuelto el bloqueo de backup.
+2. Repetir el chequeo de resultados incompletos de Liga inmediatamente antes
+   del push de migraciones; no inventar resultados ni modificar datos para
+   hacer pasar la constraint.
+3. Aplicar **solo las dos migraciones pendientes**, en orden, usando el
+   workdir aislado ya contrastado con el historial remoto. No ejecutar un
+   reset remoto ni reemplazar migraciones históricas. Comprobar conteos,
+   RLS/ACL e historial después; repetir advisors y registrar solo diferencias.
 4. Publicar la aplicación después del esquema, conservando claves de servicio
    solo en el servidor. No modificar OAuth, DNS, hosting ni facturación para
    esta fase.
