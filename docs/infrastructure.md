@@ -71,13 +71,24 @@ Supabase pauses free projects after **7 days of database inactivity**. This is s
 
 **How it works**: `/api/health` runs a real, lightweight Supabase query (`select id from juegos limit 1`) with the anon client — DB inactivity is what triggers the pause, not site traffic, so hitting the Vercel URL alone wouldn't be enough. The route logs a row to `sistema_eventos` (consumed by the admin Sistema panel) only when the request carries the correct `x-health-secret` header, so an anonymous GET can't spam rows. The workflow runs daily at 12:00 UTC + `workflow_dispatch`, using `vars.SITE_URL` and `secrets.HEALTH_PING_SECRET` — nothing hardcoded.
 
-**Still pending**: `vars.SITE_URL` needs the real production domain once the Vercel deploy (see the go-live plan's Hito 7) is live, and the workflow needs one `workflow_dispatch` run to confirm end-to-end.
+**Verified 2026-10-16**: `vars.SITE_URL` is `https://twpy.vercel.app`; the daily workflow completed successfully on that date. Keep this real DB activity query operational during releases.
 
 Daily frequency gives comfortable margin under the 7-day threshold. Free on GitHub Actions at this usage level.
 
 ---
 
 ## Backups — GitHub Actions + pg_dump
+
+**Release audit 2026-10-16:** the repository has no `SUPABASE_DB_URL` secret.
+The former dump-to-gzip pipeline hid the connection failure and uploaded empty
+archives with a successful job status. Do not rely on older artifacts without
+checking their contents. The Phase 1 release branch fixes failure propagation,
+rejects empty SQL, validates gzip, and records success only after upload.
+Its live Actions run correctly fails until the secret is configured. A real
+production schema/data backup was obtained through the authenticated Supabase
+CLI and restored locally with matching row counts; scheduled backup recovery
+remains a production release prerequisite. Details and evidence:
+`docs/releases/2026-10-16-public-player-profiles.md`.
 
 **Why this is required, not optional:** Supabase's free tier has no restorable backups (that's a Pro/PITR feature). Once the historical backfill runs (see the go-live plan), this database becomes the irreplaceable archive of the Paraguayan Tekken scene — a lost project is not recoverable without this.
 

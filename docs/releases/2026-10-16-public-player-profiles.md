@@ -110,6 +110,16 @@ un commit separado (`e5135f5`), para que el árbol publicado corresponda a la
 suite validada. El fix del backup está en `7e5352a`. El checkout original
 permanece intacto.
 
+La rama está subida y el [PR #12](https://github.com/twpyhost/TWPY/pull/12)
+queda en draft hasta resolver el gate. El build de
+[Vercel Preview](https://vercel.com/twpy/twpy/BrqBPaak6vVyVyccxdjEQADTWmmU)
+pasó; esto no sustituye el smoke test de perfiles contra el esquema publicado.
+El workflow corregido se ejecutó realmente desde esa rama:
+[38978079976](https://github.com/twpyhost/TWPY/actions/runs/38978079976)
+falló correctamente por `SUPABASE_DB_URL` ausente, no subió un artifact vacío
+y registró el fallo en Sistema. El keep-alive diario existente sigue intacto
+y su ejecución de producción del 2026-10-16 fue exitosa.
+
 ## Publicación pendiente
 
 El roadmap requiere **publicar y verificar una fase antes de iniciar la
@@ -137,5 +147,6 @@ gate; no se marcaron como publicadas.
    las tablas nuevas pueden permanecer: son aditivas. No borrar metadatos ni
    intentar deshacer fusiones mediante DDL.
 
-No se hizo push, deploy, cambio de dominio, migración remota ni activación de
-servicios externos.
+Rama subida con preview y PR en draft. No se publicaron cambios de aplicación
+en producción, no se aplicaron migraciones remotas ni se cambió dominio,
+OAuth, hosting o facturación. Fase 2 sigue sin iniciar.
