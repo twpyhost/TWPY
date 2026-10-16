@@ -1,5 +1,28 @@
 # Catálogo de casos de prueba — TWPY
 
+## Perfiles públicos — fase 1 (2026-10-16)
+
+| Caso | Conducta observable | Cobertura |
+|---|---|---|
+| PERF-001 | El DTO público permite solo datos del perfil; sin main/ranking conserva null; cuenta títulos y podios por posición final | unit/playerProfiles |
+| PERF-002 | Rechaza catálogo desconocido, segundo main, personajes/cuentas repetidos y payload mal formado; IDs privados por defecto | unit/playerProfiles |
+| PERF-003 | Resolución canónica acotada, con detección de ciclos; ID inválido no consulta DB; mocks conservan la interfaz | unit/playerProfiles |
+| PERF-004 | Personas homónimas distintas; dos cuentas Challonge no duplican participaciones; no se puede reclamar un Tekken ID ajeno | integration/playerProfiles |
+| PERF-005 | Una falla en la auditoría revierte la fusión completa; el éxito conserva main, privacidad y cuentas, transfiere resultados sin colisión y reporta los conflictos | integration/playerProfiles |
+| PERF-006 | IDs bigint consecutivos fuera del rango seguro de Number permanecen distintos | integration/playerProfiles |
+| PERF-007 | DB rechaza segundo main, escrituras anónimas y llamadas directas a RPC privadas | integration/playerProfiles, e2e/rol-liga/playerProfiles |
+| PERF-008 | Se navega desde directorio, ranking, resultado y Liga; participantes no vinculados siguen siendo texto | e2e/publico/playerProfiles |
+| PERF-009 | Identidad absorbida redirige; ID desconocido/mal formado devuelve HTTP 404; anónimo no puede editar | e2e/publico/playerProfiles |
+| PERF-010 | Admin guarda main, secundarios y Tekken ID, recarga y ve los cambios; el ID privado no aparece públicamente | e2e/admin/playerProfiles |
+| PERF-011 | `liga` recibe 403 al editar/fusionar y 42501 en ambas RPC privadas | e2e/rol-liga/playerProfiles |
+| PERF-012 | A 390px/1440px no hay overflow de página; tabla desplazable; nombre largo, avatar ausente, temporada vacía, teclado y movimiento reducido | e2e/publico/playerProfiles + inspección visual |
+| PERF-013 | Dos torneos del mismo día seleccionan el corte de mayor ID para perfil, ranking, movimiento y contador, según el orden de reconstrucción | integration/playerProfiles |
+
+Fixtures exclusivamente locales y limpieza por IDs/FK; no se invoca EWGF.
+El runbook y las limitaciones de publicación están en
+`docs/releases/2026-10-16-public-player-profiles.md`.
+
+
 Complemento del [plan de pruebas](plan-de-pruebas.md). Acá está el diseño: qué
 se prueba, con qué técnica y por qué esos valores y no otros.
 

@@ -320,3 +320,23 @@ block is moved with ↑/↓.
    instead of simple set membership). Likely not worth the added complexity
    unless it surfaces as real user feedback.
    **Status**: Open
+
+## Revisión de fase 1 — perfiles públicos (2026-10-16)
+
+1. **What**: El DTO nuevo de perfiles conserva bigint como texto, pero algunos
+   productores anteriores de enlaces y el detalle/auditoría del panel todavía
+   usan `Number`. IDs adyacentes 9007199254740992 y 9007199254740993 pueden
+   redondearse antes de llegar a la ruta exacta.
+   **Where**: `getCompetidores`/`getRankings` y consumidores del directorio,
+   ranking/sitemap; `/api/admin/identidades/jugadores/[id]/detalle` y auditoría
+   de `/api/admin/jugadores/[id]`.
+   **Why it matters**: A ese tamaño podrían abrirse o registrarse identidades
+   equivocadas. No bloquea el release actual: los IDs generados de jugadores
+   están muy por debajo del límite; los nuevos resultados de perfil ya tienen
+   una regresión que verifica precisión completa.
+   **Proposed fix**: Llevar IDs decimales exactos de extremo a extremo mediante
+   campos aditivos cuando sea necesario conservar las formas legacy del
+   facade; cubrir enlaces, lecturas del panel y log con dos IDs consecutivos
+   fuera del rango seguro de Number. No cambiar masivamente los tipos del
+   facade sin revisar sus consumidores.
+   **Status**: Open — hallazgo Minor de la revisión independiente de fase 1.

@@ -97,7 +97,8 @@ const getRankings = async (temporada) => {
     .from("torneos")
     .select("id, temporada")
     .order("temporada", { ascending: false })
-    .order("fecha_inicio", { ascending: false });
+    .order("fecha_inicio", { ascending: false })
+    .order("id", { ascending: false });
 
   if (temporada) {
     torneosQuery = torneosQuery.eq("temporada", temporada);
@@ -164,7 +165,8 @@ const getRankingsCount = async (temporada) => {
     .from("torneos")
     .select("id, temporada")
     .order("temporada", { ascending: false })
-    .order("fecha_inicio", { ascending: false });
+    .order("fecha_inicio", { ascending: false })
+    .order("id", { ascending: false });
 
   if (temporada) {
     torneosQuery = torneosQuery.eq("temporada", temporada);

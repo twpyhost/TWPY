@@ -66,7 +66,7 @@ const getRankings = async (temporada) => {
   const totals = new Map();
   const previousTotals = new Map();
   const latestTournamentId = [...torneosTemporada].sort((a, b) =>
-    b.fecha.localeCompare(a.fecha),
+    b.fecha.localeCompare(a.fecha) || (BigInt(a.id) < BigInt(b.id) ? 1 : BigInt(a.id) > BigInt(b.id) ? -1 : 0),
   )[0]?.id;
 
   resultado.torneos

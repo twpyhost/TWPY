@@ -1,5 +1,27 @@
 # Plan de pruebas — TWPY
 
+## Ampliación 2026-10-16 — perfiles públicos (fase 1)
+
+Se agregan `/competidores/[id]`, su editor de personajes/Tekken IDs y las
+redirecciones canónicas. `tests/unit/playerProfiles.test.js` cubre validación,
+proyección, ciclos y paridad mock; `tests/integration/playerProfiles.test.js`
+cubre privacidad/RLS, bigint, colisiones y rollback de la fusión. La nueva
+banda de torneos es 994801–994802 (temporada 9093), cuentas 994811–994813;
+el caso de precisión reserva temporalmente 9007199254740992–9007199254740993
+en temporada 9094 y los elimina en `finally`.
+
+Las suites `playerProfiles.spec.js` de público, admin y rol `liga` verifican
+las cuatro fuentes de navegación, 308/404 reales, guardado/recarga y 401/403,
+incluida la denegación de RPC al rol autenticado. La edición e2e escribe solo
+en jugadores sembrados de la suite y la limpieza elimina por cascade los
+metadatos/cuentas. Se mantiene un worker y `NODE_ENV=test`; no se utilizan
+Challonge, EWGF ni producción.
+
+Las capturas a 390px/1440px se guardan en el workspace ignorado de ejecución.
+El runbook de esquema, reconstrucción y release está en
+`docs/releases/2026-10-16-public-player-profiles.md`.
+
+
 Plan de pruebas de la suite end-to-end del sitio de Tekken Warriors Paraguay.
 Está pensado para ejecutarse **sin asistencia**: el que corre los tests no
 necesita conocer el código ni pedirle nada a nadie.

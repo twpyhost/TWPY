@@ -8,6 +8,9 @@ Implementación local en `feat/community-growth`, dentro de
 - `/competidores/[id]` muestra la persona canónica, main y secundarios
   declarados, posición/puntos anuales, participaciones, títulos y podios de
   la temporada elegida. Sin resultados sigue siendo un perfil válido.
+- El último corte se elige por fecha e ID de torneo, tanto en perfiles como
+  en ranking/contador. Esto resuelve la inconsistencia de dos torneos del
+  mismo día sin cambiar la fórmula ni reescribir snapshots en lecturas.
 - Competidores, ranking, resultados de torneo y participantes vinculados de
   Liga enlazan al perfil. Una identidad absorbida redirige con HTTP 308;
   una desconocida responde HTTP 404 antes de iniciar el streaming.
@@ -31,7 +34,8 @@ Implementación local en `feat/community-growth`, dentro de
 ## Validación local
 
 Se preservó el trabajo previo de Liga y sus pruebas. Baseline: lint y build
-correctos, 203 pruebas aprobadas. La ampliación prueba identidad, privacidad,
+correctos, 203 pruebas aprobadas. Cierre local: **223/223**, lint y build
+correctos después de resolver el hallazgo importante de la revisión. La ampliación prueba identidad, privacidad,
 colisiones, rollback, bigint, navegación pública, edición persistente y el rol
 `liga`. Los resultados finales se registran en `docs/estado-desarrollo.md`.
 
@@ -49,6 +53,15 @@ denegación a `anon`/`authenticated` y acceso de `service_role`.
 UI contrastada con `design/README.md` y los componentes existentes, con
 inspección a 390px y 1440px. DesignSync no está disponible en las herramientas
 de esta sesión; no se afirma comparación visual con los prototipos live.
+
+La revisión independiente identificó y se corrigió el selector de corte para
+torneos del mismo día, con regresión RED→GREEN. El seguimiento no bloqueante
+de bigint en productores legacy de enlaces y auditoría queda en
+`docs/tech-debt-backlog.md`; el DTO nuevo sí conserva precisión. Los efectos
+de colisiones de resultados conservan la lógica existente y requieren revisión
+manual, como indica el panel. No se implementó paginación para historiales que
+algún día superen las 1.000 filas del límite actual de la API; no se detectó un
+jugador afectado en el alcance actual.
 
 ## Publicación pendiente
 

@@ -11,6 +11,8 @@ import { savePlayerProfileMetadata } from "../../src/lib/playerProfileAdmin.js";
 import {
   getPlayerProfile,
   getPublicPlayerTarget,
+  getRankings,
+  getRankingsCount,
 } from "../../src/lib/data/supabaseDb.js";
 
 test.describe("canonical profiles and atomic metadata transfers", () => {
@@ -43,6 +45,11 @@ test.describe("canonical profiles and atomic metadata transfers", () => {
       { player_id: players[0].id, challonge_id: 994811, challonge_username: "same-person-current", active: true },
       { player_id: players[0].id, challonge_id: 994812, challonge_username: "same-person-old", active: false },
       { player_id: players[1].id, challonge_id: 994813, challonge_username: "duplicate-account", active: true },
+    ]).throwOnError();
+    await service.from("ranking_snapshots").insert([
+      { torneo_id: 994801, player_id: players[0].id, temporada: 9093, posicion_global: 1, puntaje_acumulado: 100 },
+      { torneo_id: 994802, player_id: players[2].id, temporada: 9093, posicion_global: 1, puntaje_acumulado: 200 },
+      { torneo_id: 994802, player_id: players[0].id, temporada: 9093, posicion_global: 2, puntaje_acumulado: 180 },
     ]).throwOnError();
   });
   test.afterAll(async () => {
@@ -96,6 +103,15 @@ test.describe("canonical profiles and atomic metadata transfers", () => {
       (await getPlayerProfile(String(players[2].id), "2026")).position,
     ).toBeNull();
   });
+  test("same-day ranking, count and profile select the same latest stored cut", async () => {
+    const [profile, ranking, count] = await Promise.all([
+      getPlayerProfile(String(players[0].id), "9093"), getRankings("9093"), getRankingsCount("9093"),
+    ]);
+    expect(profile).toMatchObject({ position: 2, points: 180 });
+    expect(ranking.find((row) => String(row.id) === String(players[0].id))).toMatchObject({ posicion: 2, puntaje: 180, movimiento: "BAJA" });
+    expect(count).toBe(2);
+  });
+
   test("merge fails atomically when audit FK fails, and keeps the survivor main on success", async () => {
     await savePlayerProfileMetadata(service, String(players[1].id), {
       main: "kazuya",
