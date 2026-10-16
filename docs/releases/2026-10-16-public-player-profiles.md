@@ -1,7 +1,11 @@
 # Fase 1 — perfiles públicos de jugadores
 
-Implementación local en `feat/community-growth`, dentro de
-`.worktrees/community-growth`. La fase todavía no está publicada.
+**Publicada el 2026-10-16** en https://twpy.vercel.app. Perfiles de ejemplo:
+[con resultados](https://twpy.vercel.app/competidores/1) y
+[sin resultados](https://twpy.vercel.app/competidores/59).
+El código se integró mediante [PR #12](https://github.com/twpyhost/TWPY/pull/12),
+merge `1e24c0c073826867a50fb1e59fa89f87b9a8457a`. El checkout original con
+cambios locales se conserva; el trabajo está en `.worktrees/community-growth`.
 
 ## Comportamiento
 
@@ -120,33 +124,54 @@ falló correctamente por `SUPABASE_DB_URL` ausente, no subió un artifact vacío
 y registró el fallo en Sistema. El keep-alive diario existente sigue intacto
 y su ejecución de producción del 2026-10-16 fue exitosa.
 
-## Publicación pendiente
+## Cierre de publicación — 2026-10-16
 
-El roadmap requiere **publicar y verificar una fase antes de iniciar la
-siguiente**. La implementación de las fases 2–7 permanece pendiente de este
-gate; no se marcaron como publicadas.
+- El usuario configuró `SUPABASE_DB_URL` en el environment **Production** de
+  GitHub Actions y renovó la contraseña Postgres. El job declara ese
+  environment; los archivos `.env.local`/`.env.prod.local` usan API keys y no
+  necesitan cambiar por este reset. La web y `/api/health` siguieron sanos.
+  Herramientas externas con conexiones Postgres deben actualizar su contraseña.
+- El [backup previo 38980982423](https://github.com/twpyhost/TWPY/actions/runs/38980982423)
+  produjo SQL real y se restauró antes de migrar, con ambas migraciones y
+  fixture de perfiles/ACL aprobados. Se volvió a comprobar cero resultados
+  incompletos de Liga. Se aplicaron exactamente `20261016171620` y
+  `20261016212742`, conservando versiones e historial anteriores.
+- Después de migrar, producción conserva 77 jugadores, 18 torneos, 307
+  resultados raw y 546 snapshots. Las tablas nuevas tienen RLS; anon y
+  authenticated no pueden escribir ni ejecutar los dos RPC internos.
+  Service role conserva EXECUTE; ambas funciones son SECURITY INVOKER.
+- Vercel publicó el merge de PR #12. Smoke con navegador anónimo: navegación
+  desde competidores (79 enlaces), ranking 2026 (38), resultados del torneo
+  18604240 (30) y Liga (35); perfiles con/sin resultados 200; identidad 19
+  redirige con 308 a 27 conservando la temporada; ID desconocido 404; sitemap
+  contiene los perfiles. API admin anónima 401 y panel redirige a login.
+  Ningún error JavaScript ni campos privados en el HTML inspeccionado.
+  Capturas reales a 390px/1440px revisadas después de completar la animación.
+- Las pruebas de escritura, guardado de admin y denegación del rol `liga`
+  permanecieron locales (223/223). No se crearon cuentas ni metadatos de prueba
+  en producción. No se dispone de una sesión admin/`liga` real en el navegador
+  de QA; la revisión remota de privilegios y el control anónimo sí se ejecutaron.
+- El backup posterior detectó que `--no-privileges` omitía los REVOKE/GRANT:
+  un restore dejaba EXECUTE predeterminado de PUBLIC en los RPC. Se reprodujo
+  el fallo y se retiró ese flag; **la base de producción conservó sus ACL
+  correctas durante toda la prueba**. El [backup 38981464176](https://github.com/twpyhost/TWPY/actions/runs/38981464176)
+  incluye ACL, se restauró con conteos coincidentes y fixture de RPC/fusión
+  aprobado. SQL: 208.764 caracteres; SHA-256
+  `f7ee7d7a07e8c0496ef21fb14331702573187780e9ed483abd94e124b3244c25`.
+  En la copia de restore se excluyeron únicamente 12 sentencias de defaults
+  del rol gestionado `supabase_admin`, que `postgres` no puede alterar.
+  Se conservó el dump original y todos los GRANT/REVOKE de objetos. Procedimiento
+  reproducible en `docs/infrastructure.md`.
+- Advisors: siguen los hallazgos preexistentes. La detección de tablas
+  descubribles en GraphQL pasa de 17 a 19 por las dos proyecciones públicas
+  nuevas; ambas mantienen políticas de lectura y RLS, incluidas cuentas
+  publicadas explícitamente. No es una nueva exposición de filas privadas.
+  [Referencia del advisor](https://supabase.com/docs/guides/database/database-linter?lint=0026_pg_graphql_anon_table_exposed).
 
-1. Configurar `SUPABASE_DB_URL` en GitHub Actions y ejecutar el workflow
-   corregido desde la rama del release. Descargar, descomprimir y restaurar
-   su artifact antes de considerar resuelto el bloqueo de backup.
-2. Repetir el chequeo de resultados incompletos de Liga inmediatamente antes
-   del push de migraciones; no inventar resultados ni modificar datos para
-   hacer pasar la constraint.
-3. Aplicar **solo las dos migraciones pendientes**, en orden, usando el
-   workdir aislado ya contrastado con el historial remoto. No ejecutar un
-   reset remoto ni reemplazar migraciones históricas. Comprobar conteos,
-   RLS/ACL e historial después; repetir advisors y registrar solo diferencias.
-4. Publicar la aplicación después del esquema, conservando claves de servicio
-   solo en el servidor. No modificar OAuth, DNS, hosting ni facturación para
-   esta fase.
-5. Comprobar como visitante un perfil conocido, uno sin resultados, un ID
-   absorbido y uno inexistente, enlaces desde las cuatro fuentes, sitemap y
-   la ausencia de IDs privados. Comprobar acceso del admin y denegación del
-   rol `liga` con una lectura. Las pruebas de escritura siguen siendo locales.
-6. Registrar el release antes de comenzar la fase 2. Para rollback de la app,
-   las tablas nuevas pueden permanecer: son aditivas. No borrar metadatos ni
-   intentar deshacer fusiones mediante DDL.
+Los backups/artifacts, hashes, capturas y `production-smoke.json` se conservan
+en el workspace ignorado de este plan. El keep-alive diario continúa intacto.
+No se modificaron OAuth, DNS, hosting ni facturación. EWGF continúa diferido
+según el plan; fases 2–7 no se iniciaron.
 
-Rama subida con preview y PR en draft. No se publicaron cambios de aplicación
-en producción, no se aplicaron migraciones remotas ni se cambió dominio,
-OAuth, hosting o facturación. Fase 2 sigue sin iniciar.
+Para rollback de la app, las tablas aditivas pueden permanecer. No borrar
+metadatos ni intentar deshacer fusiones mediante DDL.

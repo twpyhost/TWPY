@@ -79,15 +79,14 @@ Daily frequency gives comfortable margin under the 7-day threshold. Free on GitH
 
 ## Backups — GitHub Actions + pg_dump
 
-**Release audit 2026-10-16:** the repository has no `SUPABASE_DB_URL` secret.
-The former dump-to-gzip pipeline hid the connection failure and uploaded empty
-archives with a successful job status. Do not rely on older artifacts without
-checking their contents. The Phase 1 release branch fixes failure propagation,
-rejects empty SQL, validates gzip, and records success only after upload.
-Its live Actions run correctly fails until the secret is configured. A real
-production schema/data backup was obtained through the authenticated Supabase
-CLI and restored locally with matching row counts; scheduled backup recovery
-remains a production release prerequisite. Details and evidence:
+**Verified 2026-10-16:** `SUPABASE_DB_URL` is configured in GitHub's
+**Production environment**, which the backup job declares. The former pipeline
+hid a missing connection and uploaded empty archives with a success status;
+do not rely on older artifacts without checking their contents. The corrected
+job rejects failed/empty dumps, validates gzip and records success only after
+upload. It retains object GRANT/REVOKE so service-only profile RPCs remain
+private after restore. The post-release artifact from run `38981464176`
+restored locally with matching row counts and verified RPC ACLs. Evidence:
 `docs/releases/2026-10-16-public-player-profiles.md`.
 
 **Why this is required, not optional:** Supabase's free tier has no restorable backups (that's a Pro/PITR feature). Once the historical backfill runs (see the go-live plan), this database becomes the irreplaceable archive of the Paraguayan Tekken scene — a lost project is not recoverable without this.
@@ -96,11 +95,18 @@ remains a production release prerequisite. Details and evidence:
 
 **Why `--schema=public` only**: Supabase's internal schemas (`auth`, `storage`, `extensions`, `realtime`, etc.) are owned by platform-managed roles. Tested locally: a full-database dump restored onto a fresh Supabase instance throws dozens of `must be owner of table ...` and event-trigger errors — those schemas aren't meant to be restored this way, and a fresh Supabase project already provisions them correctly. Everything that matters for the community archive (`players`, `torneos`, `tournament_participants_raw`, `ranking_snapshots`, etc.) lives in `public`, so scoping the dump there is both correct and avoids all of that noise.
 
-**Restore procedure** (tested against the local stack on 2026-07-30 — a backup nobody has restored isn't a backup):
+**Restore procedure** (rechecked against the local stack on 2026-10-16):
+
 1. Download the artifact from the workflow run and `gunzip` it.
-2. Target project: either a brand-new Supabase project with migrations already applied (`supabase db push`), or the local stack (`supabase start`).
-3. Restore: `psql "<connection-string>" < backup-YYYY-MM-DD.sql` (the dump uses `--clean --if-exists`, so it drops/recreates objects cleanly even against an already-migrated schema).
-4. Verify row counts on a couple of key tables (`players`, `torneos`) match expectations.
+2. Target an isolated Supabase project/local database with the migrations already applied. `DROP POLICY IF EXISTS` still requires its parent table to exist. Public-only backups do not recreate Auth users; preserve/restore their IDs separately. The local rehearsal used placeholder Auth IDs only in the temporary database.
+3. Keep the original dump. Prepare a restore copy that omits only platform-managed `supabase_admin` default-privilege statements; the project `postgres` role cannot change those defaults. Preserve all object GRANT/REVOKE and the defaults belonging to `postgres`:
+
+   ```sh
+   sed -E '/^ALTER DEFAULT PRIVILEGES FOR ROLE "?supabase_admin"? /d' backup-YYYY-MM-DD.sql > restore.sql
+   ```
+
+4. Restore the prepared copy with `psql "<connection-string>" -v ON_ERROR_STOP=1 -f restore.sql`. The dump uses `--clean --if-exists` and replaces public objects/data in the target.
+5. Compare row counts (`players`, `torneos`, `tournament_participants_raw`, `ranking_snapshots`), then verify RLS and function ACLs. Neither `anon` nor `authenticated` may execute `merge_player_profiles` or `save_player_profile_metadata`; `service_role` must retain access. Do not use `--no-privileges` to silence a managed-role error, because that discards these security boundaries.
 
 Run the backup workflow manually once, right after the historical backfill completes, so day one already has a real snapshot.
 

@@ -213,3 +213,19 @@ su limpieza. La configuración serial actual no sustituye ese aislamiento.
 Cada caso del catálogo referencia el requisito que cubre: los ítems de
 `TODO.todo` y las reglas de negocio de `CLAUDE.md`. La matriz completa está en
 [casos-de-prueba.md](casos-de-prueba.md#7-matriz-de-trazabilidad).
+
+## 7. Cierre de release de perfiles — 2026-10-16
+
+La fase 1 se publicó mediante PR #12 después de 223/223 pruebas locales,
+lint/build, revisión independiente y restore previo de producción. Smoke
+remoto de solo lectura: cuatro fuentes de enlaces, perfiles con/sin resultados,
+308/404 reales, sitemap, API admin 401 y panel a login; capturas revisadas a
+390px/1440px, sin errores JavaScript. No se sembraron datos ni usuarios remotos.
+Las escrituras y roles admin/`liga` se verificaron localmente.
+
+El backup de Actions posterior al release (`38981464176`) se restauró en
+una base local aislada: conteos históricos coincidentes, fusión transaccional
+y ACL de RPC aprobados. Se conservan los GRANT/REVOKE; la copia de restore
+omite solo los defaults del rol gestionado supabase_admin. Procedimiento y
+evidencia en `docs/infrastructure.md` y el runbook de release. EWGF diferido;
+fase 2 no iniciada.

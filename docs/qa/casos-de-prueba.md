@@ -438,3 +438,18 @@ Se dejan anotados a propósito, no son olvidos:
   una BD desechable.
 - **Importación desde Challonge** — necesita stubs de red.
 - **OAuth de Discord** — no está configurado en el stack local.
+
+### Evidencia de publicación de perfiles — 2026-10-16
+
+Smoke de producción aprobado sin escrituras: competidores, ranking 2026,
+resultados del torneo 18604240 y Liga navegan a perfiles; IDs 1/59 responden
+200, 19 redirige con 308 a 27 conservando temporada y un ID desconocido da 404.
+Sitemap incluye perfiles, no aparecen campos privados en HTML, API admin
+anónima da 401 y el panel redirige a login. UI inspeccionada a 390px/1440px;
+sin errores JavaScript. Guardado/edición y denegación del rol `liga` están en
+la suite local 223/223, sin crear sesiones o cuentas de prueba en producción.
+
+El restore de un backup sin ACL reprodujo ejecución pública de RPC; el artifact
+corregido de Actions `38981464176` restaura conteos y permisos de servicio
+correctamente. Falta de secret, dump fallido y SQL vacío se rechazan; un dump
+válido se acepta. Detalle reproducible en el runbook del release.
