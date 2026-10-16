@@ -2,7 +2,7 @@
 
 ## Ejecución local — 2026-10-16
 
-Fase 1 implementada y verificada localmente (223/223, lint/build, revisión independiente, reconstrucción/restore de migraciones). EWGF diferido conforme al plan. Acceso MCP/CLI remoto restablecido; auditoría nueva confirma cero resultados incompletos de Liga y backup real de producción restaurado localmente con ambas migraciones. Bloqueo actual: falta `SUPABASE_DB_URL` para que el backup programado funcione; se corrigió el workflow que ocultaba el error y producía un archivo vacío. Fases 2–7 no iniciadas. El usuario confirmó esperar el release antes de seguir. Ver `docs/releases/2026-10-16-public-player-profiles.md`. Los casilleros de release de abajo permanecen abiertos porque no hubo publicación.
+Fase 1 publicada el 2026-10-16 mediante PR #12 y verificada en https://twpy.vercel.app: 223/223 pruebas locales, lint/build y revisión independiente; ambas migraciones remotas aplicadas con sus versiones originales; navegación/308/404/sitemap/roles anónimos y UI 390px/1440px comprobados en producción. Backup real restaurado antes y después del release, incluidas ACL de los RPC. El secret está en el environment Production de GitHub; el workflow ya usa ese scope y conserva GRANT/REVOKE. EWGF diferido conforme al plan. Fases 2–7 no iniciadas. Ver `docs/releases/2026-10-16-public-player-profiles.md`.
 
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
@@ -89,7 +89,7 @@ These are recorded inputs, not reasons to interrupt creating the roadmap:
 
 ## Completion record
 
-- [ ] Phase 1 released and verified.
+- [x] Phase 1 released and verified (2026-10-16; EWGF deferred as allowed).
 - [ ] Phase 2 released and verified.
 - [ ] Phase 3 released and verified.
 - [ ] Phase 4 released and verified.

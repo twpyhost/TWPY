@@ -1,6 +1,6 @@
 # Estado para retomar el desarrollo
 
-Actualizado: 2026-10-16. Release preparado en `feat/community-growth`, sobre `dfbba15`.
+Actualizado: 2026-10-16. Fase 1 publicada en `main` remoto mediante PR #12.
 Este registro complementa `TODO.todo` y `tech-debt-backlog.md`.
 
 ## Roadmap de crecimiento — ejecución de fase 1
@@ -39,11 +39,16 @@ Este registro complementa `TODO.todo` y `tech-debt-backlog.md`.
   resultados incompletos de Liga. Backup real de esquema/datos obtenido por
   CLI y restaurado localmente con conteos coincidentes; ambas migraciones
   y fixture de perfiles/ACL aprobados sobre esa restauración.
-- Bloqueo de publicación: el backup programado no tiene `SUPABASE_DB_URL`
-  y generaba gzip vacío con éxito aparente. Workflow corregido para rechazar
-  conexión ausente, dump fallido o vacío; falta configurar el secret y probar
-  el artifact real. No hubo migración remota ni deploy. La fase 2 sigue
-  pendiente del release. Runbook: `docs/releases/2026-10-16-public-player-profiles.md`.
+- Release completado: secret en environment Production, job vinculado a ese
+  environment, backup previo restaurado y las dos migraciones exactas aplicadas
+  sin cambiar historial previo. PR #12 integrado (`1e24c0c`), Vercel Production
+  correcto. Perfiles, navegación desde las cuatro fuentes, 308/404, sitemap,
+  acceso anónimo y capturas 390px/1440px verificados con navegador real.
+- El backup también conserva GRANT/REVOKE: el restore del artifact posterior
+  `38981464176` verificó conteos y ACL de RPC; se omiten solo defaults del rol
+  gestionado supabase_admin en la copia de restore. El dump original se
+  conserva. La contraseña Postgres renovada no cambió las API keys de la app.
+  Fase 2 todavía sin iniciar. Runbook: `docs/releases/2026-10-16-public-player-profiles.md`.
 
 ## Trabajo retomado y cerrado
 
@@ -80,10 +85,10 @@ Este registro complementa `TODO.todo` y `tech-debt-backlog.md`.
 
 ## Pendientes concretos
 
-1. Resolver el secret del backup y publicar el árbol verificado de fase 1 con
-   el prerrequisito de Liga (commit separado `e5135f5`) y fix de backup
-   (`7e5352a`). Usar el historial remoto real en un workdir aislado para
-   aplicar solo las dos migraciones nuevas; el dry run ya coincide.
+1. Fase 1 publicada y verificada; EWGF sigue diferido por falta de clave libre.
+   Antes de iniciar fase 2, usar el estado publicado y preservar el checkout
+   original, que aún tiene los cambios locales anteriores. No repetir las
+   migraciones ya aplicadas ni revertir el historial remoto para alinear nombres.
 2. Retomar las correcciones de navegación del backlog del 2026-08-02:
    evitar transiciones al pulsar la temporada activa, señalización accesible
    y prueba de la etiqueta de carga de Todos.

@@ -28,7 +28,8 @@ jobs:
         # preservar -- el archivo de la comunidad -- vive todo en public.
         run: |
           : "${SUPABASE_DB_URL:?Configure SUPABASE_DB_URL in repository or Production environment secrets}"
-          pg_dump "$SUPABASE_DB_URL" --schema=public --no-owner --no-privileges --clean --if-exists \
+          # Preserve GRANT/REVOKE so service-only RPCs stay private after restore.
+          pg_dump "$SUPABASE_DB_URL" --schema=public --no-owner --clean --if-exists \
             > "$RUNNER_TEMP/supabase-public.sql"
           test -s "$RUNNER_TEMP/supabase-public.sql"
           gzip -c "$RUNNER_TEMP/supabase-public.sql" > "backup-$(date -u +%Y-%m-%d).sql.gz"
