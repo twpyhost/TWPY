@@ -129,7 +129,7 @@ export default function FusionarJugadores({ onFusionado }) {
             puede deshacer.
           </>
         }
-        warningText="Se reasignan cuentas de Challonge y resultados historicos. El jugador duplicado no se borra: queda oculto y marcado como fusionado, pero no hay forma de revertir la fusion desde el panel. Los torneos donde ambos jugadores ya tengan resultado propio quedan como conflicto para revisar a mano."
+        warningText="Se reasignan las cuentas de Challonge, Tekken IDs con su privacidad, vínculos de Liga y resultados históricos. Se conserva el main del jugador base; los otros personajes pasan a secundarios. El perfil anterior redirige al base. No se puede deshacer desde el panel. Los torneos donde ambos tengan resultado propio quedan como conflicto para revisar a mano."
         requireUnderstandCheckbox
         confirmLabel="FUSIONAR"
         loading={loading}

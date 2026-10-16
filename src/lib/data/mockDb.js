@@ -4,6 +4,7 @@ import liga from "@/liga.json" with { type: "json" };
 
 import { getMovimiento } from "./movimiento";
 import { armarLiga } from "@/lib/ligaData";
+import { projectPlayerProfile } from "../playerProfiles.js";
 
 const getTorneos = async () => {
   return torneos.map((torneo) => {
@@ -125,6 +126,27 @@ const getLiga = async (slug) => {
   return armarLiga(liga);
 };
 
+const getPublicPlayerTarget = async (playerId) => {
+  // Existing mock fixtures use stable symbolic IDs (e.g. "jin_py").
+  // Accept only an exact fixture identity; production IDs remain bigint strings.
+  if (typeof playerId !== "string") return null;
+  return (await getCompetidores()).some((p) => String(p.id) === playerId) ? playerId : null;
+};
+
+const getPlayerProfile = async (playerId, year) => {
+  if (typeof playerId !== "string" || (year !== undefined && !/^\d{4}$/.test(year))) return null;
+  const player = (await getCompetidores()).find((p) => String(p.id) === playerId);
+  if (!player) return null;
+  const season = year ?? (await getFiltroAno())[0];
+  const rankings = await getRankings(season);
+  const rows = [];
+  for (const t of (await getTorneos()).filter((t) => t.temporada === season)) {
+    const result = (await getTorneoResultados(t.torneo_id))?.find((r) => String(r.jugador.id) === playerId);
+    if (result) rows.push({ tournamentId: String(t.torneo_id), title: t.nombre_torneo, date: t.fecha_torneo, placement: result.posicion, points: result.puntaje });
+  }
+  return projectPlayerProfile({ player: { id: player.id, display_name: player.nombre }, season, ranking: rankings.find((r) => String(r.id) === playerId), results: rows.sort((a, b) => b.date.localeCompare(a.date)) });
+};
+
 export {
   getTorneos,
   getRankings,
@@ -133,6 +155,8 @@ export {
   getTorneoResultados,
   getRankingsCount,
   getLiga,
+  getPlayerProfile,
+  getPublicPlayerTarget,
 };
 
 function buildRanking(totals) {

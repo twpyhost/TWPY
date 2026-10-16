@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 
 import { getMovimiento } from "./movimiento";
 import { armarLiga } from "@/lib/ligaData";
+import { isPublicId, projectPlayerProfile, resolvePublicPlayerTarget } from "../playerProfiles.js";
 
 let client = null;
 
@@ -269,6 +270,52 @@ const getLiga = async (slug) => {
   return armarLiga({ liga, fechas, grupos, participantes, partidos });
 };
 
+const getPublicPlayerTarget = async (playerId) => {
+  if (!isPublicId(playerId)) return null;
+  // Active records use the anonymous projection. Hidden merge pointers are
+  // resolved server-side with a narrowly selected privileged lookup only.
+  return resolvePublicPlayerTarget(playerId, async (id) => {
+    const visible = await getClient().from("players").select("id::text,merged_into_player_id::text").eq("id", id).maybeSingle();
+    if (visible.error) throw visible.error;
+    if (visible.data) return visible.data;
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
+    const { getSupabaseAdmin } = await import("../supabaseAdmin.js");
+    const hidden = await getSupabaseAdmin().from("players").select("id::text,merged_into_player_id::text").eq("id", id).maybeSingle();
+    if (hidden.error) throw hidden.error;
+    return hidden.data;
+  });
+};
+
+const getPlayerProfile = async (playerId, year) => {
+  if (!isPublicId(playerId) || (year !== undefined && !/^\d{4}$/.test(year))) return null;
+  const supabase = getClient();
+  const { data: player, error } = await supabase.from("players").select("id::text,display_name,avatar_url").eq("id", playerId).maybeSingle();
+  if (error) throw error;
+  if (!player) return null;
+  const season = year ?? (await getFiltroAno())[0] ?? new Intl.DateTimeFormat("en", { year: "numeric", timeZone: "America/Asuncion" }).format(new Date());
+  const [characters, accounts, results, torneos] = await Promise.all([
+    supabase.from("player_characters").select("character_key,is_main").eq("player_id", playerId).order("character_key"),
+    supabase.from("player_tekken_accounts").select("tekken_id,is_public").eq("player_id", playerId).eq("is_public", true).order("id"),
+    supabase.from("torneo_resultados_publicos").select("torneo_id::text,posicion,puntaje").eq("player_id", playerId),
+    supabase.from("torneos").select("id::text,nombre,fecha_inicio").eq("temporada", season).order("fecha_inicio", { ascending: false }).order("id", { ascending: false }),
+  ]);
+  for (const result of [characters, accounts, results, torneos]) if (result.error) throw result.error;
+  const byId = new Map(torneos.data.map((t) => [String(t.id), t]));
+  let ranking = null;
+  if (torneos.data[0]) {
+    const snapshot = await supabase.from("ranking_snapshots").select("posicion_global,puntaje_acumulado").eq("torneo_id", torneos.data[0].id).eq("player_id", playerId).maybeSingle();
+    if (snapshot.error) throw snapshot.error;
+    if (snapshot.data) ranking = { posicion: snapshot.data.posicion_global, puntaje: snapshot.data.puntaje_acumulado };
+  }
+  return projectPlayerProfile({
+    player, season, characters: characters.data, accounts: accounts.data, ranking,
+    results: results.data.filter((r) => byId.has(String(r.torneo_id))).map((r) => {
+      const t = byId.get(String(r.torneo_id));
+      return { tournamentId: String(t.id), title: t.nombre, date: t.fecha_inicio, placement: r.posicion, points: r.puntaje };
+    }).sort((a, b) => b.date.localeCompare(a.date) || (BigInt(a.tournamentId) < BigInt(b.tournamentId) ? 1 : -1)),
+  });
+};
+
 export {
   getTorneos,
   getRankings,
@@ -277,4 +324,6 @@ export {
   getTorneoResultados,
   getRankingsCount,
   getLiga,
+  getPlayerProfile,
+  getPublicPlayerTarget,
 };

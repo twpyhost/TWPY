@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { getPlayerProfileMetadata } from "@/lib/playerProfileAdmin";
 
 export async function GET(_req, { params }) {
   try {
@@ -68,6 +69,7 @@ export async function GET(_req, { params }) {
           puntaje_total: participaciones.reduce((sum, p) => sum + p.puntaje, 0),
           posicion_actual: ultimoSnapshot?.posicion_global ?? null,
           cuentas: jugador.player_challonge_accounts ?? [],
+          profileMetadata: await getPlayerProfileMetadata(supabase, String(jugador.id)),
           historial,
         },
       },

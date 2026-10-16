@@ -2,6 +2,8 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/apiAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { registrarEvento } from "@/lib/identidadEventos";
+import { savePlayerProfileMetadata } from "@/lib/playerProfileAdmin";
+import { isPublicId, validateProfileMetadata } from "@/lib/playerProfiles";
 
 export async function PATCH(req, { params }) {
   try {
@@ -16,6 +18,22 @@ export async function PATCH(req, { params }) {
     }
 
     const body = await req.json();
+    if ("profileMetadata" in body) {
+      if (!isPublicId(id)) return Response.json({ error: "Id inválido" }, { status: 400 });
+      let metadata;
+      try { metadata = validateProfileMetadata(body.profileMetadata); }
+      catch (error) { return Response.json({ error: error.message }, { status: 400 }); }
+      const supabase = getSupabaseAdmin();
+      const { data: player, error: lookupError } = await supabase.from("players").select("id").eq("id", id).is("merged_into_player_id", null).maybeSingle();
+      if (lookupError) throw lookupError;
+      if (!player) return Response.json({ error: "Jugador no encontrado" }, { status: 404 });
+      try { await savePlayerProfileMetadata(supabase, id, metadata); }
+      catch (error) { return Response.json({ error: error.message }, { status: 400 }); }
+      await registrarEvento(supabase, { tipo: "editar_jugador", actorUserId: user.id, detalle: { player_id: playerId, cambios: { profileMetadata: metadata }, actor_email: user.email } });
+      revalidatePath("/competidores", "layout");
+      revalidatePath("/ranking");
+      return Response.json({ message: "Personajes y cuentas actualizados" });
+    }
     const cambios = {};
 
     if (typeof body.display_name === "string" && body.display_name.trim()) {
@@ -52,7 +70,7 @@ export async function PATCH(req, { params }) {
       detalle: { player_id: playerId, cambios, actor_email: user.email },
     });
 
-    revalidatePath("/competidores");
+    revalidatePath("/competidores", "layout");
     revalidatePath("/ranking");
 
     return Response.json(
