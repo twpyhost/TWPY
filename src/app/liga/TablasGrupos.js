@@ -1,10 +1,6 @@
 import { formatearDif } from "@/lib/ligaTabla";
+import Link from "next/link";
 
-// Nota: el diseno del handoff linkea el nombre del jugador a su perfil
-// (/competidores/[id]) cuando hay player_id, pero esa pagina de detalle
-// todavia no existe en el sitio (competidores/ es solo un board, sin
-// rutas dinamicas) -- se muestra el nombre en texto plano para no armar
-// un link roto; conectarlo cuando exista /competidores/[id].
 // La seccion, el ancho maximo y el encabezado los pone LigaTabs: este
 // componente es el contenido del panel "GRUPOS".
 export default function TablasGrupos({ grupos }) {
@@ -55,7 +51,9 @@ function TablaGrupo({ grupo }) {
                   {fila.posicion}
                 </td>
                 <td className="px-3 py-2.5 font-body text-sm font-bold text-white">
-                  {fila.nombre}
+                  {grupo.participantes.find((p) => String(p.id) === String(fila.participanteId))?.playerId != null
+                    ? <Link href={`/competidores/${grupo.participantes.find((p) => String(p.id) === String(fila.participanteId)).playerId}`} className="hover:text-tekken-blue-400">{fila.nombre}</Link>
+                    : fila.nombre}
                 </td>
                 <td className="px-3 py-2.5 text-right font-body text-sm text-white/70">
                   {fila.pj}

@@ -8,6 +8,7 @@ import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
 import Button from "@/components/ui/Button";
 import StatusChip from "@/components/ui/StatusChip";
+import PlayerCharactersEditor from "@/components/admin/PlayerCharactersEditor";
 
 export default function JugadorDetalle({ playerId }) {
   const [jugador, setJugador] = useState(null);
@@ -168,6 +169,8 @@ export default function JugadorDetalle({ playerId }) {
               </Button>
             </form>
           </div>
+
+          <PlayerCharactersEditor playerId={playerId} metadata={jugador.profileMetadata} onSaved={cargar} />
 
           <div className="border border-white/10 bg-white/[.03] p-5">
             <h2 className="m-0 mb-4 font-display text-xl tracking-[0.04em]">

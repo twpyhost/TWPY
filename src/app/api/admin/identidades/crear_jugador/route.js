@@ -54,7 +54,8 @@ export async function POST(req) {
       });
 
       revalidatePath("/ranking");
-      revalidatePath("/competidores");
+      revalidatePath("/competidores", "layout");
+    revalidatePath("/sitemap.xml");
       revalidatePath("/torneos");
       // El badge de "Pendientes" del sidebar admin lo calcula
       // src/app/admin/layout.js -- sin esto queda desactualizado hasta un

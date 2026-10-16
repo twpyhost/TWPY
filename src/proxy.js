@@ -1,10 +1,23 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
+import { getPublicPlayerTarget } from "@/lib/data";
 
 // Refresca el token de Supabase Auth en cada request para que los Server
 // Components (que no pueden escribir cookies) siempre vean una sesion
 // valida. Patron estandar de @supabase/ssr.
 export async function proxy(request) {
+  const profilePath = request.nextUrl.pathname.match(/^\/competidores\/([^/]+)$/);
+  if (profilePath) {
+    // Resolve before the loading boundary streams headers: missing profiles
+    // need a real HTTP 404; absorbed identities get a normal 308 redirect.
+    const target = await getPublicPlayerTarget(profilePath[1]);
+    if (!target) return NextResponse.rewrite(new URL("/__player-not-found", request.url), { status: 404 });
+    if (target !== profilePath[1]) {
+      const canonical = request.nextUrl.clone();
+      canonical.pathname = `/competidores/${target}`;
+      return NextResponse.redirect(canonical, 308);
+    }
+  }
   let response = NextResponse.next({ request });
 
   if (

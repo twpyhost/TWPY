@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 
 import HeroSection from "@/components/ui/HeroSection";
 import RibbonTag from "@/components/ui/RibbonTag";
@@ -92,7 +93,7 @@ export default function CompetidoresBoard({ roster, temporada }) {
                   >
                     {player.posicion === 1 ? "CAMPEÓN VIGENTE" : "N° DEL RANKING"}
                   </RibbonTag>
-                  <p className="relative m-0 font-display text-3xl italic">{player.username}</p>
+                  <p className="relative m-0 font-display text-3xl italic"><Link href={`/competidores/${player.id}`} className="hover:text-tekken-blue-400">{player.username}</Link></p>
                   <p className="relative m-0 font-body text-sm text-white/60">
                     {player.puntaje} pts
                   </p>
@@ -167,7 +168,7 @@ export default function CompetidoresBoard({ roster, temporada }) {
                       {player.posicion !== null ? `#${player.posicion}` : "S/R"}
                     </span>
                   </div>
-                  <p className="m-0 [overflow-wrap:anywhere] font-display text-xl italic">{player.username}</p>
+                  <p className="m-0 [overflow-wrap:anywhere] font-display text-xl italic"><Link href={`/competidores/${player.id}`} className="hover:text-tekken-blue-400">{player.username}</Link></p>
                   <p className="m-0 font-body text-xs text-white/50">
                     {player.puntaje !== null ? `${player.puntaje} pts` : "SIN RANKING ESTA TEMPORADA"}
                   </p>

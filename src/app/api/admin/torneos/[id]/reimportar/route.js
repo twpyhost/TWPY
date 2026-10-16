@@ -56,7 +56,8 @@ export async function POST(req, { params }) {
     const resumen = await insertarTorneo(supabase, tournament, cuenta);
 
     revalidatePath("/ranking");
-    revalidatePath("/competidores");
+    revalidatePath("/competidores", "layout");
+    revalidatePath("/sitemap.xml");
     revalidatePath("/torneos");
     revalidatePath(`/torneo-resultado/${torneoId}`);
 
