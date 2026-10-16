@@ -95,7 +95,8 @@ export async function POST(req) {
     });
 
     revalidatePath("/ranking");
-    revalidatePath("/competidores");
+    revalidatePath("/competidores", "layout");
+    revalidatePath("/sitemap.xml");
     revalidatePath("/torneos");
     // Deshacer un vincular/crear_jugador vuelve a dejar el participante sin
     // player_id -- el badge de "Pendientes" del sidebar admin (calculado en

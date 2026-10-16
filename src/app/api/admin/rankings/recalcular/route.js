@@ -25,7 +25,8 @@ export async function POST(req) {
     }
 
     revalidatePath("/ranking");
-    revalidatePath("/competidores");
+    revalidatePath("/competidores", "layout");
+    revalidatePath("/sitemap.xml");
 
     return Response.json(
       { message: "Rankings recalculados", temporadas },

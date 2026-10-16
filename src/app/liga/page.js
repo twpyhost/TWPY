@@ -34,7 +34,9 @@ export default async function LigaPage() {
 
   const totalPartidos = liga.grupos.reduce((total, g) => total + g.partidos.length, 0);
   const partidosJugados = liga.grupos.reduce(
-    (total, g) => total + g.partidos.filter((p) => p.ganadorId != null).length,
+    (total, g) =>
+      total +
+      g.partidos.filter((p) => p.ganadorId != null || p.resultadoTipo === "sancionado").length,
     0,
   );
 

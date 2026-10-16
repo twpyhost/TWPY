@@ -11,27 +11,37 @@ on:
 jobs:
   backup:
     runs-on: ubuntu-latest
+    environment: Production
     steps:
       - name: Install postgresql-client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
       - name: Dump database
         id: dump
+        shell: bash
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         # --schema=public: los schemas internos de Supabase (auth, storage,
         # extensions, etc.) son propiedad de roles que este dump no puede
         # restaurar de todas formas (probado localmente: un dump completo
         # tira "must be owner of table..." al restaurar). Lo que importa
         # preservar -- el archivo de la comunidad -- vive todo en public.
         run: |
-          pg_dump "${{ secrets.SUPABASE_DB_URL }}" --schema=public --no-owner --no-privileges --clean --if-exists \
-            | gzip > "backup-$(date -u +%Y-%m-%d).sql.gz"
+          : "${SUPABASE_DB_URL:?Configure SUPABASE_DB_URL in repository or Production environment secrets}"
+          pg_dump "$SUPABASE_DB_URL" --schema=public --no-owner --no-privileges --clean --if-exists \
+            > "$RUNNER_TEMP/supabase-public.sql"
+          test -s "$RUNNER_TEMP/supabase-public.sql"
+          gzip -c "$RUNNER_TEMP/supabase-public.sql" > "backup-$(date -u +%Y-%m-%d).sql.gz"
+          gzip -t "backup-$(date -u +%Y-%m-%d).sql.gz"
 
       - name: Upload artifact
+        id: upload
         if: steps.dump.outcome == 'success'
         uses: actions/upload-artifact@v7.0.1
         with:
           name: supabase-backup-${{ github.run_id }}
           path: backup-*.sql.gz
+          if-no-files-found: error
           # Maximo permitido sin configuracion adicional a nivel org/repo.
           retention-days: 90
 
@@ -43,5 +53,5 @@ jobs:
         run: |
           curl -f -X POST -H "x-health-secret: ${{ secrets.HEALTH_PING_SECRET }}" \
             -H "Content-Type: application/json" \
-            -d "{\"ok\": ${{ steps.dump.outcome == 'success' }}}" \
+            -d "{\"ok\": ${{ steps.dump.outcome == 'success' && steps.upload.outcome == 'success' }}}" \
             "${{ vars.SITE_URL }}/api/admin/sistema/backup"

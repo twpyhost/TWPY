@@ -98,7 +98,8 @@ export async function POST(req) {
 
     // Refresca las paginas publicas cacheadas de inmediato.
     revalidatePath("/ranking");
-    revalidatePath("/competidores");
+    revalidatePath("/competidores", "layout");
+    revalidatePath("/sitemap.xml");
     revalidatePath("/torneos");
 
     return Response.json(

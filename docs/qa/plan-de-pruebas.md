@@ -1,5 +1,26 @@
 # Plan de pruebas — TWPY
 
+## Ampliación 2026-10-16 — perfiles públicos (fase 1)
+
+Se agregan `/competidores/[id]`, su editor de personajes/Tekken IDs y las
+redirecciones canónicas. `tests/unit/playerProfiles.test.js` cubre validación,
+proyección, ciclos y paridad mock; `tests/integration/playerProfiles.test.js`
+cubre privacidad/RLS, bigint, colisiones y rollback de la fusión. La nueva
+banda de torneos es 994801–994802 (temporada 9093), cuentas 994811–994813;
+el caso de precisión reserva temporalmente 9007199254740992–9007199254740993
+en temporada 9094 y los elimina en `finally`.
+
+Las suites `playerProfiles.spec.js` de público, admin y rol `liga` verifican
+las cuatro fuentes de navegación, 308/404 reales, guardado/recarga y 401/403,
+incluida la denegación de RPC al rol autenticado. La edición e2e escribe solo
+en jugadores sembrados de la suite y la limpieza elimina por cascade los
+metadatos/cuentas. Se mantiene un worker y `NODE_ENV=test`; no se utilizan
+Challonge, EWGF ni producción.
+
+Las capturas a 390px/1440px se guardan en el workspace ignorado de ejecución.
+El runbook de esquema, reconstrucción y release está en
+`docs/releases/2026-10-16-public-player-profiles.md`.
+
 Plan de pruebas de la suite end-to-end del sitio de Tekken Warriors Paraguay.
 Está pensado para ejecutarse **sin asistencia**: el que corre los tests no
 necesita conocer el código ni pedirle nada a nadie.
@@ -21,6 +42,9 @@ la matriz pairwise y el modelo de estados, vive en
 | Torneos y resultados | `/torneos`, `/torneo-resultado/[slug]` | TS-TOR |
 | Competidores | `/competidores` | TS-COMP |
 | Reglamento | `/reglamento` | TS-REG |
+| Liga pública | `/liga`, pestañas Grupos y Calendario | TS-LIGA |
+| Resultados y sanciones de Liga | `/admin/liga`, `/admin/liga/grupo/[numero]` | TS-LIGA-ADMIN |
+| Desempates y cierre de grupos | `/admin/liga/grupo/[numero]` | TS-LIGA-DESEMPATE |
 | Gate de acceso | `/auth/login`, todas las rutas `/admin/*` como anónimo | TS-AUTH |
 | Panel (lectura) | las 6 secciones de `/admin` con sesión admin | TS-ADM |
 | Paginación del panel | `?page=` y filtros en las listas de `/admin` | TS-PAG |
@@ -29,9 +53,10 @@ la matriz pairwise y el modelo de estados, vive en
 ### Fuera de alcance (y por qué)
 
 - **Acciones de escritura del panel** — fusionar identidades, vincular, borrar
-  torneos, recalcular rankings. La suite es de **solo lectura** por decisión
-  explícita: son operaciones destructivas sobre datos de la comunidad y ya
-  tienen cobertura de integración en `tests/integration/`.
+  torneos, recalcular rankings. Esas operaciones tienen cobertura de integración
+  en `tests/integration/`. La excepción e2e son los resultados, sanciones,
+  desempates y cierres de **Liga**: escriben únicamente en ligas de prueba
+  sembradas en el stack local y eliminadas al terminar.
 - **Todo lo que pega a Challonge** — importar, sincronizar, reimportar. El
   servidor de pruebas no recibe `CHALLONGE_API_KEY`. Si en el futuro se
   quieren cubrir, hay que interceptar con `page.route` usando los fixtures que
@@ -50,12 +75,13 @@ la matriz pairwise y el modelo de estados, vive en
 |---|---|---|---|
 | Unitario | `tests/unit/` | Playwright, project `unit` | nada |
 | Integración | `tests/integration/` | Playwright, project `unit` | Supabase local |
-| Sistema / e2e | `tests/e2e/` | Playwright, projects `e2e` y `e2e-admin` | Supabase local + `next dev` |
+| Sistema / e2e | `tests/e2e/` | Playwright, projects `e2e`, `e2e-admin` y `e2e-liga` | Supabase local + `next dev` |
 
-La siembra está montada como un **project** (`datos`) y no como `globalSetup`,
-justamente para que `npx playwright test tests/unit --project=unit` siga
-funcionando sin Docker: solo paga el costo del stack quien declara la
-dependencia.
+La siembra está montada como un **project** (`datos`) y no como `globalSetup`.
+`npx playwright test tests/unit --project=unit` funciona sin Docker: solo
+ejecuta funciones puras. El project `unit` completo también incluye integración
+y por eso necesita Supabase local. La configuración actual arranca `next dev`
+incluso al seleccionar solo pruebas unitarias.
 
 Playwright es el **único runner** del repo (no hay Jest ni Vitest), a propósito:
 un solo comando, una sola forma de escribir asserts.
@@ -106,8 +132,8 @@ Los mismos comandos están como scripts: `npm test`, `npm run test:e2e`,
 - El project `setup-liga` hace lo mismo con un usuario de rol `liga`
   (`tests/e2e/.auth/liga.json`); del él depende `e2e-liga`. Los dos usuarios
   los borra el teardown de `datos`.
-- Playwright levanta `next dev` solo. Si ya tenés uno corriendo en el 3000, lo
-  reutiliza.
+- Playwright levanta su propio `next dev`. Si el 3000 ya está ocupado, falla:
+  `reuseExistingServer: false` evita ejecutar la suite contra otro entorno.
 
 ### Datos de prueba
 
@@ -137,9 +163,14 @@ Los tests que escriben usan ids fuera de cualquier rango real. Registro:
 | `910xxx` | 9099 | `tests/integration/rls.test.js` |
 | `800001–800099` | — | `scripts/seed-datos-prueba.js` (datos de demo, no tests) |
 
+Las suites de Liga usan IDs generados por la base y slugs exclusivos:
+`liga-test-*` en integración y `liga-e2e-*` en e2e. No modifican la liga real.
+`workers: 1` mantiene serializadas las suites que consultan la liga más reciente;
+`fullyParallel: false` por sí solo no serializa archivos distintos.
+
 Al agregar una suite nueva que escriba en la BD, **tomá una banda nueva y
-anotala acá**. Hoy `fullyParallel: false` disimula las colisiones; el día que
-se paralelice, dejaría de hacerlo.
+anotala acá**. Si usa IDs generados, reservar un prefijo de slug y documentar
+su limpieza. La configuración serial actual no sustituye ese aislamiento.
 
 ---
 
@@ -151,8 +182,9 @@ se paralelice, dejaría de hacerlo.
   (`npx supabase db reset` si hay dudas).
 
 **Salida** (la corrida se considera buena cuando):
-- Los 132 casos pasan (81 e2e + 51 unit/integración), sin `test.skip` ni
-  `test.fixme` nuevos.
+- Pasan todas las ejecuciones que lista `npx playwright test --list`, sin
+  `test.skip` ni `test.fixme` nuevos. Al 2026-10-16 son 203: 117 e2e,
+  82 unit/integración y 4 tareas de preparación/limpieza.
 - Dos corridas seguidas dan el mismo resultado (verifica que el cleanup sea
   idempotente).
 - **Control de mutación**: al romper a propósito el código bajo prueba, el caso
@@ -165,13 +197,13 @@ se paralelice, dejaría de hacerlo.
 
 | Riesgo | Impacto | Mitigación |
 |---|---|---|
-| **`.env.local` apunta al proyecto remoto** | La suite testearía **producción** sin avisar | `NODE_ENV=test` en el `webServer`: Next no carga `.env.local` en modo test, así que ganan las variables que inyecta la config. Además `reuseExistingServer: false`, para no engancharse a un `npm run dev` tuyo que sí lee `.env.local`. **No quites ninguna de las dos.** |
+| **Credenciales remotas en un entorno de desarrollo** | La suite testearía **producción** sin avisar | `.env.local` apunta al stack local; el remoto está en `.env.prod.local`. Se mantienen `NODE_ENV=test` (Next no carga `.env.local`) y `reuseExistingServer: false` como defensas. No sobrescribir las variables `SUPABASE_*` de tests con valores remotos. **No quites estas protecciones.** |
 | La BD local tiene datos además de los sembrados | Los conteos exactos fallarían | Los casos que cuentan filas filtran siempre por el prefijo `E2E Jugador` |
 | El login del admin no anda en local | Toda la suite del panel queda sin correr | `[auth.email] enable_signup` en `supabase/config.toml` tiene que estar en `true`: en el CLI de Supabase ese flag apaga el **proveedor de email entero**, no solo el alta. El registro público sigue cerrado por el `enable_signup` global de `[auth]` |
 | **Puerto 3000 ocupado por una corrida anterior** | La corrida siguiente falla al toque: `http://localhost:3000 is already used` | En Windows, `command: "npm run dev"` metía una capa extra (`npm.cmd` → `node`) que Playwright no lograba cerrar del todo al terminar. El `webServer.command` invoca `next` directo (`npx next dev --turbopack`) para evitarlo. Si aun así ves este error, algo más tiene el puerto tomado — cerralo (`netstat -ano \| findstr :3000` en PowerShell, después `taskkill /PID <pid> /F`) y volvé a correr |
 | `revalidate = 60` en las páginas públicas | Datos recién sembrados servidos viejos | La siembra ocurre antes de arrancar los tests; en `next dev` el cacheo es mínimo |
-| `fullyParallel: false` | Corrida más lenta | Aceptado: la suite escribe en una BD compartida |
-| El stack local no está arriba | Errores opacos | `globalSetup` falla temprano con instrucciones |
+| `workers: 1` y `fullyParallel: false` | Corrida más lenta | Aceptado: la suite escribe en una BD compartida y las rutas de Liga eligen la más reciente |
+| El stack local no está arriba | Errores opacos | El project `datos` falla temprano con instrucciones |
 | Cambios de copy en la UI | Selectores por texto se rompen | Se prefiere `getByRole` y, donde el texto es identidad (nombres sembrados), el texto es dato del test, no de la UI |
 
 ---

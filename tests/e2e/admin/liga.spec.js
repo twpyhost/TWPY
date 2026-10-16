@@ -42,19 +42,31 @@ test.describe("TS-LIGA-ADMIN | Admin de liga", () => {
    *   MATCHES 3-1, DIF +2 y PTS 1.
    * Tecnica: caso feliz | Prioridad: alta
    */
-  test("TC-LIGA-ADMIN-001 | cargar un resultado actualiza la tabla", async ({ page }) => {
+  test("TC-LIGA-ADMIN-001 | cargar un resultado actualiza la tabla", async ({
+    page,
+  }) => {
     await page.goto("/admin/liga/grupo/1");
 
     // La Fecha 1 es siempre el primer bloque de fechas del grupo (orden
     // ascendente) -- su primera pelea es "Wario vs Rox" (ver el fixture),
     // asi que el primer boton "Wario" en el DOM es el de esa pelea.
-    await page.getByRole("button", { name: "Wario", exact: true }).first().click();
-    await page.getByRole("button", { name: "3-1", exact: true }).first().click();
+    await page
+      .getByRole("button", { name: "Wario", exact: true })
+      .first()
+      .click();
+    await page
+      .getByRole("button", { name: "3-1", exact: true })
+      .first()
+      .click();
 
     const filaWario = page.getByRole("row", { name: /^1 Wario/ });
     await expect(filaWario).toBeVisible();
-    await expect(filaWario.getByRole("cell", { name: "3-1", exact: true })).toBeVisible();
-    await expect(filaWario.getByRole("cell", { name: "+2", exact: true })).toBeVisible();
+    await expect(
+      filaWario.getByRole("cell", { name: "3-1", exact: true }),
+    ).toBeVisible();
+    await expect(
+      filaWario.getByRole("cell", { name: "+2", exact: true }),
+    ).toBeVisible();
   });
 
   /**
@@ -68,15 +80,176 @@ test.describe("TS-LIGA-ADMIN | Admin de liga", () => {
    *   elegir un ganador, se habilita.
    * Tecnica: particion de equivalencia / estado invalido | Prioridad: media
    */
-  test("TC-LIGA-ADMIN-003 | el marcador requiere elegir ganador primero", async ({ page }) => {
+  test("TC-LIGA-ADMIN-003 | el marcador requiere elegir ganador primero", async ({
+    page,
+  }) => {
     await page.goto("/admin/liga/grupo/3");
 
-    const primerMarcador = page.getByRole("button", { name: "3-0", exact: true }).first();
+    const primerMarcador = page
+      .getByRole("button", { name: "3-0", exact: true })
+      .first();
     await expect(primerMarcador).toBeDisabled();
 
     // La primera pelea de la Fecha 1 del grupo 3 es "Hosco vs Danns".
-    await page.getByRole("button", { name: "Hosco", exact: true }).first().click();
+    await page
+      .getByRole("button", { name: "Hosco", exact: true })
+      .first()
+      .click();
     await expect(primerMarcador).toBeEnabled();
+  });
+
+  /**
+   * TC-LIGA-ADMIN-004 | Transiciones del resultado
+   * Precondicion: Grupo 4 sin resultados, abierto, en una liga de prueba.
+   * Pasos: cargar victoria de A 3-2, sancionar, recargar, quitar la sancion,
+   *   recargar y cargar victoria de B 3-0.
+   * Resultado esperado: cada estado persiste y reemplaza los datos anteriores;
+   *   la sancion cuenta en progreso y PJ, sin G/P/matches/puntos; quitarla
+   *   limpia marcador y auditoria. El resultado final tiene ganador B.
+   * Tecnica: modelo de estados | Prioridad: alta
+   */
+  test("TC-LIGA-ADMIN-004 | un resultado jugado puede sancionarse, limpiarse y volver a cargarse", async ({
+    page,
+  }) => {
+    const { data: grupo4 } = await supabase
+      .from("liga_grupos")
+      .select("id")
+      .eq("liga_id", ligaId)
+      .eq("numero", 4)
+      .single()
+      .throwOnError();
+    const { data: partido } = await supabase
+      .from("liga_partidos")
+      .select("id, participante_a_id, participante_b_id")
+      .eq("grupo_id", grupo4.id)
+      .order("id")
+      .limit(1)
+      .single()
+      .throwOnError();
+    const columnasResultado =
+      "resultado_tipo, ganador_id, matches_a, matches_b";
+
+    await page.goto("/admin/liga/grupo/4");
+    await page
+      .getByRole("button", { name: "Rushador Cuidadoso", exact: true })
+      .first()
+      .click();
+    await page
+      .getByRole("button", { name: "3-2", exact: true })
+      .first()
+      .click();
+    await expect(
+      page
+        .getByRole("row", { name: /Rushador Cuidadoso/ })
+        .getByRole("cell")
+        .nth(5),
+    ).toHaveText("3-2");
+
+    // La sancion debe borrar el ganador y el marcador previo, persistir
+    // despues de recargar y sumar solo PJ para los dos participantes.
+    await page
+      .getByRole("button", { name: "SANCIONAR 0-0", exact: true })
+      .first()
+      .click();
+    await expect(
+      page.getByRole("button", { name: "QUITAR SANCIÓN", exact: true }),
+    ).toBeEnabled();
+    await page.reload();
+    await expect(
+      page.getByRole("button", { name: "QUITAR SANCIÓN", exact: true }),
+    ).toBeVisible();
+    const { data: sancionado } = await supabase
+      .from("liga_partidos")
+      .select(columnasResultado)
+      .eq("id", partido.id)
+      .single()
+      .throwOnError();
+    expect(sancionado).toEqual({
+      resultado_tipo: "sancionado",
+      ganador_id: null,
+      matches_a: 0,
+      matches_b: 0,
+    });
+    const resumen = await page.request.get("/api/admin/liga");
+    expect(resumen.status()).toBe(200);
+    const grupoEnResumen = (await resumen.json()).grupos.find(
+      (g) => g.numero === 4,
+    );
+    expect(grupoEnResumen.progreso).toEqual({ cargados: 1, total: 21 });
+    for (const nombre of ["Rushador Cuidadoso", "Lightgear"]) {
+      const celdas = page
+        .getByRole("row", { name: new RegExp(nombre) })
+        .getByRole("cell");
+      await expect(celdas).toHaveText([
+        /^\d+$/,
+        nombre,
+        "1",
+        "0",
+        "0",
+        "0-0",
+        "0",
+        "0",
+        /.*/,
+      ]);
+    }
+
+    await page
+      .getByRole("button", { name: "QUITAR SANCIÓN", exact: true })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "QUITAR SANCIÓN", exact: true }),
+    ).toHaveCount(0);
+    await page.reload();
+    const { data: pendiente } = await supabase
+      .from("liga_partidos")
+      .select(`${columnasResultado}, cargado_at, cargado_by`)
+      .eq("id", partido.id)
+      .single()
+      .throwOnError();
+    expect(pendiente).toEqual({
+      resultado_tipo: "pendiente",
+      ganador_id: null,
+      matches_a: null,
+      matches_b: null,
+      cargado_at: null,
+      cargado_by: null,
+    });
+    for (const nombre of ["Rushador Cuidadoso", "Lightgear"]) {
+      await expect(
+        page
+          .getByRole("row", { name: new RegExp(nombre) })
+          .getByRole("cell")
+          .nth(2),
+      ).toHaveText("0");
+    }
+
+    // Ahora gana B: no puede quedar el ganador A ni la sancion anterior.
+    await page
+      .getByRole("button", { name: "Lightgear", exact: true })
+      .first()
+      .click();
+    await page
+      .getByRole("button", { name: "3-0", exact: true })
+      .first()
+      .click();
+    await expect(
+      page
+        .getByRole("row", { name: /Lightgear/ })
+        .getByRole("cell")
+        .nth(5),
+    ).toHaveText("3-0");
+    const { data: jugado } = await supabase
+      .from("liga_partidos")
+      .select(columnasResultado)
+      .eq("id", partido.id)
+      .single()
+      .throwOnError();
+    expect(jugado).toEqual({
+      resultado_tipo: "jugado",
+      ganador_id: partido.participante_b_id,
+      matches_a: 0,
+      matches_b: 3,
+    });
   });
 
   /**
@@ -93,7 +266,9 @@ test.describe("TS-LIGA-ADMIN | Admin de liga", () => {
    *   peleas quedan deshabilitados.
    * Tecnica: caso feliz sobre una restriccion de negocio | Prioridad: alta
    */
-  test("TC-LIGA-ADMIN-002 | un grupo cerrado no acepta cambios", async ({ page }) => {
+  test("TC-LIGA-ADMIN-002 | un grupo cerrado no acepta cambios", async ({
+    page,
+  }) => {
     // El grupo recien sembrado esta totalmente empatado en 0 puntos (sin
     // resultados cargados), asi que el guard de "empates sin resolver"
     // rechazaria el cierre. Ese guard no es lo que este test verifica --
@@ -125,9 +300,13 @@ test.describe("TS-LIGA-ADMIN | Admin de liga", () => {
 
     await expect(page.getByText("CERRADO", { exact: true })).toBeVisible();
 
-    const primerBotonDePelea = page.getByRole("button", { name: "Damian", exact: true }).first();
+    const primerBotonDePelea = page
+      .getByRole("button", { name: "Damian", exact: true })
+      .first();
     await expect(primerBotonDePelea).toBeDisabled();
-    const primerBotonDeMarcador = page.getByRole("button", { name: "3-0", exact: true }).first();
+    const primerBotonDeMarcador = page
+      .getByRole("button", { name: "3-0", exact: true })
+      .first();
     await expect(primerBotonDeMarcador).toBeDisabled();
   });
 });

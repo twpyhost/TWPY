@@ -15,7 +15,10 @@ test.describe("sembrarLiga", () => {
     supabase = getServiceClient();
     // Mismo fixture real (5 grupos de 7, round-robin completo) pero con un
     // slug propio del test para no pisar la liga real si ya esta sembrada.
-    fixture = { ...fixtureReal, slug: `liga-test-${Date.now()}-${Math.random()}` };
+    fixture = {
+      ...fixtureReal,
+      slug: `liga-test-${Date.now()}-${Math.random()}`,
+    };
   });
 
   test.afterEach(async () => {
@@ -67,52 +70,85 @@ test.describe("sembrarLiga", () => {
     }
   });
 
-  test("re-correrlo no borra un resultado ya cargado (ganador ni marcador)", async () => {
-    const primeraCorrida = await sembrarLiga(supabase, fixture);
-    ligaId = primeraCorrida.ligaId;
+  for (const caso of [
+    {
+      nombre: "jugado con victoria de A",
+      tipo: "jugado",
+      ganador: "a",
+      matchesA: 3,
+      matchesB: 1,
+    },
+    {
+      nombre: "jugado con victoria de B",
+      tipo: "jugado",
+      ganador: "b",
+      matchesA: 2,
+      matchesB: 3,
+    },
+    {
+      nombre: "sancionado sin ganador",
+      tipo: "sancionado",
+      ganador: null,
+      matchesA: 0,
+      matchesB: 0,
+    },
+  ]) {
+    test(`re-correrlo conserva el resultado ${caso.nombre}`, async () => {
+      const primeraCorrida = await sembrarLiga(supabase, fixture);
+      ligaId = primeraCorrida.ligaId;
 
-    const { data: unPartido } = await supabase
-      .from("liga_partidos")
-      .select("id, participante_a_id, participante_b_id")
-      .eq(
-        "grupo_id",
-        (
-          await supabase
-            .from("liga_grupos")
-            .select("id")
-            .eq("liga_id", ligaId)
-            .eq("numero", 1)
-            .single()
-        ).data.id,
-      )
-      .limit(1)
-      .single();
+      const { data: unPartido } = await supabase
+        .from("liga_partidos")
+        .select("id, participante_a_id, participante_b_id")
+        .eq(
+          "grupo_id",
+          (
+            await supabase
+              .from("liga_grupos")
+              .select("id")
+              .eq("liga_id", ligaId)
+              .eq("numero", 1)
+              .single()
+              .throwOnError()
+          ).data.id,
+        )
+        .limit(1)
+        .single()
+        .throwOnError();
 
-    // A gana 3-1: el marcador tiene que sobrevivir al re-seed igual que el
-    // ganador (los upserts de liga_partidos no tocan las columnas de resultado).
-    await supabase
-      .from("liga_partidos")
-      .update({
-        resultado_tipo: "jugado",
-        ganador_id: unPartido.participante_a_id,
-        matches_a: 3,
-        matches_b: 1,
-      })
-      .eq("id", unPartido.id);
+      const resultado = {
+        resultado_tipo: caso.tipo,
+        ganador_id:
+          caso.ganador === null
+            ? null
+            : unPartido[`participante_${caso.ganador}_id`],
+        matches_a: caso.matchesA,
+        matches_b: caso.matchesB,
+      };
+      const columnasResultado =
+        "resultado_tipo, ganador_id, matches_a, matches_b";
+      const { data: guardado } = await supabase
+        .from("liga_partidos")
+        .update(resultado)
+        .eq("id", unPartido.id)
+        .select(columnasResultado)
+        .single()
+        .throwOnError();
+      expect(guardado).toEqual(resultado);
 
-    const segundaCorrida = await sembrarLiga(supabase, fixture);
-    expect(segundaCorrida.totalPartidos).toBe(105);
-    expect(segundaCorrida.totalParticipantes).toBe(35);
+      const segundaCorrida = await sembrarLiga(supabase, fixture);
+      expect(segundaCorrida.totalPartidos).toBe(105);
+      expect(segundaCorrida.totalParticipantes).toBe(35);
 
-    const { data: partidoTrasReseed } = await supabase
-      .from("liga_partidos")
-      .select("ganador_id, matches_a, matches_b")
-      .eq("id", unPartido.id)
-      .single();
-    expect(partidoTrasReseed.ganador_id).toBe(unPartido.participante_a_id);
-    expect(partidoTrasReseed.matches_a).toBe(3);
-    expect(partidoTrasReseed.matches_b).toBe(1);
-  });
+      const { data: partidoTrasReseed } = await supabase
+        .from("liga_partidos")
+        .select(columnasResultado)
+        .eq("id", unPartido.id)
+        .single()
+        .throwOnError();
+      expect(partidoTrasReseed).toEqual(resultado);
+    });
+  }
 
   test("la constraint rechaza un marcador que no es first-to-3", async () => {
     const primeraCorrida = await sembrarLiga(supabase, fixture);
@@ -138,19 +174,50 @@ test.describe("sembrarLiga", () => {
     // 3-3 no es un resultado valido de un first-to-3.
     const { error: errorMarcador } = await supabase
       .from("liga_partidos")
-      .update({ ganador_id: unPartido.participante_a_id, matches_a: 3, matches_b: 3 })
+      .update({
+        resultado_tipo: "jugado",
+        ganador_id: unPartido.participante_a_id,
+        matches_a: 3,
+        matches_b: 3,
+      })
       .eq("id", unPartido.id);
-    expect(errorMarcador).not.toBeNull();
+    expect(errorMarcador?.code).toBe("23514");
+    expect(errorMarcador?.message).toContain(
+      "liga_partidos_resultado_coherente",
+    );
 
     // Ganador sin marcador tampoco: las tres columnas van juntas.
     const { error: errorSinMarcador } = await supabase
       .from("liga_partidos")
-      .update({ ganador_id: unPartido.participante_a_id, matches_a: null, matches_b: null })
+      .update({
+        resultado_tipo: "jugado",
+        ganador_id: unPartido.participante_a_id,
+        matches_a: null,
+        matches_b: null,
+      })
       .eq("id", unPartido.id);
-    expect(errorSinMarcador).not.toBeNull();
+    expect(errorSinMarcador?.code).toBe("23514");
+    expect(errorSinMarcador?.message).toContain(
+      "liga_partidos_resultado_coherente",
+    );
+
+    // CHECK no debe aceptar UNKNOWN: un FT con marcador exige ganador.
+    const { error: errorSinGanador } = await supabase
+      .from("liga_partidos")
+      .update({
+        resultado_tipo: "jugado",
+        ganador_id: null,
+        matches_a: 3,
+        matches_b: 1,
+      })
+      .eq("id", unPartido.id);
+    expect(errorSinGanador?.code).toBe("23514");
+    expect(errorSinGanador?.message).toContain(
+      "liga_partidos_resultado_coherente",
+    );
   });
 
-  test("acepta una pelea sancionada 0-0 sin ganador", async () => {
+  test("una sancion exige 0-0 sin ganador", async () => {
     const primeraCorrida = await sembrarLiga(supabase, fixture);
     ligaId = primeraCorrida.ligaId;
 
@@ -159,17 +226,24 @@ test.describe("sembrarLiga", () => {
       .select("id")
       .eq("liga_id", ligaId)
       .eq("numero", 1)
-      .single();
+      .single()
+      .throwOnError();
     const { data: partido } = await supabase
       .from("liga_partidos")
-      .select("id")
+      .select("id, participante_a_id")
       .eq("grupo_id", grupo.id)
       .limit(1)
-      .single();
+      .single()
+      .throwOnError();
 
     const { error } = await supabase
       .from("liga_partidos")
-      .update({ resultado_tipo: "sancionado", ganador_id: null, matches_a: 0, matches_b: 0 })
+      .update({
+        resultado_tipo: "sancionado",
+        ganador_id: null,
+        matches_a: 0,
+        matches_b: 0,
+      })
       .eq("id", partido.id);
     expect(error).toBeNull();
 
@@ -177,12 +251,30 @@ test.describe("sembrarLiga", () => {
       .from("liga_partidos")
       .select("resultado_tipo, ganador_id, matches_a, matches_b")
       .eq("id", partido.id)
-      .single();
+      .single()
+      .throwOnError();
     expect(resultado).toEqual({
       resultado_tipo: "sancionado",
       ganador_id: null,
       matches_a: 0,
       matches_b: 0,
     });
+
+    for (const invalido of [
+      { ganador_id: partido.participante_a_id, matches_a: 0, matches_b: 0 },
+      { ganador_id: null, matches_a: 0, matches_b: 1 },
+      { ganador_id: null, matches_a: null, matches_b: 0 },
+      { ganador_id: null, matches_a: 0, matches_b: null },
+      { ganador_id: null, matches_a: null, matches_b: null },
+    ]) {
+      const { error: errorSancion } = await supabase
+        .from("liga_partidos")
+        .update({ resultado_tipo: "sancionado", ...invalido })
+        .eq("id", partido.id);
+      expect(errorSancion?.code).toBe("23514");
+      expect(errorSancion?.message).toContain(
+        "liga_partidos_resultado_coherente",
+      );
+    }
   });
 });

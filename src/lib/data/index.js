@@ -12,4 +12,6 @@ export const {
   getTorneoResultados,
   getRankingsCount,
   getLiga,
+  getPlayerProfile,
+  getPublicPlayerTarget,
 } = db;

@@ -16,9 +16,9 @@ import {
 //   e2e-admin  -- panel de administracion, con la sesion del setup.
 //   e2e-liga   -- separacion de roles, con la sesion del rol 'liga'.
 //
-// La siembra es un project y no globalSetup para que `--project=unit` siga
-// corriendo sin Docker: solo paga el costo del stack quien lo declara como
-// dependencia.
+// La siembra es un project y no globalSetup: `tests/unit --project=unit`
+// no necesita Docker. El project unit completo incluye integracion con DB
+// y si requiere el stack local.
 //
 // Todo corre contra `next dev` + el stack local de Supabase (`supabase start`),
 // nunca contra el proyecto remoto.
@@ -110,8 +110,8 @@ export default defineConfig({
     command: "npx next dev --turbopack",
     url: "http://localhost:3000",
     // NUNCA reusar un servidor ya levantado: si es el `npm run dev` de tu
-    // sesion, apunta al proyecto REMOTO (por .env.local) y la suite pasaria a
-    // testear produccion sin avisar. Mejor fallar con "puerto ocupado".
+    // sesion, podria apuntar al proyecto REMOTO con dev:prod y la suite pasaria
+    // a testear produccion sin avisar. Mejor fallar con "puerto ocupado".
     reuseExistingServer: false,
     timeout: 120_000,
     env: {

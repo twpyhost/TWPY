@@ -61,7 +61,8 @@ export async function POST() {
 
     if (importados.length > 0) {
       revalidatePath("/ranking");
-      revalidatePath("/competidores");
+      revalidatePath("/competidores", "layout");
+    revalidatePath("/sitemap.xml");
       revalidatePath("/torneos");
     }
 

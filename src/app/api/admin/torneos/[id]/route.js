@@ -117,7 +117,8 @@ export async function DELETE(req, { params }) {
     });
 
     revalidatePath("/ranking");
-    revalidatePath("/competidores");
+    revalidatePath("/competidores", "layout");
+    revalidatePath("/sitemap.xml");
     revalidatePath("/torneos");
     revalidatePath(`/torneo-resultado/${torneoId}`);
 

@@ -2,6 +2,7 @@ import { getRankings } from "../utils/db";
 import { withMinDelay } from "@/lib/withMinDelay";
 import { fadeDelay } from "@/lib/fadeDelay";
 import { TREND } from "@/lib/data/movimiento";
+import Link from "next/link";
 
 function tierBorderClass(posicion) {
   return posicion <= 3 ? "border-l-tekken-blue-400" : "border-l-primary-500";
@@ -32,9 +33,9 @@ export default async function RankingTable({ temporada }) {
               <span className="font-display text-base text-white/50 sm:text-2xl">
                 {ranking.posicion}
               </span>
-              <span className="[overflow-wrap:anywhere] font-body text-sm font-semibold sm:text-lg">
+              <Link href={`/competidores/${ranking.id}`} className="[overflow-wrap:anywhere] font-body text-sm font-semibold hover:text-tekken-blue-400 sm:text-lg">
                 {ranking.nombre}
-              </span>
+              </Link>
               <span className="whitespace-nowrap font-display text-base sm:text-2xl">
                 {ranking.puntaje} pts
               </span>

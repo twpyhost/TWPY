@@ -139,7 +139,8 @@ behavior `/ranking`'s season selector already had.
    Harmless, just stale.
    **Proposed fix**: Update the two references next time `TODO.todo` is
    touched.
-   **Status**: Open
+   **Status**: Done (2026-10-16). Ambas referencias usan ahora
+   `SearchParamTransitionProvider`.
 
 ---
 
@@ -210,7 +211,9 @@ group with unresolved ties).
    **Proposed fix**: In `TC-LIGA-DESEMPATE-003` (or a new test), move a row,
    `page.reload()` *before* clicking Confirmar, and assert the original
    (pre-move) order is what comes back.
-   **Status**: Open
+   **Status**: Done (2026-10-16). `TC-LIGA-DESEMPATE-003` ahora comprueba
+   que mover una fila y recargar sin confirmar recupera el orden original,
+   antes de verificar que confirmar sí persiste el nuevo orden.
 
 ---
 
@@ -320,3 +323,86 @@ block is moved with ↑/↓.
    instead of simple set membership). Likely not worth the added complexity
    unless it surfaces as real user feedback.
    **Status**: Open
+
+---
+
+## 2026-10-16 — Fixtures y regresiones de Liga
+
+1. **What**: El lint advierte que el cleanup del efecto lee
+   `destacadosTimeouts.current`, cuya referencia puede cambiar antes del desmontaje.
+   **Where**: `src/app/admin/liga/grupo/[numero]/GrupoDetalle.js:65`.
+   **Why it matters**: Advertencia preexistente de `react-hooks/exhaustive-deps`;
+   el cleanup podría consultar otro Map si se reemplaza la referencia. No causó
+   fallos en las pruebas de Liga y no bloquea la corrección de fixtures.
+   **Proposed fix**: Capturar el Map del ref al iniciar el efecto y usar esa
+   variable en su cleanup, verificando que se cancelen los timeouts al desmontar.
+   **Status**: Done (2026-10-16). El efecto captura el Map al montar y su
+   cleanup cancela los timeouts de esa misma instancia. ESLint pasa con
+   `--max-warnings 0`; la suite completa de Liga también pasa.
+
+2. **What**: El CHECK de resultados permitía `jugado` sin ganador y sanciones
+   con uno o ambos matches nulos: PostgreSQL acepta un CHECK que evalúa a NULL.
+   **Where**: `supabase/migrations/0015_liga_resultado_sancionado.sql`.
+   **Why it matters**: Las escrituras directas podían dejar estados que no
+   cumplen las reglas de Liga, aunque la API de resultados envía campos completos.
+   **Proposed fix**: Exigir ganador no nulo para `jugado` y ambos matches no
+   nulos para `sancionado`, sin cambiar los tres estados válidos.
+   **Status**: Done en código y Supabase local (2026-10-16), migración
+   `20261016171620_liga_resultados_completos.sql`. Dos regresiones fallaron con
+   0015 y pasaron con el nuevo CHECK. Reconstrucción de todas las migraciones
+   verificada en una base temporal. Pendiente aplicar la migración en producción.
+
+3. **What**: Los advisors locales señalan la vista con privilegios del owner
+   `torneo_resultados_publicos` (ERROR) y el `search_path` mutable de
+   `set_updated_at` (WARN), ambos preexistentes a esta sesión.
+   **Where**: migraciones `0006_vista_resultados_publicos.sql` y
+   `0004_auth_y_funciones.sql`.
+   **Why it matters**: El advisor no queda en verde. La vista es deliberada:
+   publica solo las columnas y filas filtradas de resultados sin conceder acceso
+   a `tournament_participants_raw`; cambiarla a invoker rompería las lecturas
+   anónimas actuales. La suite RLS comprueba esa separación.
+   **Proposed fix**: Revisar la arquitectura de la vista antes de cambiar sus
+   privilegios; fijar el `search_path` del trigger en una migración separada
+   con regresión de `updated_at`. No son cambios de la constraint de Liga.
+   **Status**: Open
+
+4. **What**: El contenedor local y `config.toml` usan PostgreSQL 17, pero el CLI
+   reconstruye la base temporal con 15.14.1.003, la versión guardada en
+   `supabase/.temp/postgres-version`.
+   **Where**: entorno Docker local y caché del CLI en `supabase/.temp/`.
+   **Why it matters**: `db pull` / `db diff` generan ruido de `GRANT MAINTAIN`
+   al comparar versiones. Ese ruido se descartó de la nueva migración; el diff
+   final no muestra diferencias de la constraint.
+   **Proposed fix**: Revisar cómo el CLI elige la versión temporal al usar un
+   proyecto vinculado. Mantener la compatibilidad con la versión remota y
+   revisar todo diff antes de migrar; no copiar GRANTs ajenos al cambio.
+   **Status**: Open
+
+5. **What**: Next advierte en los e2e que el logo `tekken8-logo-sm` es el LCP y
+   convendría cargarlo con prioridad por estar visible al abrir la página.
+   **Where**: imagen del hero público; aviso observado durante `npm test`.
+   **Why it matters**: Posible demora de la imagen principal; no causa fallos
+   funcionales ni errores de lint/build.
+   **Proposed fix**: Medir la carga y ajustar `loading` / prioridad de la imagen
+   visible, verificando que no se prioricen imágenes ocultas o de otras rutas.
+   **Status**: Open
+
+## Revisión de fase 1 — perfiles públicos (2026-10-16)
+
+1. **What**: El DTO nuevo de perfiles conserva bigint como texto, pero algunos
+   productores anteriores de enlaces y el detalle/auditoría del panel todavía
+   usan `Number`. IDs adyacentes 9007199254740992 y 9007199254740993 pueden
+   redondearse antes de llegar a la ruta exacta.
+   **Where**: `getCompetidores`/`getRankings` y consumidores del directorio,
+   ranking/sitemap; `/api/admin/identidades/jugadores/[id]/detalle` y auditoría
+   de `/api/admin/jugadores/[id]`.
+   **Why it matters**: A ese tamaño podrían abrirse o registrarse identidades
+   equivocadas. No bloquea el release actual: los IDs generados de jugadores
+   están muy por debajo del límite; los nuevos resultados de perfil ya tienen
+   una regresión que verifica precisión completa.
+   **Proposed fix**: Llevar IDs decimales exactos de extremo a extremo mediante
+   campos aditivos cuando sea necesario conservar las formas legacy del
+   facade; cubrir enlaces, lecturas del panel y log con dos IDs consecutivos
+   fuera del rango seguro de Number. No cambiar masivamente los tipos del
+   facade sin revisar sus consumidores.
+   **Status**: Open — hallazgo Minor de la revisión independiente de fase 1.

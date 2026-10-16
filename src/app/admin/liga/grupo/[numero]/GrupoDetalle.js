@@ -61,8 +61,9 @@ export default function GrupoDetalle({ numero }) {
   }, [cargar]);
 
   useEffect(() => {
+    const timeouts = destacadosTimeouts.current;
     return () => {
-      for (const timeoutId of destacadosTimeouts.current.values()) {
+      for (const timeoutId of timeouts.values()) {
         clearTimeout(timeoutId);
       }
     };

@@ -121,7 +121,7 @@ export default async function Resultados({ params }) {
                   <div className="relative flex items-end justify-between gap-4">
                     <div className="flex min-w-0 flex-col gap-0.5">
                       <span className={`[overflow-wrap:anywhere] font-display leading-[.98] tracking-[0.02em] text-white ${tag.nameSize}`}>
-                        {r.jugador.nombre}
+                        <Link href={`/competidores/${r.jugador.id}`} className="hover:text-tekken-blue-400">{r.jugador.nombre}</Link>
                       </span>
                       <span className="text-[13px] uppercase tracking-[0.16em] text-white/50">
                         PUNTOS SUMADOS AL RANKING
@@ -182,7 +182,7 @@ export default async function Resultados({ params }) {
                     </span>
                   </div>
                   <span className={`[overflow-wrap:anywhere] font-display text-xl leading-[1.05] tracking-[0.03em] sm:text-[30px] ${top ? "text-white" : "text-white/90"}`}>
-                    {r.jugador.nombre}
+                    <Link href={`/competidores/${r.jugador.id}`} className="hover:text-tekken-blue-400">{r.jugador.nombre}</Link>
                   </span>
                   <span className="text-right font-display text-2xl leading-none text-primary-500 sm:text-[32px]">
                     {r.puntaje}

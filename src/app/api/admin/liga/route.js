@@ -52,7 +52,9 @@ export async function GET() {
       nombre: g.nombre,
       cerrado: g.cerrado,
       progreso: {
-        cargados: g.partidos.filter((p) => p.ganadorId != null).length,
+        cargados: g.partidos.filter(
+          (p) => p.ganadorId != null || p.resultadoTipo === "sancionado",
+        ).length,
         total: g.partidos.length,
       },
       liderNombre: g.tabla[0]?.nombre ?? null,

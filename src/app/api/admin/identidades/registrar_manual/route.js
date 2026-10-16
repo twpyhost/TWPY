@@ -35,7 +35,8 @@ export async function POST(req) {
       },
     });
 
-    revalidatePath("/competidores");
+    revalidatePath("/competidores", "layout");
+    revalidatePath("/sitemap.xml");
 
     return Response.json(
       { message: "Jugador registrado", player: jugador },
