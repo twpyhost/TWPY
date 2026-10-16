@@ -11,6 +11,7 @@ on:
 jobs:
   backup:
     runs-on: ubuntu-latest
+    environment: Production
     steps:
       - name: Install postgresql-client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
@@ -26,7 +27,7 @@ jobs:
         # tira "must be owner of table..." al restaurar). Lo que importa
         # preservar -- el archivo de la comunidad -- vive todo en public.
         run: |
-          : "${SUPABASE_DB_URL:?Configure the SUPABASE_DB_URL repository secret}"
+          : "${SUPABASE_DB_URL:?Configure SUPABASE_DB_URL in repository or Production environment secrets}"
           pg_dump "$SUPABASE_DB_URL" --schema=public --no-owner --no-privileges --clean --if-exists \
             > "$RUNNER_TEMP/supabase-public.sql"
           test -s "$RUNNER_TEMP/supabase-public.sql"
