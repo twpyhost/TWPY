@@ -4,6 +4,8 @@ import AnimatedCount from "@/components/ui/AnimatedCount";
 import LigaTabs from "./LigaTabs";
 import TablasGrupos from "./TablasGrupos";
 import CalendarioLiga from "./CalendarioLiga";
+import MisPartidosLiga from "./MisPartidosLiga";
+import { Suspense } from "react";
 
 import { getLiga } from "../utils/db";
 
@@ -66,6 +68,9 @@ export default async function LigaPage() {
         </div>
       </HeroSection>
 
+      <Suspense fallback={<p className="px-5 py-8 font-body text-white/60">Cargando selector de participantes…</p>}>
+        <MisPartidosLiga liga={liga} />
+      </Suspense>
       <LigaTabs
         grupos={<TablasGrupos grupos={liga.grupos} />}
         calendario={<CalendarioLiga fechas={liga.fechas} grupos={liga.grupos} />}

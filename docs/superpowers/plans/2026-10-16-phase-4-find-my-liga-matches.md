@@ -41,3 +41,6 @@ Unlinked participants and duplicate names; participant with no scheduled match o
 - [ ] Implement the selector/result view and safe client-side persistence. Avoid a server round trip to refetch the same league on every selection; use client URL state synchronized with back/forward. Hydration must render a stable initial state before applying storage. Full group/calendar views remain usable and server-shared data never depends on a visitor's local preference.
 - [ ] Repeat tests, inspect 390px fixtures/opponent labels and complete common phase checks. Verify no additional Supabase or EWGF request occurs when changing the selected participant.
 - [ ] Commit: `feat: find and remember my Liga matches`.
+
+
+**Local checkpoint (2026-10-17):** Tasks 1–2 implemented and reviewed. 39 targeted checks plus 5 post-review content/keyboard checks pass. Final combined lint/build/full regression gate remains pending. No schema or ranking changes.
