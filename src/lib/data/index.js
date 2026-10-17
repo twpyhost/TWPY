@@ -14,4 +14,7 @@ export const {
   getLiga,
   getPlayerProfile,
   getPublicPlayerTarget,
+  getRankingCuts,
+  getRankingAtCut,
+  getPlayerRankingHistory,
 } = db;

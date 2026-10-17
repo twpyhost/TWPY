@@ -55,3 +55,6 @@ Two tournaments on the same date; first cut of a season; missing snapshot versus
 - [ ] Implement cut selection and the profile timeline using existing design components. Use simple responsive SVG plus HTML table rather than adding a chart dependency. Clearly label the selected tournament/date and explain that history can change after corrected results/identities.
 - [ ] Repeat targeted specs, inspect keyboard/mobile chart/table behavior and complete common phase checks. Invalidate these reads when existing import/reimport/identity/recalculation actions change snapshots; add the appropriate path/tag invalidation at those existing write sites.
 - [ ] Commit: `feat: browse ranking cuts and player timelines`.
+
+
+**Local checkpoint (2026-10-17):** Tasks 1–2 implemented and reviewed. Full suite 233/233 before the final review fix; 8 targeted checks and production build pass afterward. Final combined regression run pending. Phases 2, 6 and 7 remain on standby. See docs/estado-desarrollo.md for evidence.

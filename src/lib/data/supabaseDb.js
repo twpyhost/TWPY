@@ -1,4 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
+import { createRankingHistoryReader } from "../rankingHistoryDb.js";
+
+export const getRankingCuts = (year) => createRankingHistoryReader(getClient()).getRankingCuts(year);
+export const getRankingAtCut = (selection) => createRankingHistoryReader(getClient()).getRankingAtCut(selection);
+export const getPlayerRankingHistory = (playerId, year) => createRankingHistoryReader(getClient()).getPlayerRankingHistory(playerId, year);
 
 import { getMovimiento } from "./movimiento";
 import { armarLiga } from "@/lib/ligaData";

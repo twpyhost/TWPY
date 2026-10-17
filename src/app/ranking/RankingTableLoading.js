@@ -1,4 +1,4 @@
-export default function RankingTableLoading({ temporada }) {
+export default function RankingTableLoading({ temporada, cutLabel }) {
   return (
     <section className="bg-black px-4 pb-16 pt-8 sm:px-8 lg:px-14">
       <div className="mx-auto flex min-h-[420px] max-w-[1240px] flex-col items-center justify-center gap-4 border border-white/[.08] bg-[rgba(3,10,14,.82)] backdrop-blur-[3px]">
@@ -7,7 +7,7 @@ export default function RankingTableLoading({ temporada }) {
           <div className="absolute inset-1.5 animate-ring-spin-rev rounded-full border border-dashed border-tekken-blue-400/30" />
         </div>
         <span className="font-display text-sm tracking-[0.22em] text-white/85">
-          CARGANDO TEMPORADA {temporada}&hellip;
+          {cutLabel ? `CARGANDO CORTE ${cutLabel}` : `CARGANDO TEMPORADA ${temporada}`}&hellip;
         </span>
       </div>
     </section>

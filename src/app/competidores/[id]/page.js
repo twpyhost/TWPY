@@ -4,9 +4,11 @@ import {
   getPlayerProfile,
   getPublicPlayerTarget,
   getFiltroAno,
+  getPlayerRankingHistory,
 } from "@/lib/data";
 import PlayerSummary from "@/components/players/PlayerSummary";
 import PlayerResults from "@/components/players/PlayerResults";
+import RankingTimeline from "@/components/players/RankingTimeline";
 
 export const revalidate = 60;
 
@@ -36,6 +38,7 @@ export default async function PlayerProfilePage({ params, searchParams }) {
     getFiltroAno(),
   ]);
   if (!profile) notFound();
+  const series = await getPlayerRankingHistory(id, profile.season);
   return (
     <>
       <PlayerSummary profile={profile} />
@@ -57,6 +60,7 @@ export default async function PlayerProfilePage({ params, searchParams }) {
             ))}
           </nav>
           <PlayerResults results={profile.results} />
+          <RankingTimeline series={series} year={profile.season} />
           <Link
             href="/competidores"
             className="w-fit font-display text-lg text-tekken-blue-400"

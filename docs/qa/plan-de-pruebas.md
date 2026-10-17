@@ -229,3 +229,9 @@ y ACL de RPC aprobados. Se conservan los GRANT/REVOKE; la copia de restore
 omite solo los defaults del rol gestionado supabase_admin. Procedimiento y
 evidencia en `docs/infrastructure.md` y el runbook de release. EWGF diferido;
 fase 2 no iniciada.
+
+## 2026-10-17 — Fase 3: historial del ranking (local)
+
+Cortes por torneo con URL compartible, orden fecha/ID bigint, comparación con el corte anterior de la misma temporada y estados distintos para selección inválida, snapshot faltante y puntos cero. Los perfiles incluyen gráfico sin líneas sobre huecos y tabla accesible. Ambas fuentes de datos exponen los mismos contratos; las lecturas no recalculan ni escriben snapshots. Las rutas de importación, identidades y recálculo ya invalidan ranking y perfiles.
+
+Verificación local: 8 unit/integración iniciales; 25 navegadores de ranking/perfiles; suite completa 233/233. La revisión detectó la selección durante carga: regresión falló y pasó con ID optimista. Los 8 checks dirigidos posteriores cubren además corrección de resultados/vinculación, cero real y ausencia de errores de hidratación. Build aprobado. Capturas 390px/1440px revisadas. El cierre conjunto repetirá la suite tras las siguientes fases. Sin migraciones nuevas.

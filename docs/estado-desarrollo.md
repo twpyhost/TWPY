@@ -112,3 +112,9 @@ Este registro complementa `TODO.todo` y `tech-debt-backlog.md`.
   `NODE_ENV=test` y `reuseExistingServer: false` siguen activos.
 - `.codex/` y `AGENTS.md` ya estaban sin seguimiento al empezar; se dejaron
   intactos. No incluirlos por accidente al preparar un commit.
+
+## 2026-10-17 — Fase 3: historial del ranking (local)
+
+Cortes por torneo con URL compartible, orden fecha/ID bigint, comparación con el corte anterior de la misma temporada y estados distintos para selección inválida, snapshot faltante y puntos cero. Los perfiles incluyen gráfico sin líneas sobre huecos y tabla accesible. Ambas fuentes de datos exponen los mismos contratos; las lecturas no recalculan ni escriben snapshots. Las rutas de importación, identidades y recálculo ya invalidan ranking y perfiles.
+
+Verificación local: 8 unit/integración iniciales; 25 navegadores de ranking/perfiles; suite completa 233/233. La revisión detectó la selección durante carga: regresión falló y pasó con ID optimista. Los 8 checks dirigidos posteriores cubren además corrección de resultados/vinculación, cero real y ausencia de errores de hidratación. Build aprobado. Capturas 390px/1440px revisadas. El cierre conjunto repetirá la suite tras las siguientes fases. Sin migraciones nuevas.

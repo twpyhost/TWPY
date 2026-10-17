@@ -5,8 +5,9 @@ import SeasonRibbon from "./SeasonRibbon";
 import RankingTable from "./RankingTable";
 import SearchParamTransitionProvider from "@/components/ui/SearchParamTransitionProvider";
 import RankingTableBoundary from "./RankingTableBoundary";
+import CutSelector from "./CutSelector";
 
-import { getFiltroAno, getRankingsCount } from "../utils/db";
+import { getFiltroAno, getRankingCuts, getRankingAtCut } from "../utils/db";
 
 // Revalida cada 60s para reflejar torneos nuevos sin redeploy
 // (y cachea las consultas a la BD).
@@ -26,7 +27,11 @@ export default async function RankingPage({ searchParams }) {
     requestedYear && anos.includes(requestedYear)
       ? requestedYear
       : (anos[0] ?? String(new Date().getFullYear()));
-  const count = await getRankingsCount(temporada);
+  const cuts = await getRankingCuts(temporada);
+  const historical = params?.torneo !== undefined;
+  const tournamentId = historical ? params.torneo : cuts.at(-1)?.tournamentId;
+  const selection = tournamentId ? await getRankingAtCut({ year: historical && requestedYear !== undefined ? requestedYear : temporada, tournamentId }) : null;
+  const count = selection?.rows.length ?? 0;
 
   const seasons = anos.map((year) => ({
     year,
@@ -35,7 +40,7 @@ export default async function RankingPage({ searchParams }) {
   }));
 
   return (
-    <SearchParamTransitionProvider value={temporada}>
+    <SearchParamTransitionProvider value={temporada} label={historical ? selection?.cut.title : null} selectionValue={historical ? selection?.cut.tournamentId ?? "invalid" : ""}>
       <HeroSection className="px-5 pb-11 pt-11 sm:px-8 sm:pt-16 lg:px-14 lg:pt-[84px]">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-6">
           <div className="flex flex-wrap items-end justify-between gap-8">
@@ -60,11 +65,13 @@ export default async function RankingPage({ searchParams }) {
           {seasons.length > 1 && (
             <SeasonTabs seasons={seasons} />
           )}
+          <CutSelector cuts={cuts} year={temporada} invalid={historical && !selection} />
+          {selection && <p className="font-body text-sm text-white/70">Después de <strong>{selection.cut.title}</strong> · {selection.cut.date.slice(0, 10)}. El historial puede cambiar después de corregir resultados o identidades.</p>}
         </div>
       </HeroSection>
 
       <RankingTableBoundary>
-        <RankingTable temporada={temporada} />
+        <RankingTable temporada={temporada} selection={selection} historical={historical} />
       </RankingTableBoundary>
     </SearchParamTransitionProvider>
   );

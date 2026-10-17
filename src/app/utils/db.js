@@ -7,4 +7,7 @@ export {
   getTorneoResultados,
   getRankingsCount,
   getLiga,
+  getRankingCuts,
+  getRankingAtCut,
+  getPlayerRankingHistory,
 } from "@/lib/data";

@@ -21,9 +21,9 @@ import { useSearchParamTransition } from "@/components/ui/SearchParamTransitionP
 // el label saltaba de una a la otra a mitad del loading. Ahora los dos leen
 // `temporadaMostrada` (optimista) del contexto.
 export default function RankingTableBoundary({ children }) {
-  const { isPending, valorMostrado: temporadaMostrada } = useSearchParamTransition();
+  const { isPending, valorMostrado: temporadaMostrada, etiquetaMostrada } = useSearchParamTransition();
 
-  const cargando = <RankingTableLoading temporada={temporadaMostrada} />;
+  const cargando = <RankingTableLoading temporada={temporadaMostrada} cutLabel={etiquetaMostrada} />;
 
   return isPending ? cargando : <Suspense fallback={cargando}>{children}</Suspense>;
 }

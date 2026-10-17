@@ -22,14 +22,18 @@ import { useRouter } from "next/navigation";
 // value from the server is already the new one, so it never flickers back.
 const SearchParamTransitionContext = createContext(null);
 
-export default function SearchParamTransitionProvider({ value, children }) {
+export default function SearchParamTransitionProvider({ value, label = null, selectionValue = "", children }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [valorMostrado, setValorOptimista] = useOptimistic(value);
+  const [etiquetaMostrada, setEtiquetaOptimista] = useOptimistic(label);
+  const [seleccionMostrada, setSeleccionOptimista] = useOptimistic(selectionValue);
 
-  function navigate(href, nextValue) {
+  function navigate(href, nextValue, nextLabel = null, nextSelection = "") {
     startTransition(() => {
       setValorOptimista(nextValue);
+      setEtiquetaOptimista(nextLabel);
+      setSeleccionOptimista(nextSelection);
       // scroll: false -- these are same-page filter changes, not page
       // changes; the default would jump back to the top mid-read.
       router.push(href, { scroll: false });
@@ -37,7 +41,7 @@ export default function SearchParamTransitionProvider({ value, children }) {
   }
 
   return (
-    <SearchParamTransitionContext.Provider value={{ isPending, navigate, valorMostrado }}>
+    <SearchParamTransitionContext.Provider value={{ isPending, navigate, valorMostrado, etiquetaMostrada, seleccionMostrada }}>
       {children}
     </SearchParamTransitionContext.Provider>
   );

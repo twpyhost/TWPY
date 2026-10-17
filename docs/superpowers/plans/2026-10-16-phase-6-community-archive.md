@@ -1,5 +1,7 @@
 # Community Archive Implementation Plan
 
+> **Status: STANDBY (2026-10-17).** Do not start or continue any work in this phase until the user explicitly instructs you to proceed with it. This hold overrides task checkboxes, phase sequencing, and cross-phase prerequisites, including any early execution of Phase 7 Task 1.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Preserve curated tournament/event recaps, credited photos and VOD links with stable public URLs and recoverable media.

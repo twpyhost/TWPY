@@ -3,6 +3,30 @@ import resultado from "@/resultado.json" with { type: "json" };
 import liga from "@/liga.json" with { type: "json" };
 
 import { getMovimiento } from "./movimiento";
+import { orderRankingCuts, projectRankingAtCut, projectRankingHistory } from "../rankingHistory.js";
+
+// Fixture snapshots for the mock source; production history only reads stored rows.
+function mockHistory(year) {
+  const cuts = orderRankingCuts(torneos.filter(t => t.fecha.split("-")[0] === year).map(t => ({
+    tournamentId: String(t.id), title: t.nombre, date: t.fecha, season: year, available: true,
+  })));
+  const totals = new Map();
+  const snapshots = [];
+  for (const cut of cuts) {
+    const result = resultado.torneos.find(t => String(t.id) === cut.tournamentId);
+    for (const player of result?.competidores ?? []) {
+      const previous = totals.get(player.id);
+      totals.set(player.id, { id: player.id, nombre: player.name, puntaje: (previous?.puntaje ?? 0) + player.score });
+    }
+    snapshots.push(...buildRanking(totals).map(r => ({ tournamentId: cut.tournamentId, playerId: String(r.id),
+      name: r.nombre, position: r.posicion, points: r.puntaje })));
+    cut.available = snapshots.some(s => s.tournamentId === cut.tournamentId);
+  }
+  return { cuts, snapshots };
+}
+export const getRankingCuts = async (year) => mockHistory(year).cuts;
+export const getRankingAtCut = async ({ year, tournamentId }) => projectRankingAtCut({ ...mockHistory(year), year, tournamentId });
+export const getPlayerRankingHistory = async (playerId, year) => projectRankingHistory({ ...mockHistory(year), playerId });
 import { armarLiga } from "@/lib/ligaData";
 import { projectPlayerProfile } from "../playerProfiles.js";
 

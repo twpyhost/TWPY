@@ -1,5 +1,7 @@
 # Community Growth Roadmap Implementation Plan
 
+> **Execution hold (2026-10-17): Phases 2, 6 and 7 are on STANDBY.** Do not start or continue any of these phases until the user explicitly instructs you to proceed with that phase. This overrides the sequence and prerequisite instructions below, including early execution of Phase 7 Task 1. Other phases may proceed when requested, skipping held phases; if their work requires a held deliverable, leave that dependent work pending until the user explicitly resumes the required phase.
+
 ## Ejecución local — 2026-10-16
 
 Fase 1 publicada el 2026-10-16 mediante PR #12 y verificada en https://twpy.vercel.app: 223/223 pruebas locales, lint/build y revisión independiente; ambas migraciones remotas aplicadas con sus versiones originales; navegación/308/404/sitemap/roles anónimos y UI 390px/1440px comprobados en producción. Backup real restaurado antes y después del release, incluidas ACL de los RPC. El secret está en el environment Production de GitHub; el workflow ya usa ese scope y conserva GRANT/REVOKE. EWGF diferido conforme al plan. Fases 2–7 no iniciadas. Ver `docs/releases/2026-10-16-public-player-profiles.md`.

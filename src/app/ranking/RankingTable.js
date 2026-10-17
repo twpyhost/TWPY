@@ -13,14 +13,18 @@ function tierBackgroundClass(posicion, index) {
   return index % 2 === 1 ? "bg-white/[.055]" : "bg-white/[.03]";
 }
 
-export default async function RankingTable({ temporada }) {
-  const rankings = await withMinDelay(getRankings(temporada));
+export default async function RankingTable({ temporada, selection, historical = false }) {
+  const rankings = await withMinDelay(selection === undefined ? getRankings(temporada) : Promise.resolve(selection?.rows.map(row => ({
+    id: row.playerId, posicion: row.position, nombre: row.name, puntaje: row.points, movimiento: row.movement,
+  })) ?? []));
+  if (historical && !selection) return <p role="status" className="mx-auto max-w-[1240px] px-5 py-10 font-body">Corte no válido para esta temporada. Elegí otro torneo.</p>;
+  if (selection && !selection.cut.available) return <p role="status" className="mx-auto max-w-[1240px] px-5 py-10 font-body">Historial no disponible para este torneo. No hay un snapshot registrado.</p>;
 
   return (
     <section className="bg-black px-4 pb-16 pt-8 sm:px-8 lg:px-14">
       <div className="mx-auto max-w-[1240px] lg:columns-2 lg:gap-x-8">
         {rankings.map((ranking, index) => {
-          const trend = TREND[ranking.movimiento] ?? TREND.IGUAL;
+          const trend = TREND[ranking.movimiento] ?? { icon: "—", className: "text-white/40" };
 
           return (
             <div
