@@ -3,6 +3,57 @@ import { getServiceClient } from "../../testSupabase.js";
 import sharp from "sharp";
 import { cleanupArchiveMedia } from "../../../src/lib/archiveMedia.js";
 const slug = `editor-${Date.now()}`;
+test("text remains editable when a recap has a large gallery", async ({
+  page,
+  request,
+}) => {
+  const response = await request.post("/api/admin/archivo", {
+    data: {
+      slug: `${slug}-large-gallery`,
+      title: "Galería extensa",
+      recap: "Texto original",
+      season: 8998,
+      date: "2026-10-18",
+      status: "draft",
+      vod_links: [],
+    },
+  });
+  expect(response.status()).toBe(201);
+  const entry = await response.json();
+  try {
+    await page.route(`**/api/admin/archivo/${entry.id}`, async (route) => {
+      if (route.request().method() !== "GET") return route.continue();
+      const original = await route.fetch();
+      const data = await original.json();
+      // Representative gallery metadata only; no files or extra DB rows needed.
+      data.assets = Array.from({ length: 150 }, (_, i) => ({
+        id: crypto.randomUUID(),
+        caption: "C".repeat(500),
+        credit: "A".repeat(200),
+        sort_order: i,
+        width: 100,
+        height: 70,
+        url: null,
+      }));
+      expect(Buffer.byteLength(JSON.stringify(data))).toBeGreaterThan(100000);
+      await route.fulfill({ response: original, json: data });
+    });
+    await page.goto("/admin/archivo");
+    await page.getByRole("button", { name: "Galería extensa" }).click();
+    await page
+      .getByRole("textbox", { name: "Crónica", exact: true })
+      .fill("Texto actualizado");
+    await page.getByRole("button", { name: "Guardar borrador" }).click();
+    await expect(page.getByRole("status")).toContainText("Guardado");
+    const saved = await request.get(`/api/admin/archivo/${entry.id}`);
+    expect((await saved.json()).recap).toBe("Texto actualizado");
+  } finally {
+    await getServiceClient()
+      .from("archive_entries")
+      .delete()
+      .eq("id", entry.id);
+  }
+});
 test.afterAll(async () => {
   const db = getServiceClient(),
     row = (

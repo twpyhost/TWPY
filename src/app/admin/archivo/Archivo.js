@@ -73,7 +73,11 @@ export default function Archivo() {
   async function save(status, success) {
     await action(async () => {
       const body = {
-        ...entry,
+        slug: entry.slug,
+        title: entry.title,
+        recap: entry.recap,
+        season: entry.season,
+        date: entry.date,
         status,
         tournament_id: entry.tournament_id || null,
         vod_links: entry.vod_links.map((url) => url.trim()).filter(Boolean),
