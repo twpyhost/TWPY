@@ -56,21 +56,44 @@ test("editor saves a private draft, reloads, publishes and retracts with stable 
   })
     .png()
     .toBuffer();
-  await page
-    .getByLabel("Imagen", { exact: true })
-    .setInputFiles({
-      name: "fixture.png",
-      mimeType: "image/png",
-      buffer: bytes,
-    });
+  await page.getByLabel("Imagen", { exact: true }).setInputFiles({
+    name: "fixture.png",
+    mimeType: "image/png",
+    buffer: bytes,
+  });
   await page
     .getByLabel("Leyenda de nueva foto", { exact: true })
     .fill("Leyenda editorial");
   await page
     .getByLabel("Crédito de nueva foto", { exact: true })
     .fill("Crédito editorial");
+  await page
+    .getByRole("textbox", { name: "Crónica", exact: true })
+    .fill("Texto pendiente");
   await page.getByRole("button", { name: "Subir foto", exact: true }).click();
   await expect(page.getByRole("status")).toContainText("Foto guardada");
+  await expect
+    .soft(page.getByRole("textbox", { name: "Crónica", exact: true }))
+    .toHaveValue("Texto pendiente");
+  await page
+    .getByRole("textbox", { name: "Crónica", exact: true })
+    .fill("Texto y foto intercalados");
+  await page
+    .getByRole("textbox", { name: "Leyenda", exact: true })
+    .fill("Leyenda guardada");
+  await page.getByRole("button", { name: "Guardar leyenda y crédito" }).click();
+  await expect(page.getByRole("status")).toContainText("Crédito guardado");
+  await expect
+    .soft(page.getByRole("textbox", { name: "Crónica", exact: true }))
+    .toHaveValue("Texto y foto intercalados");
+  await page
+    .getByRole("textbox", { name: "Leyenda", exact: true })
+    .fill("Leyenda pendiente");
+  await page.getByRole("button", { name: "Guardar borrador" }).click();
+  await expect(page.getByRole("status")).toContainText("Guardado");
+  await expect
+    .soft(page.getByRole("textbox", { name: "Leyenda", exact: true }))
+    .toHaveValue("Leyenda pendiente");
   let response = await page.request.get(`/archivo/${slug}`);
   expect(response.status()).toBe(404);
   expect(await response.text()).not.toContain("Texto editorial");

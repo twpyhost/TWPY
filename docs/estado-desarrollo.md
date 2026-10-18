@@ -1,6 +1,6 @@
 # Estado para retomar el desarrollo
 
-Actualizado: 2026-10-17. Fase 1 publicada; fases 3–5 implementadas y verificadas localmente en `feat/next-phases`. Fase 6 retomada e implementada localmente; cierre de verificación en curso. Publicación pendiente. Fases 2 y 7 en standby.
+Actualizado: 2026-10-17. Fase 1 publicada; fases 3–5 implementadas y verificadas localmente en `feat/next-phases`. Fase 6 implementada y verificada localmente (264/264, lint/build correctos). Publicación pendiente. Fases 2 y 7 en standby.
 Este registro complementa `TODO.todo` y `tech-debt-backlog.md`.
 
 ## Roadmap de crecimiento — ejecución de fase 1
@@ -132,3 +132,12 @@ Verificación final tras los fixes de revisión: `npm run lint` aprobado; `npm r
 La revisión de fase 5 produjo dos hallazgos antes de interrumpirse por límite del revisor; el cierre del diff fue autorrevisión. Ambos hallazgos quedaron reproducidos y corregidos: fallback local según cmap sin HTTP para caracteres ausentes, y compartir con archivo preparado y un segundo clic. Los nombres completos siguen en las páginas; imágenes usan ? para grafemas/emoji sin soporte y elipsis para nombres largos. Las pruebas de compartir simulan la API nativa; no se afirma compatibilidad específica con dispositivos reales sin esa revisión.
 
 Publicación y aprobación visual del diseño de tarjetas pendientes de decisión del usuario. Runbook: `docs/releases/2026-10-17-phases-3-5.md`. Se registraron dos hallazgos heredados no bloqueantes en `docs/tech-debt-backlog.md` (precisión de IDs de torneos y desempate por ID en lectores latest antiguos).
+
+
+## 2026-10-17 — Fase 6: archivo comunitario (local)
+
+Archivo público y editor de admin, borrador/publicación/retiro, URL estable, crónica en texto, temporada, torneo opcional SET NULL, VODs HTTPS y fotos con leyendas/créditos/orden. Bucket privado, decodificación/re-encoding, 2 MiB/foto, 100 MiB con reservas serializadas y firmas de 900 segundos. Backup empareja snapshot SQL, metadata y bytes inmutables con manifiesto SHA-256; retención de medios 14 días. Dump anterior conserva ACL, frecuencia semanal, retención 90 días y reporte; ambos artefactos se cifran por ser público el repo. Keep-alive intacto.
+
+Verificación final: 264/264 (3.6m), lint and production build passed; local Supabase only. Reconstrucción completa y restore a DB/bucket temporales aprobados; layouts 390/990/1440 inspeccionados. Revisión independiente: dos Important reproducidos/corregidos (outage al firmar fotos no oculta texto; acciones de medios/texto conservan ediciones pendientes), sin Critical/Minor. Advisors: solo hallazgos heredados. Runbook: `docs/releases/2026-10-17-phase-6.md`.
+
+Fases 2/7 siguen en standby; eventos pendientes de fase 2. Publicación, clave de cifrado respaldada offline, presupuesto global de artefactos/Packages y habilitación de backups de medios pendientes. Sin cambios remotos.

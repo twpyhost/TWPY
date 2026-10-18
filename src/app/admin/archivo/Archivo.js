@@ -58,6 +58,18 @@ export default function Archivo() {
   async function open(id) {
     setEntry(await api(`/api/admin/archivo/${id}`));
   }
+  async function refreshMedia(id) {
+    const row = await api(`/api/admin/archivo/${id}`);
+    setEntry((current) => ({
+      ...current,
+      assets: row.assets.map((asset) => {
+        const pending = current.assets.find((a) => a.id === asset.id);
+        return pending
+          ? { ...asset, caption: pending.caption, credit: pending.credit }
+          : asset;
+      }),
+    }));
+  }
   async function save(status, success) {
     await action(async () => {
       const body = {
@@ -74,7 +86,15 @@ export default function Archivo() {
           body: JSON.stringify(body),
         },
       );
-      await open(row.id);
+      // The text save does not discard pending caption/credit edits, nor round
+      // a decimal tournament ID through the JSON response's numeric value.
+      setEntry((current) => ({
+        ...current,
+        id: row.id,
+        status: row.status,
+        ever_published: row.ever_published,
+        updated_at: row.updated_at,
+      }));
     }, success);
   }
   async function media(method, body) {
@@ -83,7 +103,7 @@ export default function Archivo() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    await open(entry.id);
+    await refreshMedia(entry.id);
   }
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-8">
@@ -249,8 +269,10 @@ export default function Archivo() {
               <section className="mt-8 border-t border-white/20 pt-6">
                 <h2 className="font-display text-2xl">Fotos y créditos</h2>
                 <p className="mb-4 text-sm text-white/60">
-                  Cada foto publicada necesita leyenda y crédito. Usá fotos con
-                  permiso de sus autores.
+                  Cada foto publicada necesita leyenda y crédito. Guardá cada
+                  foto con su botón de leyenda y crédito; el guardado de la
+                  crónica conserva los cambios de fotos pendientes. Usá fotos
+                  con permiso de sus autores.
                 </p>
                 <div className="space-y-6">
                   {entry.assets.map((a, index) => (
@@ -393,7 +415,7 @@ export default function Archivo() {
                         });
                         setCaption("");
                         setCredit("");
-                        await open(entry.id);
+                        await refreshMedia(entry.id);
                       }, "Foto guardada")
                     }
                   >

@@ -5,6 +5,7 @@ import {
   publicArchiveEntry,
 } from "../../src/lib/archive.js";
 import { validateArchiveAsset } from "../../src/lib/archiveMedia.js";
+import { createArchiveData } from "../../src/lib/archiveDb.js";
 
 const entry = {
   slug: "final-2026",
@@ -16,6 +17,85 @@ const entry = {
   tournament_id: "9007199254740993",
   vod_links: ["https://youtu.be/example"],
 };
+test("signing outage keeps published text and credits, but still rejects a retracted entry", async () => {
+  for (const retract of [false, true]) {
+    for (const networkError of [false, true]) {
+      let reads = 0;
+      const publicClient = {
+        from(table) {
+          const query = {
+            select() {
+              return this;
+            },
+            eq() {
+              return this;
+            },
+            order() {
+              return this;
+            },
+            async maybeSingle() {
+              reads++;
+              return {
+                data:
+                  reads > 1 && retract ? null : { ...entry, id: "entry-id" },
+                error: null,
+              };
+            },
+            then(resolve, reject) {
+              return Promise.resolve({
+                data:
+                  table === "archive_assets"
+                    ? [
+                        {
+                          id: "photo",
+                          caption: "Final",
+                          credit: "Community",
+                          storage_path: "private.png",
+                          width: 4,
+                          height: 3,
+                        },
+                      ]
+                    : [],
+                error: null,
+              }).then(resolve, reject);
+            },
+          };
+          return query;
+        },
+      };
+      const service = {
+        storage: {
+          from: () => ({
+            async createSignedUrls() {
+              if (networkError) throw new Error("network unavailable");
+              return { data: null, error: { message: "Storage 503" } };
+            },
+          }),
+        },
+      };
+      const row = await createArchiveData(
+        publicClient,
+        service,
+      ).getArchiveEntry(entry.slug);
+      expect(reads).toBe(2);
+      if (retract) expect(row).toBeNull();
+      else {
+        expect(row.recap).toBe(entry.recap);
+        expect(row.assets).toEqual([
+          {
+            id: "photo",
+            caption: "Final",
+            credit: "Community",
+            width: 4,
+            height: 3,
+            url: null,
+            expiresAt: null,
+          },
+        ]);
+      }
+    }
+  }
+});
 test("archive accepts plain text and exact IDs, rejects unsafe links and invalid dates", () => {
   expect(validateArchiveEntry(entry).valid).toBe(true);
   for (const change of [

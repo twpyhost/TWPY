@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   backup:
-    # Account-wide Actions + Packages usage must be checked before enabling.
+    # Repository-level vars: check account-wide Actions + Packages usage first.
     if: vars.ARCHIVE_BACKUPS_ENABLED == 'true' && vars.ARCHIVE_BACKUP_BUDGET_VERIFIED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15

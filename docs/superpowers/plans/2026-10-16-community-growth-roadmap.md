@@ -102,4 +102,7 @@ These are recorded inputs, not reasons to interrupt creating the roadmap:
 
 ## Local checkpoint — 2026-10-17
 
-Phases 3–5 implemented and verified in feat/next-phases: 251/251 tests, lint and production build pass. Production release boxes above remain pending. Phases 2, 6 and 7 remain on standby until an explicit instruction for that phase. Release evidence and review decisions: docs/releases/2026-10-17-phases-3-5.md.
+Phases 3–5 implemented and verified in feat/next-phases: 251/251 tests, lint and production build pass. Production release boxes above remain pending. Phases 2 and 7 remain on standby; Phase 6 was subsequently resumed by the user. Release evidence and review decisions: docs/releases/2026-10-17-phases-3-5.md.
+
+
+Phase 6 local checkpoint: 264/264 (3.6m), lint and production build passed; local Supabase only. Fresh review fixes, full migration reconstruction and paired DB/media restore verified. Production release box remains pending, including backup key/budget configuration and curated content approval. Evidence: docs/releases/2026-10-17-phase-6.md.

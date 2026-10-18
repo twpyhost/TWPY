@@ -57,18 +57,23 @@ export function createArchiveData(publicClient, serviceClient) {
         .order("id"),
     );
     if (assets.length) {
-      const signed = checked(
-        await serviceClient.storage.from(ARCHIVE_BUCKET).createSignedUrls(
-          assets.map((a) => a.storage_path),
-          ARCHIVE_TTL,
-        ),
-      );
+      let signed = [];
+      try {
+        const result = await serviceClient.storage
+          .from(ARCHIVE_BUCKET)
+          .createSignedUrls(
+            assets.map((a) => a.storage_path),
+            ARCHIVE_TTL,
+          );
+        if (!result.error) signed = result.data ?? [];
+      } catch {
+        // A Storage outage must not hide the published recap or photo credits.
+      }
       const expiresAt = new Date(Date.now() + ARCHIVE_TTL * 1000).toISOString();
-      row.assets = assets.map((a, i) => ({
-        ...a,
-        url: signed[i]?.signedUrl ?? null,
-        expiresAt,
-      }));
+      row.assets = assets.map((a, i) => {
+        const url = signed[i]?.error ? null : (signed[i]?.signedUrl ?? null);
+        return { ...a, url, expiresAt: url ? expiresAt : null };
+      });
     }
     // A retraction during signing must not return fresh URLs/content.
     const stillPublished = checked(
