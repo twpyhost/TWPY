@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { name: "TORNEOS", href: "/torneos" },
   { name: "LIGA", href: "/liga" },
   { name: "COMPETIDORES", href: "/competidores" },
+  { name: "ARCHIVO", href: "/archivo" },
   { name: "REGLAMENTO", href: "/reglamento" },
 ];
 
@@ -46,15 +47,15 @@ export default function Navbar() {
           className={`${
             isOpen
               ? "flex translate-y-0 opacity-100"
-              : "pointer-events-none flex -translate-y-2 opacity-0 min-[880px]:pointer-events-auto min-[880px]:translate-y-0 min-[880px]:opacity-100"
-          } absolute left-0 right-0 top-[76px] flex-col gap-1 border-b border-white/10 bg-black px-5 py-4 shadow-lg transition-all duration-300 ease-in-out min-[880px]:static min-[880px]:flex-row min-[880px]:items-center min-[880px]:gap-8 min-[880px]:border-0 min-[880px]:bg-transparent min-[880px]:p-0 min-[880px]:shadow-none`}
+              : "pointer-events-none flex -translate-y-2 opacity-0 min-[1080px]:pointer-events-auto min-[1080px]:translate-y-0 min-[1080px]:opacity-100"
+          } absolute left-0 right-0 top-[76px] flex-col gap-1 border-b border-white/10 bg-black px-5 py-4 shadow-lg transition-all duration-300 ease-in-out min-[1080px]:static min-[1080px]:flex-row min-[1080px]:items-center min-[1080px]:gap-8 min-[1080px]:border-0 min-[1080px]:bg-transparent min-[1080px]:p-0 min-[1080px]:shadow-none`}
         >
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setIsOpen(false)}
-              className={`border-b-2 py-2 font-display text-[19px] italic tracking-[0.05em] transition-colors duration-300 min-[880px]:py-0 ${
+              className={`border-b-2 py-2 font-display text-[19px] italic tracking-[0.05em] transition-colors duration-300 min-[1080px]:py-0 ${
                 pathname === item.href
                   ? "border-primary-500 text-primary-500 [text-shadow:0_0_14px_rgba(245,10,100,.65)]"
                   : "border-transparent text-white hover:border-primary-500 hover:text-primary-500"
@@ -66,7 +67,7 @@ export default function Navbar() {
           <Link
             href={auth.href}
             onClick={() => setIsOpen(false)}
-            className={`border-b-2 py-2 font-display text-[19px] italic tracking-[0.05em] transition-colors duration-300 min-[880px]:py-0 ${
+            className={`border-b-2 py-2 font-display text-[19px] italic tracking-[0.05em] transition-colors duration-300 min-[1080px]:py-0 ${
               pathname === auth.href
                 ? "border-tekken-blue-400 text-tekken-blue-400 [text-shadow:0_0_14px_rgba(63,209,231,.65)]"
                 : "border-transparent text-white/75 hover:border-tekken-blue-400 hover:text-tekken-blue-400"
@@ -81,7 +82,7 @@ export default function Navbar() {
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Menú"
           aria-expanded={isOpen}
-          className="relative flex h-11 w-11 items-center justify-center border border-white/[.14] bg-white/[.06] text-white min-[880px]:hidden"
+          className="relative flex h-11 w-11 items-center justify-center border border-white/[.14] bg-white/[.06] text-white min-[1080px]:hidden"
         >
           {/* Las tres barras comparten la misma base -- incluido
               `-translate-y-1/2`. Sin esa compensacion, `top` ubica el borde

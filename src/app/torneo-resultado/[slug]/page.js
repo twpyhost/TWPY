@@ -11,6 +11,8 @@ import { withMinDelay } from "@/lib/withMinDelay";
 import { fadeDelay } from "@/lib/fadeDelay";
 import twpyLogo from "../../../../public/images/LOGO TWPY/PNG/TWPY LOGO VARIANTES-04.png";
 import ShareResults from "@/components/share/ShareResults";
+import { getArchiveEntries } from "@/lib/data";
+export const dynamic = "force-dynamic";
 
 const MESES = [
   "ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
@@ -61,6 +63,7 @@ export default async function Resultados({ params }) {
   }
 
   const torneoInfo = torneos.find((t) => String(t.torneo_id) === String(slug));
+  const archive = await getArchiveEntries({ tournamentId: slug });
   const fecha = torneoInfo ? parseFecha(torneoInfo.fecha_torneo) : null;
   const nombreTorneo = resultados[0].torneo.nombre_torneo;
   const totalPuntos = resultados.reduce((sum, r) => sum + r.puntaje, 0);
@@ -105,6 +108,7 @@ export default async function Resultados({ params }) {
           </div>
         </div>
       </HeroSection>
+      {!!archive.length && <section className="mx-auto max-w-[1240px] px-5 py-6"><h2 className="font-display text-2xl">Crónicas de este torneo</h2>{archive.map(e => <Link key={e.id} href={`/archivo/${e.slug}`} className="mr-4 text-tekken-blue-400 underline">{e.title}</Link>)}</section>}
 
       {podio.length === 3 && (
         <section className="relative z-[3] bg-black px-5 sm:px-8 lg:px-14">

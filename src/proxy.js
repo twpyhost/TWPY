@@ -1,11 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
-import { getPublicPlayerTarget } from "@/lib/data";
+import { getPublicPlayerTarget, getPublicArchiveTarget } from "@/lib/data";
 
 // Refresca el token de Supabase Auth en cada request para que los Server
 // Components (que no pueden escribir cookies) siempre vean una sesion
 // valida. Patron estandar de @supabase/ssr.
 export async function proxy(request) {
+  const archivePath = request.nextUrl.pathname.match(/^\/archivo\/([^/]+)$/);
+  if (archivePath && !await getPublicArchiveTarget(archivePath[1])) {
+    return NextResponse.rewrite(new URL("/__archive-not-found", request.url), { status: 404, headers: { "Cache-Control": "no-store" } });
+  }
   const profilePath = request.nextUrl.pathname.match(/^\/competidores\/([^/]+)$/);
   if (profilePath) {
     // Resolve before the loading boundary streams headers: missing profiles

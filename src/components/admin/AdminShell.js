@@ -10,6 +10,7 @@ import StatusDot from "@/components/ui/StatusDot";
 // `soloAdmin: true` = seccion exclusiva del superusuario. El rol 'liga' solo
 // ve Liga (ver migracion 0014 y requireSuperusuario()).
 const NAV_ITEMS = [
+  { href: "/admin/archivo", label: "Archivo", soloAdmin: true, icon: <span aria-hidden="true">▤</span> },
   {
     href: "/admin/identidades",
     label: "Identidades",

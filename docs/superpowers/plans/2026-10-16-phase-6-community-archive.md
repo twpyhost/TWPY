@@ -1,6 +1,6 @@
 # Community Archive Implementation Plan
 
-> **Status: STANDBY (2026-10-17).** Do not start or continue any work in this phase until the user explicitly instructs you to proceed with it. This hold overrides task checkboxes, phase sequencing, and cross-phase prerequisites, including any early execution of Phase 7 Task 1.
+> **Status: IN PROGRESS (2026-10-17).** The user resumed Phase 6 with “next phase” after Phases 3–5. Phases 2 and 7 remain on standby; event linking is pending Phase 2. Work is local until publication is explicitly authorized.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

@@ -1,6 +1,6 @@
 # Estado para retomar el desarrollo
 
-Actualizado: 2026-10-17. Fase 1 publicada; fases 3–5 implementadas y verificadas localmente en `feat/next-phases`. Publicación pendiente. Fases 2, 6 y 7 en standby.
+Actualizado: 2026-10-17. Fase 1 publicada; fases 3–5 implementadas y verificadas localmente en `feat/next-phases`. Fase 6 retomada e implementada localmente; cierre de verificación en curso. Publicación pendiente. Fases 2 y 7 en standby.
 Este registro complementa `TODO.todo` y `tech-debt-backlog.md`.
 
 ## Roadmap de crecimiento — ejecución de fase 1

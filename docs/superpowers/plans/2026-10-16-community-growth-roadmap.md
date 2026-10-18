@@ -1,6 +1,6 @@
 # Community Growth Roadmap Implementation Plan
 
-> **Execution hold (2026-10-17): Phases 2, 6 and 7 are on STANDBY.** Do not start or continue any of these phases until the user explicitly instructs you to proceed with that phase. This overrides the sequence and prerequisite instructions below, including early execution of Phase 7 Task 1. Other phases may proceed when requested, skipping held phases; if their work requires a held deliverable, leave that dependent work pending until the user explicitly resumes the required phase.
+> **Execution hold (updated 2026-10-17): Phases 2 and 7 are on STANDBY.** Phase 6 was explicitly resumed by the user after Phases 3–5. Do not start or continue Phase 2 or 7 until the user instructs you to proceed with that phase; this includes early Phase 7 Task 1. Work that requires a held deliverable remains pending.
 
 ## Ejecución local — 2026-10-16
 
