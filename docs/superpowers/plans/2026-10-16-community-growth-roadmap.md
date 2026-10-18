@@ -1,5 +1,7 @@
 # Community Growth Roadmap Implementation Plan
 
+> **Execution hold (updated 2026-10-17): Phases 2 and 7 are on STANDBY.** Phase 6 was explicitly resumed by the user after Phases 3–5. Do not start or continue Phase 2 or 7 until the user instructs you to proceed with that phase; this includes early Phase 7 Task 1. Work that requires a held deliverable remains pending.
+
 ## Ejecución local — 2026-10-16
 
 Fase 1 publicada el 2026-10-16 mediante PR #12 y verificada en https://twpy.vercel.app: 223/223 pruebas locales, lint/build y revisión independiente; ambas migraciones remotas aplicadas con sus versiones originales; navegación/308/404/sitemap/roles anónimos y UI 390px/1440px comprobados en producción. Backup real restaurado antes y después del release, incluidas ACL de los RPC. El secret está en el environment Production de GitHub; el workflow ya usa ese scope y conserva GRANT/REVOKE. EWGF diferido conforme al plan. Fases 2–7 no iniciadas. Ver `docs/releases/2026-10-16-public-player-profiles.md`.
@@ -96,3 +98,11 @@ These are recorded inputs, not reasons to interrupt creating the roadmap:
 - [ ] Phase 5 released and verified.
 - [ ] Phase 6 released and verified, including a media restore.
 - [ ] Phase 7 released only after commercial hosting proof/cutover, independent keep-alive and explicit sponsor agreement activation.
+
+
+## Local checkpoint — 2026-10-17
+
+Phases 3–5 implemented and verified in feat/next-phases: 251/251 tests, lint and production build pass. Production release boxes above remain pending. Phases 2 and 7 remain on standby; Phase 6 was subsequently resumed by the user. Release evidence and review decisions: docs/releases/2026-10-17-phases-3-5.md.
+
+
+Phase 6 local checkpoint: 264/264 (3.6m), lint and production build passed; local Supabase only. Fresh review fixes, full migration reconstruction and paired DB/media restore verified. Production release box remains pending, including backup key/budget configuration and curated content approval. Evidence: docs/releases/2026-10-17-phase-6.md.

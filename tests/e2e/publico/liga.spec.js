@@ -10,6 +10,7 @@ import { test, expect } from "@playwright/test";
 import { getServiceClient } from "../../testSupabase.js";
 import { sembrarLiga } from "../../../src/lib/ligaSeed.js";
 import fixture from "../../../scripts/data/liga-2026-fixture.json" with { type: "json" };
+import { nombreJugador } from "../fixtures/datos.js";
 
 // /liga abre en la pestana GRUPOS: el calendario esta en el DOM pero oculto
 // (atributo `hidden`), asi que hay que cambiar de pestana antes de aseverar
@@ -83,6 +84,78 @@ test.describe("TS-LIGA | Liga publica", () => {
   test.afterAll(async () => {
     // fechas/grupos/participantes/partidos caen por cascade.
     await supabase.from("ligas").delete().eq("id", ligaId).throwOnError();
+  });
+
+  test("TC-LIGA-MIS-001 | seleccion local, enlace, recarga y atras sin nuevas consultas", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/liga?origen=prueba");
+    const selector = page.getByLabel("Elegí tu participante");
+    const options = await selector.locator("option").evaluateAll(items => items.map(item => item.value).filter(Boolean));
+    expect(options.length).toBeGreaterThan(2);
+    let requests = 0;
+    page.on("request", request => { if (request.url().includes("_rsc=") || request.url().includes("/rest/v1/")) requests++; });
+    await selector.selectOption(options[0]);
+    await expect(page).toHaveURL(new RegExp(`participante=${options[0]}`));
+    await expect(page).toHaveURL(/origen=prueba/);
+    await expect(page.getByRole("region", { name: "Mis partidos de Liga" })).toBeVisible();
+    const personal = page.getByRole("region", { name: "Mis partidos de Liga" });
+    await expect(personal.getByText("Wario", { exact: true })).toBeVisible();
+    await expect(personal.getByRole("heading", { name: "Pendientes" })).toBeVisible();
+    await expect(personal.getByText("vs. Rox", { exact: true })).toBeVisible();
+    await expect(personal.getByText(/^Descansa: fecha 2/)).toBeVisible();
+    await expect(page.getByRole("region", { name: "Mis partidos de Liga" }).getByRole("link", { name: "Ver perfil" })).toHaveCount(0);
+    await selector.selectOption(options[1]);
+    expect(requests).toBe(0);
+    await page.goBack();
+    await expect(selector).toHaveValue(options[0]);
+    await page.goForward();
+    await expect(selector).toHaveValue(options[1]);
+    await page.goBack();
+    await page.reload();
+    await expect(selector).toHaveValue(options[0]);
+    await page.goto("/liga");
+    await expect(selector).toHaveValue(options[0]);
+    await selector.selectOption("");
+    await page.reload();
+    await expect(selector).toHaveValue("");
+    await page.setViewportSize({ width: 390, height: 844 });
+    await selector.selectOption(options[0]);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.getByRole("region", { name: "Mis partidos de Liga" }).screenshot({ path: ".superpowers/my-liga-mobile.png", animations: "disabled" });
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.getByRole("region", { name: "Mis partidos de Liga" }).screenshot({ path: ".superpowers/my-liga-desktop.png", animations: "disabled" });
+  });
+
+  test("TC-LIGA-MIS-002 | enlace invalido, preferencia obsoleta y storage bloqueado", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("twpy:liga:liga-invitacional-2026:participante", "999999999"));
+    await page.goto("/liga?participante=desconocido");
+    await expect(page.getByRole("alert").filter({ hasText: "El participante del enlace" })).toBeVisible();
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("twpy:liga:liga-invitacional-2026:participante"))).toBeNull();
+    await page.addInitScript(() => Object.defineProperty(window, "localStorage", { get() { throw new Error("Bloqueado"); } }));
+    await page.goto("/liga");
+    const selector = page.getByLabel("Elegí tu participante");
+    await expect(selector).toBeEnabled();
+    await selector.focus();
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await expect(selector).not.toHaveValue("");
+    await expect(page).toHaveURL(/participante=\d+/);
+    await expect(page.getByRole("region", { name: "Mis partidos de Liga" }).getByRole("heading", { name: "Pendientes" })).toBeVisible();
+  });
+
+  test("TC-LIGA-MIS-003 | resultados A/B, sancion y perfil canonico", async ({ page }) => {
+    const group = (await supabase.from("liga_grupos").select("id").eq("liga_id", ligaId).eq("numero", 2).single().throwOnError()).data;
+    const matches = (await supabase.from("liga_partidos").select("participante_a_id,participante_b_id").eq("grupo_id", group.id).order("id").limit(3).throwOnError()).data;
+    const player = (await supabase.from("players").select("id").eq("display_name", nombreJugador(1)).single().throwOnError()).data;
+    await supabase.from("liga_participantes").update({ player_id: player.id }).eq("id", matches[0].participante_a_id).throwOnError();
+    const personal = page.getByRole("region", { name: "Mis partidos de Liga" });
+    await page.goto(`/liga?participante=${matches[0].participante_a_id}`);
+    await expect(personal.getByText("3–1", { exact: true })).toBeVisible();
+    await expect(personal.getByRole("link", { name: "Ver perfil" })).toHaveAttribute("href", `/competidores/${player.id}`);
+    await page.getByLabel("Elegí tu participante").selectOption(String(matches[1].participante_b_id));
+    await expect(personal.getByText("3–2", { exact: true })).toBeVisible();
+    await page.getByLabel("Elegí tu participante").selectOption(String(matches[2].participante_a_id));
+    await expect(personal.getByText("Sancionado · 0–0", { exact: true })).toBeVisible();
   });
 
   /**

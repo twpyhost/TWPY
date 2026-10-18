@@ -1,4 +1,15 @@
 import { createClient } from "@supabase/supabase-js";
+import { createRankingHistoryReader } from "../rankingHistoryDb.js";
+import { createArchiveData } from "../archiveDb.js";
+import { getSupabaseAdmin } from "../supabaseAdmin.js";
+export const getArchiveEntries = (filters) => createArchiveData(getClient(), getSupabaseAdmin()).getArchiveEntries(filters);
+export const getArchiveEntry = (slug) => createArchiveData(getClient(), getSupabaseAdmin()).getArchiveEntry(slug);
+export const getPublicArchiveTarget = (slug) => createArchiveData(getClient(), null).getPublicArchiveTarget(slug);
+export const getPublishedArchiveMedia = (entryId, assetId) => createArchiveData(getClient(), getSupabaseAdmin()).getPublishedArchiveMedia(entryId, assetId);
+
+export const getRankingCuts = (year) => createRankingHistoryReader(getClient()).getRankingCuts(year);
+export const getRankingAtCut = (selection) => createRankingHistoryReader(getClient()).getRankingAtCut(selection);
+export const getPlayerRankingHistory = (playerId, year) => createRankingHistoryReader(getClient()).getPlayerRankingHistory(playerId, year);
 
 import { getMovimiento } from "./movimiento";
 import { armarLiga } from "@/lib/ligaData";
@@ -35,6 +46,23 @@ const getTorneos = async () => {
     temporada: String(torneo.temporada),
     url_challonge: torneo.url_challonge ?? null,
   }));
+};
+
+export const getTournamentCardSource = async (id) => {
+  if (!isPublicId(id)) return null;
+  const supabase = getClient();
+  const { data: tournament, error } = await supabase.from("torneos")
+    .select("id::text,nombre,fecha_inicio,temporada").eq("id", id).maybeSingle();
+  if (error) throw error;
+  if (!tournament) return null;
+  const { data: results, error: resultsError } = await supabase.from("torneo_resultados_publicos")
+    .select("player_id::text,jugador_nombre,posicion,puntaje").eq("torneo_id", id).order("posicion");
+  if (resultsError) throw resultsError;
+  return {
+    tournament: { torneo_id: tournament.id, nombre_torneo: tournament.nombre,
+      fecha_torneo: tournament.fecha_inicio, temporada: String(tournament.temporada) },
+    results: results.map(r => ({ jugador: { id: r.player_id, nombre: r.jugador_nombre }, posicion: r.posicion, puntaje: r.puntaje })),
+  };
 };
 
 const getTorneoResultados = async (torneoId) => {
@@ -95,7 +123,7 @@ const getRankings = async (temporada) => {
   // para calcular el movimiento.
   let torneosQuery = supabase
     .from("torneos")
-    .select("id, temporada")
+    .select("id::text, temporada")
     .order("temporada", { ascending: false })
     .order("fecha_inicio", { ascending: false })
     .order("id", { ascending: false });
@@ -163,7 +191,7 @@ const getRankingsCount = async (temporada) => {
 
   let torneosQuery = supabase
     .from("torneos")
-    .select("id, temporada")
+    .select("id::text, temporada")
     .order("temporada", { ascending: false })
     .order("fecha_inicio", { ascending: false })
     .order("id", { ascending: false });

@@ -1,6 +1,6 @@
 # Estado para retomar el desarrollo
 
-Actualizado: 2026-10-16. Fase 1 publicada en `main` remoto mediante PR #12.
+Actualizado: 2026-10-18. Fase 1 publicada; fases 3-6 y mejoras posteriores en `feat/next-phases`, PR #14 abierto. Verificacion local:266/266, lint/build aprobados. Publicacion pendiente; fases 2 y 7 en standby.
 Este registro complementa `TODO.todo` y `tech-debt-backlog.md`.
 
 ## Roadmap de crecimiento — ejecución de fase 1
@@ -112,3 +112,37 @@ Este registro complementa `TODO.todo` y `tech-debt-backlog.md`.
   `NODE_ENV=test` y `reuseExistingServer: false` siguen activos.
 - `.codex/` y `AGENTS.md` ya estaban sin seguimiento al empezar; se dejaron
   intactos. No incluirlos por accidente al preparar un commit.
+
+## 2026-10-17 — Fase 3: historial del ranking (local)
+
+Cortes por torneo con URL compartible, orden fecha/ID bigint, comparación con el corte anterior de la misma temporada y estados distintos para selección inválida, snapshot faltante y puntos cero. Los perfiles incluyen gráfico sin líneas sobre huecos y tabla accesible. Ambas fuentes de datos exponen los mismos contratos; las lecturas no recalculan ni escriben snapshots. Las rutas de importación, identidades y recálculo ya invalidan ranking y perfiles.
+
+Verificación local: 8 unit/integración iniciales; 25 navegadores de ranking/perfiles; suite completa 233/233. La revisión detectó la selección durante carga: regresión falló y pasó con ID optimista. Los 8 checks dirigidos posteriores cubren además corrección de resultados/vinculación, cero real y ausencia de errores de hidratación. Build aprobado. Capturas 390px/1440px revisadas. El cierre conjunto repetirá la suite tras las siguientes fases. Sin migraciones nuevas.
+## 2026-10-17 — Fase 4: mis partidos de Liga (local)
+
+Selector por ID de participante, URL compartible y preferencia por liga/dispositivo. Muestra grupo/posición, rivales, pendientes, resultados orientados al participante, sanciones 0–0 y descansos solo de su grupo. Enlaces de perfil únicamente con identidad canónica. Conserva parámetros ajenos y atrás/adelante sin refetch; tolera localStorage bloqueado y limpia preferencias obsoletas. El selector espera la hidratación de preferencias antes de habilitarse.
+
+Pruebas: 39 checks dirigidos de proyección, preferencias, tabla y navegador; revisión independiente sin defectos de lógica. Se reforzaron los asserts del contenido personal, perfil canónico, teclado y navegación adelante; 5/5 checks posteriores aprobados. Se reprodujo y corrigió interacción demasiado temprana antes de hidratación. Lint/build aprobados antes de ese ajuste; se repetirán al cerrar fases 3–5. Capturas móvil/escritorio revisadas. Sin cambios en puntos o esquema.
+## 2026-10-17 — Cierre local de fases 3–5
+
+Fases 3 (historial por corte y evolución en perfiles), 4 (mis partidos de Liga) y 5 (tarjetas PNG/descarga/enlace/compartir) implementadas en `feat/next-phases`, worktree `.worktrees/community-growth`, desde la fase 1 publicada (`6f761bc`). Fases 2, 6 y 7 permanecen en standby. Sin migraciones nuevas ni cambios de puntos, roles, keep-alive o backups.
+
+Verificación final tras los fixes de revisión: `npm run lint` aprobado; `npm run build` aprobado; `npm test` **251/251** en 3,4 minutos contra Supabase local. No se cuenta como aprobada la corrida previa interrumpida. Se inspeccionaron las cuatro combinaciones de tarjeta/formato y variantes con nombres largos/acentos, empates, torneo vacío y jugador sin ranking; UI móvil/escritorio revisada. Historial usa títulos de torneo en la tabla en lugar de IDs internos.
+
+La revisión de fase 5 produjo dos hallazgos antes de interrumpirse por límite del revisor; el cierre del diff fue autorrevisión. Ambos hallazgos quedaron reproducidos y corregidos: fallback local según cmap sin HTTP para caracteres ausentes, y compartir con archivo preparado y un segundo clic. Los nombres completos siguen en las páginas; imágenes usan ? para grafemas/emoji sin soporte y elipsis para nombres largos. Las pruebas de compartir simulan la API nativa; no se afirma compatibilidad específica con dispositivos reales sin esa revisión.
+
+Publicación y aprobación visual del diseño de tarjetas pendientes de decisión del usuario. Runbook: `docs/releases/2026-10-17-phases-3-5.md`. Se registraron dos hallazgos heredados no bloqueantes en `docs/tech-debt-backlog.md` (precisión de IDs de torneos y desempate por ID en lectores latest antiguos).
+
+
+## 2026-10-17 — Fase 6: archivo comunitario (local)
+
+Archivo público y editor de admin, borrador/publicación/retiro, URL estable, crónica en texto, temporada, torneo opcional SET NULL, VODs HTTPS y fotos con leyendas/créditos/orden. Bucket privado, decodificación/re-encoding, 2 MiB/foto, 100 MiB con reservas serializadas y firmas de 900 segundos. Backup empareja snapshot SQL, metadata y bytes inmutables con manifiesto SHA-256; retención de medios 14 días. Dump anterior conserva ACL, frecuencia semanal, retención 90 días y reporte; ambos artefactos se cifran por ser público el repo. Keep-alive intacto.
+
+Verificación final: 264/264 (3.6m), lint and production build passed; local Supabase only. Reconstrucción completa y restore a DB/bucket temporales aprobados; layouts 390/990/1440 inspeccionados. Revisión independiente: dos Important reproducidos/corregidos (outage al firmar fotos no oculta texto; acciones de medios/texto conservan ediciones pendientes), sin Critical/Minor. Advisors: solo hallazgos heredados. Runbook: `docs/releases/2026-10-17-phase-6.md`.
+
+Fases 2/7 siguen en standby; eventos pendientes de fase 2. Publicación, clave de cifrado respaldada offline, presupuesto global de artefactos/Packages y habilitación de backups de medios pendientes. Sin cambios remotos.
+
+
+## 2026-10-18 - PR y mejoras de fases completadas
+
+[PR #14](https://github.com/twpyhost/TWPY/pull/14) abierto contra main tras autorizacion de push; checks iniciales de Vercel aprobados. El usuario eligio mejorar las fases completadas y mantener2/7 en standby. Se corrigieron guardados de texto con galerias grandes (solo campos editables en el payload) y IDs bigint de los lookups internos de ranking/count (casts a texto antes de consultar snapshots), ambos con regresiones RED/GREEN. El backlog de desempate por ID estaba desactualizado y se corrigio a partir del codigo/git blame. Cierre local266/266, lint/build correctos; sin migraciones nuevas, cambios competitivos o escrituras de produccion. Evidencia: `docs/releases/2026-10-18-completed-phase-improvements.md`.

@@ -229,3 +229,36 @@ y ACL de RPC aprobados. Se conservan los GRANT/REVOKE; la copia de restore
 omite solo los defaults del rol gestionado supabase_admin. Procedimiento y
 evidencia en `docs/infrastructure.md` y el runbook de release. EWGF diferido;
 fase 2 no iniciada.
+
+## 2026-10-17 — Fase 3: historial del ranking (local)
+
+Cortes por torneo con URL compartible, orden fecha/ID bigint, comparación con el corte anterior de la misma temporada y estados distintos para selección inválida, snapshot faltante y puntos cero. Los perfiles incluyen gráfico sin líneas sobre huecos y tabla accesible. Ambas fuentes de datos exponen los mismos contratos; las lecturas no recalculan ni escriben snapshots. Las rutas de importación, identidades y recálculo ya invalidan ranking y perfiles.
+
+Verificación local: 8 unit/integración iniciales; 25 navegadores de ranking/perfiles; suite completa 233/233. La revisión detectó la selección durante carga: regresión falló y pasó con ID optimista. Los 8 checks dirigidos posteriores cubren además corrección de resultados/vinculación, cero real y ausencia de errores de hidratación. Build aprobado. Capturas 390px/1440px revisadas. El cierre conjunto repetirá la suite tras las siguientes fases. Sin migraciones nuevas.
+## 2026-10-17 — Fase 4: mis partidos de Liga (local)
+
+Selector por ID de participante, URL compartible y preferencia por liga/dispositivo. Muestra grupo/posición, rivales, pendientes, resultados orientados al participante, sanciones 0–0 y descansos solo de su grupo. Enlaces de perfil únicamente con identidad canónica. Conserva parámetros ajenos y atrás/adelante sin refetch; tolera localStorage bloqueado y limpia preferencias obsoletas. El selector espera la hidratación de preferencias antes de habilitarse.
+
+Pruebas: 39 checks dirigidos de proyección, preferencias, tabla y navegador; revisión independiente sin defectos de lógica. Se reforzaron los asserts del contenido personal, perfil canónico, teclado y navegación adelante; 5/5 checks posteriores aprobados. Se reprodujo y corrigió interacción demasiado temprana antes de hidratación. Lint/build aprobados antes de ese ajuste; se repetirán al cerrar fases 3–5. Capturas móvil/escritorio revisadas. Sin cambios en puntos o esquema.
+## 2026-10-17 — Cierre local de fases 3–5
+
+Fases 3 (historial por corte y evolución en perfiles), 4 (mis partidos de Liga) y 5 (tarjetas PNG/descarga/enlace/compartir) implementadas en `feat/next-phases`, worktree `.worktrees/community-growth`, desde la fase 1 publicada (`6f761bc`). Fases 2, 6 y 7 permanecen en standby. Sin migraciones nuevas ni cambios de puntos, roles, keep-alive o backups.
+
+Verificación final tras los fixes de revisión: `npm run lint` aprobado; `npm run build` aprobado; `npm test` **251/251** en 3,4 minutos contra Supabase local. No se cuenta como aprobada la corrida previa interrumpida. Se inspeccionaron las cuatro combinaciones de tarjeta/formato y variantes con nombres largos/acentos, empates, torneo vacío y jugador sin ranking; UI móvil/escritorio revisada. Historial usa títulos de torneo en la tabla en lugar de IDs internos.
+
+La revisión de fase 5 produjo dos hallazgos antes de interrumpirse por límite del revisor; el cierre del diff fue autorrevisión. Ambos hallazgos quedaron reproducidos y corregidos: fallback local según cmap sin HTTP para caracteres ausentes, y compartir con archivo preparado y un segundo clic. Los nombres completos siguen en las páginas; imágenes usan ? para grafemas/emoji sin soporte y elipsis para nombres largos. Las pruebas de compartir simulan la API nativa; no se afirma compatibilidad específica con dispositivos reales sin esa revisión.
+
+Publicación y aprobación visual del diseño de tarjetas pendientes de decisión del usuario. Runbook: `docs/releases/2026-10-17-phases-3-5.md`. Se registraron dos hallazgos heredados no bloqueantes en `docs/tech-debt-backlog.md` (precisión de IDs de torneos y desempate por ID en lectores latest antiguos).
+
+## 2026-10-17 - Fase 6: archivo comunitario (local)
+
+Editor exclusivo de admin con borrador/publicacion/retiro, URL permanente, temporada, cronica como texto, VODs HTTPS, foto/leyenda/credito/orden. Lista publica, sitemap y resultados incluyen solo publicaciones vigentes; se conserva la cronica al borrar el torneo. Fotos privadas con firmas de900s y sin cache persistente de imagen. Reglas SQL/RLS, spoof/SVG/HTML/datos corruptos, limite2MiB y presupuesto100MiB con reservas concurrentes cubiertos por tests. Restore emparejado reconstruye migraciones, DB/metadata/ACL y bytes en bucket separado; manifiesto rechaza faltantes/corrupcion. Artefactos cifrados por tratarse de repositorio publico.
+
+Pruebas dirigidas:16/16 iniciales, incluyendo roles Liga, editor y galeria390/1440; credito publicado3/3 y subida real desde editor4/4. Un fallo de imagen antes de hidratacion fue reproducido y corregido. Cierre final:264/264, lint/build aprobados; revision independiente con dos Important reproducidos y corregidos (outage de firma y edicion intercalada). Sin Critical/Minor. Runbook: `docs/releases/2026-10-17-phase-6.md`. Fases2/7 siguen en standby; enlace a eventos diferido.
+
+
+## 2026-10-18 - Mejoras de fases completadas
+
+- Galeria extensa:150 filas de metadata simulada superan100.000 bytes; una edicion de cronica persiste mediante el API local sin reenviar la galeria ni aumentar el limite. La regresion primero fallo y luego paso.
+- Ranking/count latest:dos torneos del mismo dia con IDs bigint adyacentes fuera de Number seguro y snapshots de distinta composicion. Ambas lecturas primero rechazaron las consultas por redondeo; tras id::text coinciden con el lector historico, sin cambiar DTOs publicos o puntos.
+- Verificacion final:266/266, lint y build aprobados. PR #14; fases2/7 en standby.

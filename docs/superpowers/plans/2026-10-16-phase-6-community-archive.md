@@ -1,5 +1,7 @@
 # Community Archive Implementation Plan
 
+> **Status: IMPLEMENTED AND VERIFIED LOCALLY (2026-10-17).** The user resumed Phase 6 with “next phase” after Phases 3–5. Phases 2 and 7 remain on standby; event linking is pending Phase 2. Work is local until publication is explicitly authorized.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Preserve curated tournament/event recaps, credited photos and VOD links with stable public URLs and recoverable media.
@@ -34,11 +36,11 @@ Draft media exposure, malicious/oversized files, broken historical links, asset-
 - `getPublishedArchiveMedia(entryId,assetId) -> Promise<{url,expiresAt}|null>` signs a read only after verifying publication and asset membership. TTL is 900 seconds; cache pages/URLs less than the remaining TTL. Retraction prevents issuing new URLs immediately; already issued signed URLs remain valid for at most that TTL, a limitation to document in the editor.
 - Backup script writes object bytes plus `{path,size,sha256,entryId}` manifest and a paired metadata/DB snapshot identified by backup run ID. Workflow runs weekly and on demand, with 14-day artifact retention; verify total account artifact budget before enabling it. Use immutable object paths and defer physical deletion while a backup is collecting its referenced objects. Keep the established DB dump/retention; older DB-only snapshots cannot promise restoration of media beyond the media window. Restore tests use the paired snapshot and manifest, not whichever independent DB artifact happens to be newest.
 
-- [ ] Write red tests for anonymous draft entry/object access, `liga` upload denial, extension/MIME spoof, SVG/HTML, 2 MiB boundary, aggregate-budget race, dangling reference and deleted parent SET NULL. Test signed-URL expiry/retraction behavior and a missing/corrupt object detected by the checksum manifest.
-- [ ] Run `npx playwright test tests/unit/archive.test.js tests/integration/archive.test.js tests/integration/archiveStorage.test.js --project=unit` and confirm the new contracts fail.
-- [ ] Implement the records, least-privilege RLS/Storage policies, safe generated paths, upload/finalize/cleanup workflow and explicit media budget. Only published-entry assets may receive anonymous read access/signatures. Never expose credentials or use a public bucket for drafts. Backups must recover media outside the primary Storage project, not merely copy metadata into that same project.
-- [ ] Repeat tests and follow local schema/advisor/reconstruction steps. Restore a temporary local DB plus the media archive, verify all published assets against checksums and confirm captions/entry associations survive. Do not reset the development DB or treat a successful upload as proof of a backup.
-- [ ] Commit: `feat: store and back up community archive content`.
+- [x] Write red tests for anonymous draft entry/object access, `liga` upload denial, extension/MIME spoof, SVG/HTML, 2 MiB boundary, aggregate-budget race, dangling reference and deleted parent SET NULL. Test signed-URL expiry/retraction behavior and a missing/corrupt object detected by the checksum manifest.
+- [x] Run `npx playwright test tests/unit/archive.test.js tests/integration/archive.test.js tests/integration/archiveStorage.test.js --project=unit` and confirm the new contracts fail.
+- [x] Implement the records, least-privilege RLS/Storage policies, safe generated paths, upload/finalize/cleanup workflow and explicit media budget. Only published-entry assets may receive anonymous read access/signatures. Never expose credentials or use a public bucket for drafts. Backups must recover media outside the primary Storage project, not merely copy metadata into that same project.
+- [x] Repeat tests and follow local schema/advisor/reconstruction steps. Restore a temporary local DB plus the media archive, verify all published assets against checksums and confirm captions/entry associations survive. Do not reset the development DB or treat a successful upload as proof of a backup.
+- [x] Commit: `feat: store and back up community archive content`.
 
 ### Task 2: Editorial and public archive pages
 
@@ -50,8 +52,15 @@ Draft media exposure, malicious/oversized files, broken historical links, asset-
 
 **Interfaces:** Editor uses draft/save/publish/retract with caption, credit, media ordering and ordinary HTTPS VOD links. Public listing filters by season; detail resolves stable slug and optional event/result links. Published slug is immutable in v1 to keep shared URLs stable. Only allowlisted video providers can be embedded; otherwise use safe links, never raw iframe HTML.
 
-- [ ] Write red browser cases for draft save/reload and exclusion from public listing/sitemap, publish/retract, media credit/alt text, season filtering, linked result removed, failed media load and escaped plain-text content. Assert a previously cached page stops exposing the entry on retraction within the documented cache window and no fresh media URL is issued.
-- [ ] Run the new public/admin specs under their proper projects and confirm new assertions fail.
-- [ ] Implement the editorial workflow and responsive gallery. Invalidate entry/list/event/result/sitemap data on edits, publication and retraction; align cached-page TTL with signed media TTL. Include captions/credits and a clear fallback for unavailable third-party videos. No autoplay requirement or public contributions in v1.
-- [ ] Repeat targeted specs, inspect a real gallery on mobile/desktop, complete common phase checks and document restore instructions plus current asset/artifact usage.
-- [ ] Commit: `feat: publish the community archive`.
+- [x] Write red browser cases for draft save/reload and exclusion from public listing/sitemap, publish/retract, media credit/alt text, season filtering, linked result removed, failed media load and escaped plain-text content. Assert a previously cached page stops exposing the entry on retraction within the documented cache window and no fresh media URL is issued.
+- [x] Run the new public/admin specs under their proper projects and confirm new assertions fail.
+- [x] Implement the editorial workflow and responsive gallery. Invalidate entry/list/event/result/sitemap data on edits, publication and retraction; align cached-page TTL with signed media TTL. Include captions/credits and a clear fallback for unavailable third-party videos. No autoplay requirement or public contributions in v1.
+- [x] Repeat targeted specs, inspect a real gallery on mobile/desktop, complete common phase checks and document restore instructions plus current asset/artifact usage.
+- [x] Commit: `feat: publish the community archive`.
+
+
+## Local completion evidence
+
+Commits: `67dd52d` (records/media/backups), `fe6d790` (editor/public pages), followed by the reviewed fixes. 264/264 (3.6m), lint and production build passed; local Supabase only. Fresh independent review found two Important issues; both were reproduced RED, corrected in one pass, and verified GREEN with the full suite. Isolated migration reconstruction, paired DB/media restore, private bucket checksum verification and 390/990/1440 layouts passed. No new archive advisor findings.
+
+Event integration remains deferred with Phase 2. No production release or remote configuration; encrypted backups require an offline-backed-up key and media workflow gates remain off pending account-wide storage verification. Runbook: [Phase 6 release](../../releases/2026-10-17-phase-6.md).

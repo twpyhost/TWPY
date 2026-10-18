@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: Production
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
       - name: Install postgresql-client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
@@ -21,6 +25,7 @@ jobs:
         shell: bash
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
         # --schema=public: los schemas internos de Supabase (auth, storage,
         # extensions, etc.) son propiedad de roles que este dump no puede
         # restaurar de todas formas (probado localmente: un dump completo
@@ -28,12 +33,15 @@ jobs:
         # preservar -- el archivo de la comunidad -- vive todo en public.
         run: |
           : "${SUPABASE_DB_URL:?Configure SUPABASE_DB_URL in repository or Production environment secrets}"
+          : "${BACKUP_ENCRYPTION_KEY:?Configure BACKUP_ENCRYPTION_KEY before publishing archive support}"
           # Preserve GRANT/REVOKE so service-only RPCs stay private after restore.
           pg_dump "$SUPABASE_DB_URL" --schema=public --no-owner --clean --if-exists \
             > "$RUNNER_TEMP/supabase-public.sql"
           test -s "$RUNNER_TEMP/supabase-public.sql"
           gzip -c "$RUNNER_TEMP/supabase-public.sql" > "backup-$(date -u +%Y-%m-%d).sql.gz"
           gzip -t "backup-$(date -u +%Y-%m-%d).sql.gz"
+          # Public repository artifacts must never contain plaintext drafts.
+          node scripts/backupCrypto.js encrypt "backup-$(date -u +%Y-%m-%d).sql.gz" "backup-$(date -u +%Y-%m-%d).sql.gz.enc"
 
       - name: Upload artifact
         id: upload
@@ -41,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v7.0.1
         with:
           name: supabase-backup-${{ github.run_id }}
-          path: backup-*.sql.gz
+          path: backup-*.sql.gz.enc
           if-no-files-found: error
           # Maximo permitido sin configuracion adicional a nivel org/repo.
           retention-days: 90
