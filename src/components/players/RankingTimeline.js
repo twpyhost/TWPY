@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-export default function RankingTimeline({ series, year }) {
+export default function RankingTimeline({ series, year, cuts = [] }) {
+  const titles = new Map(cuts.map(cut => [cut.tournamentId, cut.title]));
   const positions = series.filter(s => s.position != null).map(s => s.position);
   const max = Math.max(2, ...positions);
   const x = index => 30 + index * 540 / Math.max(1, series.length - 1);
@@ -21,7 +22,7 @@ export default function RankingTimeline({ series, year }) {
         <table aria-label="Evolución del ranking" className="w-full text-left font-body text-sm">
           <thead><tr className="border-b border-white/15 text-white/60"><th className="p-3">Corte</th><th className="p-3">Posición</th><th className="p-3">Puntos</th></tr></thead>
           <tbody>{series.map(point => <tr key={point.tournamentId} className="border-b border-white/10">
-            <td className="p-3"><Link className="text-tekken-blue-400 hover:underline" href={`/ranking?year=${year}&torneo=${point.tournamentId}`}>{point.date.slice(0, 10)} · {point.tournamentId}</Link></td>
+            <td className="p-3"><Link className="text-tekken-blue-400 hover:underline" href={`/ranking?year=${year}&torneo=${point.tournamentId}`}>{point.date.slice(0, 10)}{titles.has(point.tournamentId) ? ` · ${titles.get(point.tournamentId)}` : ""}</Link></td>
             <td className="p-3">{point.position == null ? (point.available ? "Sin ranking" : "Sin datos") : `#${point.position}`}</td>
             <td className="p-3">{point.points ?? "—"}</td>
           </tr>)}</tbody>

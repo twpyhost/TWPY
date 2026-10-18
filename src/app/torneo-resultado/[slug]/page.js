@@ -10,6 +10,7 @@ import { getTorneoResultados, getTorneos } from "@/app/utils/db";
 import { withMinDelay } from "@/lib/withMinDelay";
 import { fadeDelay } from "@/lib/fadeDelay";
 import twpyLogo from "../../../../public/images/LOGO TWPY/PNG/TWPY LOGO VARIANTES-04.png";
+import ShareResults from "@/components/share/ShareResults";
 
 const MESES = [
   "ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
@@ -45,6 +46,7 @@ export async function generateMetadata({ params }) {
   return {
     title: nombreTorneo,
     description: `Resultados y puntajes de ${nombreTorneo} — Tekken Warriors Paraguay.`,
+    openGraph: { images: [{ url: `/api/cards/torneos/${slug}?format=landscape`, width: 1200, height: 630 }] },
   };
 }
 
@@ -202,6 +204,7 @@ export default async function Resultados({ params }) {
             </span>
           </div>
 
+          <ShareResults resourceType="torneo" resourceId={String(slug)} />
           <div className="mt-3 flex flex-wrap gap-3.5">
             <ChallongeLinkButton url={torneoInfo?.url_challonge} />
             <Button href="/ranking" className="px-7 py-3 text-lg">

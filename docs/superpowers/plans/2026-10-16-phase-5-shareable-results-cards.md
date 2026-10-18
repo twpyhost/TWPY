@@ -1,6 +1,6 @@
 # Shareable Results Cards Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Generate downloadable tournament podium and player-season PNGs that accurately represent public TWPY records.
 
@@ -34,11 +34,11 @@ Tied/sparse podiums, long Unicode names, unranked players, source changes versus
 - `getCardDimensions(format)` accepts only `landscape` (1200×630) or `portrait` (1080×1350).
 - GET routes accept only valid IDs, an existing season for player cards, the bounded format and an optional source-version hint. Return `image/png`, safe filename/Content-Disposition, 404 for unknown resource/season and 400 for unsupported format. No arbitrary text, HTML, remote URL or sponsor query parameters.
 
-- [ ] Add red projection tests for one/two competitors, tied third places, zero results, Unicode/long names, absent season snapshot and correct season labels. Route tests assert PNG signature, exact dimensions, status/content headers and bounded request parameters; inject a remote-avatar URL and assert it is never fetched.
-- [ ] Run `npx playwright test tests/unit/shareCards.test.js --project=unit` and the new public spec; observe the expected failures.
-- [ ] Implement templates using supported flexbox/layout primitives and bundled assets, with a text/logo fallback if a font cannot render the required glyph. Keep JSX/CSS/fonts/images within ImageResponse's documented 500KB bundle limit; target <=400KB for initial templates to reserve room for sponsor attribution. Generate only from known public IDs. Use shared public cache/version metadata and invalidate on import/reimport, identity/profile edits, snapshot recalculation and later sponsor changes. Do not accept a caller's arbitrary version as authoritative data or as a way to generate unbounded cache keys.
-- [ ] Repeat tests and export all four template/format combinations with sparse/tied/long-name fixtures. Visually inspect every export for clipping, overlapping text, correct accents/numbers and safe margins. Confirm `next/og` runs in the current Node build; Phase 7 repeats this against Netlify. Complete common phase checks.
-- [ ] Commit: `feat: render accurate public results cards`.
+- [x] Add red projection tests for one/two competitors, tied third places, zero results, Unicode/long names, absent season snapshot and correct season labels. Route tests assert PNG signature, exact dimensions, status/content headers and bounded request parameters; inject a remote-avatar URL and assert it is never fetched.
+- [x] Run `npx playwright test tests/unit/shareCards.test.js --project=unit` and the new public spec; observe the expected failures.
+- [x] Implement templates using supported flexbox/layout primitives and bundled assets, with a text/logo fallback if a font cannot render the required glyph. Keep JSX/CSS/fonts/images within ImageResponse's documented 500KB bundle limit; target <=400KB for initial templates to reserve room for sponsor attribution. Generate only from known public IDs. Use shared public cache/version metadata and invalidate on import/reimport, identity/profile edits, snapshot recalculation and later sponsor changes. Do not accept a caller's arbitrary version as authoritative data or as a way to generate unbounded cache keys.
+- [x] Repeat tests and export all four template/format combinations with sparse/tied/long-name fixtures. Visually inspect every export for clipping, overlapping text, correct accents/numbers and safe margins. Confirm `next/og` runs in the current Node build; Phase 7 repeats this against Netlify. Complete common phase checks.
+- [x] Commit: `feat: render accurate public results cards`.
 
 ### Task 2: Download and share controls
 
@@ -46,8 +46,11 @@ Tied/sparse podiums, long Unicode names, unranked players, source changes versus
 
 **Interfaces:** `ShareResults({resourceType,resourceId,year,sourceVersion})` builds only the supported same-origin image/page URLs. `resourceType` is `torneo` or `jugador`; no caller-supplied rendering URL. Native file sharing requires a user click and capability detection; unsupported browsers keep working download/copy-link actions.
 
-- [ ] Write failing browser cases for PNG download filename, copied canonical page link, absent native-share support, rejected/cancelled native share and image-generation failure. Verify a cancelled share never reports success or posts a message.
-- [ ] Run the public card spec and confirm the new controls fail before implementation.
-- [ ] Implement accessible format selection/download/copy controls. Use a clear progress/error label and permit retry; avoid blocking the public result/profile itself when card rendering is unavailable. User review of the template precedes publication of its final design.
-- [ ] Repeat tests and manually inspect mobile/browser share behavior; record actual supported fallback behavior in QA documentation.
-- [ ] Commit: `feat: download and share public results cards`.
+- [x] Write failing browser cases for PNG download filename, copied canonical page link, absent native-share support, rejected/cancelled native share and image-generation failure. Verify a cancelled share never reports success or posts a message.
+- [x] Run the public card spec and confirm the new controls fail before implementation.
+- [x] Implement accessible format selection/download/copy controls. Use a clear progress/error label and permit retry; avoid blocking the public result/profile itself when card rendering is unavailable. User review of the template precedes publication of its final design.
+- [x] Repeat tests and manually inspect mobile/browser share behavior; record actual supported fallback behavior in QA documentation.
+- [x] Commit: `feat: download and share public results cards`.
+
+
+**Local checkpoint (2026-10-17):** Tasks 1–2 implemented. Final combined suite 251/251, lint and production build pass after review fixes. Local commits only; production publication and card-design approval remain pending. Phases 2, 6 and 7 remain on standby. Evidence: docs/releases/2026-10-17-phases-3-5.md.

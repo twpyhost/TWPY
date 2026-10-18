@@ -17,4 +17,5 @@ export const {
   getRankingCuts,
   getRankingAtCut,
   getPlayerRankingHistory,
+  getTournamentCardSource,
 } = db;

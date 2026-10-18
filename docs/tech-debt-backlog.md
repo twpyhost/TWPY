@@ -406,3 +406,8 @@ block is moved with ↑/↓.
    fuera del rango seguro de Number. No cambiar masivamente los tipos del
    facade sin revisar sus consumidores.
    **Status**: Open — hallazgo Minor de la revisión independiente de fase 1.
+
+## Fases 3–5 — 2026-10-17
+
+- Facades históricos `getTorneos`/`getTorneoResultados` aún leen IDs como números JS; un torneo existente `9223372036854775806` devolvió 404 al reutilizarlos para tarjetas. Fase 5 tiene un lookup nuevo y exacto con casts `::text`, verificado por regresión. Queda pendiente alinear las rutas/listados históricos que todavía usan Number, conservando sus contratos y agregando regresiones propias; no se amplió este trabajo a esas superficies.
+- `getRankings`/`getRankingsCount` antiguos ordenan por temporada/fecha sin desempate por ID. El historial nuevo y su vista latest usan fecha+ID como `recalcularSnapshots`; otros consumidores antiguos pueden discrepar si hay dos torneos el mismo día. Alinear esos consumidores en un cambio dedicado con una regresión de mismo día; la fase 3 preservó los métodos anteriores conforme a su alcance.

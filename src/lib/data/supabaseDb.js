@@ -42,6 +42,23 @@ const getTorneos = async () => {
   }));
 };
 
+export const getTournamentCardSource = async (id) => {
+  if (!isPublicId(id)) return null;
+  const supabase = getClient();
+  const { data: tournament, error } = await supabase.from("torneos")
+    .select("id::text,nombre,fecha_inicio,temporada").eq("id", id).maybeSingle();
+  if (error) throw error;
+  if (!tournament) return null;
+  const { data: results, error: resultsError } = await supabase.from("torneo_resultados_publicos")
+    .select("player_id::text,jugador_nombre,posicion,puntaje").eq("torneo_id", id).order("posicion");
+  if (resultsError) throw resultsError;
+  return {
+    tournament: { torneo_id: tournament.id, nombre_torneo: tournament.nombre,
+      fecha_torneo: tournament.fecha_inicio, temporada: String(tournament.temporada) },
+    results: results.map(r => ({ jugador: { id: r.player_id, nombre: r.jugador_nombre }, posicion: r.posicion, puntaje: r.puntaje })),
+  };
+};
+
 const getTorneoResultados = async (torneoId) => {
   const id = Number(torneoId);
   if (!Number.isFinite(id)) {

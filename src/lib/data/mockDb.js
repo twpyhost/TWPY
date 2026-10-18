@@ -44,6 +44,12 @@ const getTorneos = async () => {
   });
 };
 
+export const getTournamentCardSource = async (id) => {
+  const tournament = (await getTorneos()).find(t => String(t.torneo_id) === id);
+  if (!tournament) return null;
+  return { tournament, results: await getTorneoResultados(id) ?? [] };
+};
+
 const getTorneoResultados = async (torneoId) => {
   const torneo = resultado.torneos.find((item) => item.id === String(torneoId));
 

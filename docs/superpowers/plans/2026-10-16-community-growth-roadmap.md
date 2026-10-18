@@ -98,3 +98,8 @@ These are recorded inputs, not reasons to interrupt creating the roadmap:
 - [ ] Phase 5 released and verified.
 - [ ] Phase 6 released and verified, including a media restore.
 - [ ] Phase 7 released only after commercial hosting proof/cutover, independent keep-alive and explicit sponsor agreement activation.
+
+
+## Local checkpoint — 2026-10-17
+
+Phases 3–5 implemented and verified in feat/next-phases: 251/251 tests, lint and production build pass. Production release boxes above remain pending. Phases 2, 6 and 7 remain on standby until an explicit instruction for that phase. Release evidence and review decisions: docs/releases/2026-10-17-phases-3-5.md.
