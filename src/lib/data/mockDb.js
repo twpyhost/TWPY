@@ -199,3 +199,8 @@ function buildRanking(totals) {
       puntaje: competidor.puntaje,
     }));
 }
+// Mock mode has no editorial content or private media credentials.
+export const getArchiveEntries = async () => [];
+export const getArchiveEntry = async () => null;
+export const getPublicArchiveTarget = async () => null;
+export const getPublishedArchiveMedia = async () => null;

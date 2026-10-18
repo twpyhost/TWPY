@@ -1,0 +1,41 @@
+name: Backup community archive
+on:
+  schedule:
+    - cron: "30 6 * * 0"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: archive-backup
+  cancel-in-progress: false
+jobs:
+  backup:
+    # Account-wide Actions + Packages usage must be checked before enabling.
+    if: vars.ARCHIVE_BACKUPS_ENABLED == 'true' && vars.ARCHIVE_BACKUP_BUDGET_VERIFIED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: Production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Collect paired database and immutable objects, verify and encrypt
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+        run: |
+          : "${BACKUP_ENCRYPTION_KEY:?Configure the offline-backed-up encryption key}"
+          node scripts/backup-archive-media.js backup "$RUNNER_TEMP/archive"
+          tar -czf "$RUNNER_TEMP/archive.tar.gz" -C "$RUNNER_TEMP/archive" .
+          node scripts/backupCrypto.js encrypt "$RUNNER_TEMP/archive.tar.gz" "$RUNNER_TEMP/archive.tar.gz.enc"
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: archive-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/archive.tar.gz.enc
+          if-no-files-found: error
+          retention-days: 14

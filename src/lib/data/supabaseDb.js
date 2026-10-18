@@ -1,5 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import { createRankingHistoryReader } from "../rankingHistoryDb.js";
+import { createArchiveData } from "../archiveDb.js";
+import { getSupabaseAdmin } from "../supabaseAdmin.js";
+export const getArchiveEntries = (filters) => createArchiveData(getClient(), getSupabaseAdmin()).getArchiveEntries(filters);
+export const getArchiveEntry = (slug) => createArchiveData(getClient(), getSupabaseAdmin()).getArchiveEntry(slug);
+export const getPublicArchiveTarget = (slug) => createArchiveData(getClient(), null).getPublicArchiveTarget(slug);
+export const getPublishedArchiveMedia = (entryId, assetId) => createArchiveData(getClient(), getSupabaseAdmin()).getPublishedArchiveMedia(entryId, assetId);
 
 export const getRankingCuts = (year) => createRankingHistoryReader(getClient()).getRankingCuts(year);
 export const getRankingAtCut = (selection) => createRankingHistoryReader(getClient()).getRankingAtCut(selection);

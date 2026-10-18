@@ -18,4 +18,8 @@ export const {
   getRankingAtCut,
   getPlayerRankingHistory,
   getTournamentCardSource,
+  getArchiveEntries,
+  getArchiveEntry,
+  getPublicArchiveTarget,
+  getPublishedArchiveMedia,
 } = db;

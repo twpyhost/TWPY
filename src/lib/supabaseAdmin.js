@@ -3,7 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 let client = null;
 
 // Cliente con service_role: ignora RLS, usarlo SOLO en rutas de API
-// protegidas con getAdminUser(). Nunca importar desde codigo de cliente.
+// protegidas con getAdminUser(), o para firmar un objeto tras verificar su
+// publicación con el cliente público. Nunca importar desde codigo de cliente.
 export function getSupabaseAdmin() {
   if (!client) {
     client = createClient(
