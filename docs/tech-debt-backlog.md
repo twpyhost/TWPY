@@ -410,4 +410,8 @@ block is moved with ↑/↓.
 ## Fases 3–5 — 2026-10-17
 
 - Facades históricos `getTorneos`/`getTorneoResultados` aún leen IDs como números JS; un torneo existente `9223372036854775806` devolvió 404 al reutilizarlos para tarjetas. Fase 5 tiene un lookup nuevo y exacto con casts `::text`, verificado por regresión. Queda pendiente alinear las rutas/listados históricos que todavía usan Number, conservando sus contratos y agregando regresiones propias; no se amplió este trabajo a esas superficies.
-- `getRankings`/`getRankingsCount` antiguos ordenan por temporada/fecha sin desempate por ID. El historial nuevo y su vista latest usan fecha+ID como `recalcularSnapshots`; otros consumidores antiguos pueden discrepar si hay dos torneos el mismo día. Alinear esos consumidores en un cambio dedicado con una regresión de mismo día; la fase 3 preservó los métodos anteriores conforme a su alcance.
+- **Registro corregido (2026-10-18):** `getRankings`/`getRankingsCount` ya ordenan por temporada, fecha e ID desde `d5f302a` (2026-10-16). El hallazgo anterior sobre ausencia de desempate estaba desactualizado; no se necesita otro cambio de orden. La precisión del ID usado para consultar el snapshot es un problema separado, cubierto por el seguimiento de identificadores exactos.
+
+## Seguimiento de fases completadas — 2026-10-18
+
+- **Resuelto en las lecturas internas de ranking:** `getRankings` y `getRankingsCount` conservan el ID decimal de torneo con `id::text` antes de consultar snapshots. La regresión con dos IDs bigint adyacentes del mismo día reprodujo el error por redondeo fuera de rango; luego pasó y coincidió con el historial exacto (5/5 pruebas dirigidas). Los contratos públicos y la fórmula de puntos se conservan. Siguen abiertos los productores legacy de enlaces/IDs de jugador y los facades de torneos mencionados arriba: este arreglo no modifica esas superficies.

@@ -123,7 +123,7 @@ const getRankings = async (temporada) => {
   // para calcular el movimiento.
   let torneosQuery = supabase
     .from("torneos")
-    .select("id, temporada")
+    .select("id::text, temporada")
     .order("temporada", { ascending: false })
     .order("fecha_inicio", { ascending: false })
     .order("id", { ascending: false });
@@ -191,7 +191,7 @@ const getRankingsCount = async (temporada) => {
 
   let torneosQuery = supabase
     .from("torneos")
-    .select("id, temporada")
+    .select("id::text, temporada")
     .order("temporada", { ascending: false })
     .order("fecha_inicio", { ascending: false })
     .order("id", { ascending: false });

@@ -1,6 +1,6 @@
 # Estado para retomar el desarrollo
 
-Actualizado: 2026-10-17. Fase 1 publicada; fases 3–5 implementadas y verificadas localmente en `feat/next-phases`. Fase 6 implementada y verificada localmente (264/264, lint/build correctos). Publicación pendiente. Fases 2 y 7 en standby.
+Actualizado: 2026-10-18. Fase 1 publicada; fases 3-6 y mejoras posteriores en `feat/next-phases`, PR #14 abierto. Verificacion local:266/266, lint/build aprobados. Publicacion pendiente; fases 2 y 7 en standby.
 Este registro complementa `TODO.todo` y `tech-debt-backlog.md`.
 
 ## Roadmap de crecimiento — ejecución de fase 1
@@ -141,3 +141,8 @@ Archivo público y editor de admin, borrador/publicación/retiro, URL estable, c
 Verificación final: 264/264 (3.6m), lint and production build passed; local Supabase only. Reconstrucción completa y restore a DB/bucket temporales aprobados; layouts 390/990/1440 inspeccionados. Revisión independiente: dos Important reproducidos/corregidos (outage al firmar fotos no oculta texto; acciones de medios/texto conservan ediciones pendientes), sin Critical/Minor. Advisors: solo hallazgos heredados. Runbook: `docs/releases/2026-10-17-phase-6.md`.
 
 Fases 2/7 siguen en standby; eventos pendientes de fase 2. Publicación, clave de cifrado respaldada offline, presupuesto global de artefactos/Packages y habilitación de backups de medios pendientes. Sin cambios remotos.
+
+
+## 2026-10-18 - PR y mejoras de fases completadas
+
+[PR #14](https://github.com/twpyhost/TWPY/pull/14) abierto contra main tras autorizacion de push; checks iniciales de Vercel aprobados. El usuario eligio mejorar las fases completadas y mantener2/7 en standby. Se corrigieron guardados de texto con galerias grandes (solo campos editables en el payload) y IDs bigint de los lookups internos de ranking/count (casts a texto antes de consultar snapshots), ambos con regresiones RED/GREEN. El backlog de desempate por ID estaba desactualizado y se corrigio a partir del codigo/git blame. Cierre local266/266, lint/build correctos; sin migraciones nuevas, cambios competitivos o escrituras de produccion. Evidencia: `docs/releases/2026-10-18-completed-phase-improvements.md`.
